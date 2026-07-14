@@ -789,7 +789,7 @@ const DEMO_STUDENTS = [
 ];
 // ============ ИИ ============
 // Адрес ИИ: в артефакте — напрямую (среда Claude сама проксирует), в прод-сборке заменяется на шлюз StudyGlobal
-const AI_URL = "https://api.anthropic.com/v1/messages";
+const AI_URL = "https://ai.studyglobal.tech/v1/messages";
 async function askClaude(messages, system, tools) {
     const res = await fetch(AI_URL, {
         method: "POST",
