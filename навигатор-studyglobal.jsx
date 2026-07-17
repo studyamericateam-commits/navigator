@@ -294,7 +294,7 @@ const ANKETA = [
 ];
 
 // ============ ЭТАП 2, ШАГ 1: PLACEMENT-ТЕСТ АНГЛИЙСКОГО ============
-// Модель международных placement-тестов: вопросы по ступеням CEFR.
+// Модель международных входных тестов: вопросы по ступеням CEFR.
 // Итоговый уровень — высшая ступень, где ученик стабилен (>= половины верных), а не самый сложный угаданный вопрос.
 const ENG_BANDS = [
   { code: "A1", need: 2 }, { code: "A2", need: 2 }, { code: "B1", need: 3 }, { code: "B2", need: 3 }, { code: "C1", need: 3 },
@@ -503,23 +503,23 @@ const NEXT_PRODUCTS = {
 // Языковые пороги указаны по TOEFL/Duolingo (IELTS в РФ недоступен — правило FACTS_GUARD п.5).
 const EU_COUNTRIES = [
   { id: "nl", flag: "🇳🇱", name: "Нидерланды", slog: "Самая развитая система англоязычного бакалавриата в континентальной Европе",
-    study: "гос. вузы (WO/HBO) 6–15 тыс €/год · foundation для WO 10–25 тыс €/год", living: "500–1500 €/мес",
+    study: "гос. вузы (WO/HBO) 6–15 тыс €/год · подготовительный год (Foundation) для WO: 10–25 тыс €/год", living: "500–1500 €/мес",
     eng: "очень широко: ≈90% населения говорит по-английски, сотни программ",
-    path11: "в прикладные HBO — часто напрямую после 11 класса; в исследовательские WO — через foundation или 1 курс дома/в HBO",
+    path11: "в прикладные HBO — часто напрямую после 11 класса; в исследовательские WO — через подготовительный год (Foundation) или 1 курс дома/в HBO",
     exam: "TOEFL iBT 80–90+ или Duolingo", dl: "15 января (программы с отбором numerus fixus) · 1 мая (открытые, Studielink)",
     fund: "стипендии вузов 2–7 тыс € (чаще на WO-программах)",
     after: "1 год на поиск работы (zoekjaar; можно взять в течение 3 лет после выпуска) → ПМЖ через 5 лет пребывания, включая учёбу" },
   { id: "de", flag: "🇩🇪", name: "Германия", slog: "Крупнейшая экономика ЕС и бесплатное государственное высшее образование",
     study: "гос. вузы ≈0 €/год + семестровый взнос 150–350 € · частные 7–20 тыс €/год", living: "250–1000 €/мес",
     eng: "в гос. вузах программ на английском немного — англоязычный бакалавриат в основном в частных (Private Hochschule)",
-    path11: "в гос. вузы — через foundation (Studienkolleg, немецкий B1–B2, экзамен FSP); в частные англоязычные — с аттестатом + foundation 9–10 тыс €",
+    path11: "в гос. вузы — через подготовительный год Studienkolleg (немецкий B1–B2, экзамен FSP); в частные англоязычные — с аттестатом + подготовительный год 9–10 тыс €",
     exam: "частные: TOEFL iBT 80–90; гос.: немецкий Goethe/telc B1–B2", dl: "май–июль (Uni-Assist или напрямую в вуз)",
     fund: "бесплатное обучение в большинстве гос. вузов; частичные стипендии в частных",
     after: "18 месяцев на поиск работы после выпуска → Blue Card → ПМЖ через 21–33 месяца с Blue Card" },
   { id: "ie", flag: "🇮🇪", name: "Ирландия", slog: "Англоязычная страна ЕС с прозрачным поступлением и глобальными карьерами",
-    study: "гос. вузы 9–19 тыс €/год · foundation 13,5–15 тыс €/год", living: "600–1400 €/мес",
+    study: "гос. вузы 9–19 тыс €/год · подготовительный год (Foundation) 13,5–15 тыс €/год", living: "600–1400 €/мес",
     eng: "английский — язык всей страны: учёбы, работы и жизни",
-    path11: "часто напрямую после 11 класса при достаточном уровне; foundation — как усиливающая опция",
+    path11: "часто напрямую после 11 класса при достаточном уровне; подготовительный год — как усиливающий вариант",
     exam: "TOEFL iBT 80+ или Duolingo 90+", dl: "февраль–март (система CAO); в частных — приём круглый год",
     fund: "частичные скидки за академическую успеваемость",
     after: "виза Stamp 1G: 12 месяцев на поиск работы → ПМЖ через 2 года с Critical Skills Permit (или 5 лет), гражданство через 5 лет" },
@@ -533,9 +533,9 @@ const EU_COUNTRIES = [
   { id: "at", flag: "🇦🇹", name: "Австрия", slog: "Стабильная страна ЕС с очень доступным государственным образованием",
     study: "гос. вузы 1450–3000 €/год + взнос ≈20–25 € · частные 7–15 тыс €/год", living: "300–900 €/мес",
     eng: "основной язык — немецкий; английский доступен на ряде программ (больше в частных)",
-    path11: "в гос. вузы — через foundation (Vorstudienlehrgang); в частные — foundation semester, зачисление гарантируется после его окончания",
+    path11: "в гос. вузы — через подготовительный год Vorstudienlehrgang; в частные — подготовительный семестр, зачисление гарантируется после его окончания",
     exam: "англоязычные: TOEFL iBT 90+ или Duolingo 95+; гос.: немецкий A2–B1 на старте", dl: "различаются по вузам — уточняй у эксперта под конкретную программу",
-    fund: "частичные скидки в частных университетах; foundation 1300–2200 €/семестр",
+    fund: "частичные скидки в частных университетах; подготовительный семестр 1300–2200 €",
     after: "12 месяцев на поиск работы по специальности → RWR-карта → ПМЖ через 5 лет пребывания" },
   { id: "it", flag: "🇮🇹", name: "Италия", slog: "Доступное качественное образование и растущий выбор программ на английском",
     study: "гос. вузы 900–4000 €/год · частные 6–20 тыс €/год (медицина/бизнес до 36 тыс)", living: "300–1900 €/мес",
@@ -561,14 +561,14 @@ const EU_COUNTRIES = [
   { id: "dk", flag: "🇩🇰", name: "Дания", slog: "Скандинавское качество и рекордные 3 года на поиск работы после выпуска",
     study: "Universitet 7–16,3 тыс €/год · Professionshøjskole ≈15 тыс €/год", living: "600–1000 €/мес",
     eng: "англоязычные программы есть; отбор строгий — смотрят и профильные предметы",
-    path11: "прямое поступление возможно, но академические требования высокие; иногда foundation через партнёрские программы",
+    path11: "прямое поступление возможно, но академические требования высокие; иногда подготовительный год через партнёрские программы",
     exam: "TOEFL iBT 90+ или Duolingo", dl: "январь–март",
     fund: "скидки до 50% за успеваемость в Professionshøjskole",
-    after: "Job Seeking Permit на 36 месяцев (!) после выпуска → рабочая виза → ПМЖ через 4 года (нужен датский Dansk 2)" },
+    after: "виза поиска работы (Job Seeking) на 36 месяцев (!) после выпуска → рабочая виза → ПМЖ через 4 года (нужен датский Dansk 2)" },
   { id: "se", flag: "🇸🇪", name: "Швеция", slog: "Инновации, наука и англоязычная рабочая среда",
     study: "гос. вузы 7,7–14,6 тыс €/год · Jönköping University 8,6–11,6 тыс €/год", living: "350–800 €/мес",
     eng: "86% населения владеет английским; он — рабочий язык в IT и науке",
-    path11: "прямое поступление возможно, требования высокие; в Jönköping — pathway с гарантированным зачислением после его окончания",
+    path11: "прямое поступление возможно, требования высокие; в Jönköping — подготовительная программа с гарантированным зачислением после её окончания",
     exam: "TOEFL iBT 88–90+ или Duolingo 95+", dl: "15 января (universityadmissions.se) · Jönköping — до мая",
     fund: "стипендии до 30% стоимости в Jönköping University",
     after: "12 месяцев на поиск работы → рабочая виза → ПМЖ через 4 года, гражданство через 5 лет" },
@@ -597,20 +597,57 @@ const EU_COMPARE_ROWS = [
   ["После 11 класса", "path11"], ["Языковой экзамен", "exam"], ["Дедлайны", "dl"],
   ["Финансирование", "fund"], ["Работа после учёбы и ПМЖ", "after"],
 ];
-// Справочник для промптов ИИ: Вега и Strategy Book отвечают фактами гида, а не общими знаниями
+// Справочник для промптов ИИ: Вега и книга стратегии отвечают фактами гида, а не общими знаниями
 const EU_BRIEF = "Справочник StudyEurope по странам Европы (методичка 2026/27, используй ТОЛЬКО эти факты по странам): " +
   EU_COUNTRIES.map(e => `${e.name}: обучение ${e.study}; проживание ${e.living}; после учёбы ${e.after}`).join(". ") + ".";
 
 const UNIVERSITIES = {
   usa: [
-    { name: "Columbia University", city: "Нью-Йорк", sel: 3, tag: "Лига плюща: бизнес, науки, медиа", fit: ["biz", "art", "med"], url: "https://www.columbia.edu" },
-    { name: "New York University", city: "Нью-Йорк", sel: 3, tag: "бизнес, медиа, искусство", fit: ["biz", "art"], url: "https://www.nyu.edu" },
-    { name: "Boston University", city: "Бостон", sel: 2, tag: "широкий выбор программ, сильный кампус", fit: ["med", "biz", "art"], url: "https://www.bu.edu" },
-    { name: "Northeastern University", city: "Бостон", sel: 2, tag: "co-op: учёба + оплачиваемые стажировки", fit: ["it", "biz"], url: "https://www.northeastern.edu" },
-    { name: "Purdue University", city: "Индиана", sel: 2, tag: "инженерия и компьютерные науки", fit: ["it"], url: "https://www.purdue.edu" },
-    { name: "Arizona State University", city: "Аризона", sel: 1, tag: "инновации, лоялен к международным студентам", fit: ["it", "biz", "art"], url: "https://www.asu.edu" },
+    { name: "Tufts University", city: "Бостон", sel: 3, tag: "топ-100, сильные международные программы — его называет сама StudyAmerica", fit: ["it", "med", "art"], url: "https://www.tufts.edu", cost: 72, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Cornell University", city: "Нью-Йорк (штат)", sel: 3, tag: "Лига Плюща с широчайшим выбором направлений", fit: ["it", "biz", "med"], url: "https://www.cornell.edu", cost: 74, aid: "помощь по потребности семьи" },
+    { name: "Carnegie Mellon University", city: "Питтсбург", sel: 3, tag: "мировой топ в Computer Science и искусстве", fit: ["it", "art"], url: "https://www.cmu.edu", cost: 67 },
+    { name: "Columbia University", city: "Нью-Йорк", sel: 3, tag: "Лига плюща: бизнес, науки, медиа", fit: ["biz", "art", "med"], url: "https://www.columbia.edu", cost: 71, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "New York University", city: "Нью-Йорк", sel: 3, tag: "бизнес, медиа, искусство", fit: ["biz", "art"], url: "https://www.nyu.edu", cost: 65, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Boston University", city: "Бостон", sel: 3, tag: "широкий выбор программ, сильный кампус", fit: ["med", "biz", "art"], url: "https://www.bu.edu", cost: 70, aid: "стипендии за успехи" },
+    { name: "Northeastern University", city: "Бостон", sel: 3, tag: "co-op: учёба + оплачиваемые стажировки", fit: ["it", "biz"], url: "https://www.northeastern.edu", cost: 67, aid: "стипендии за успехи" },
+    { name: "Purdue University", city: "Индиана", sel: 2, tag: "инженерия и компьютерные науки", fit: ["it"], url: "https://www.purdue.edu", cost: 29, aid: "стипендии за успехи" },
+    { name: "University of Illinois Urbana-Champaign", city: "Иллинойс", sel: 2, tag: "инженерная классика США, сильный CS", fit: ["it"], url: "https://illinois.edu" },
+    { name: "Indiana University Bloomington", city: "Индиана", sel: 2, tag: "бизнес-школа Kelley, кампус-классика", fit: ["biz", "art"], url: "https://www.indiana.edu" },
+    { name: "Arizona State University", city: "Аризона", sel: 1, tag: "инновации, лоялен к международным студентам", fit: ["it", "biz", "art"], url: "https://www.asu.edu", cost: 25, aid: "стипендии за успехи" },
     { name: "Michigan State University", city: "Мичиган", sel: 1, tag: "сильные программы, дружелюбен к иностранцам", fit: ["med", "biz", "art"], url: "https://msu.edu" },
-    { name: "University of Arizona", city: "Аризона", sel: 1, tag: "исследования и науки, доступный вход", fit: ["it", "med", "biz"], url: "https://www.arizona.edu" },
+    { name: "University of Arizona", city: "Аризона", sel: 1, tag: "исследования и науки, доступный вход", fit: ["it", "med", "biz"], url: "https://www.arizona.edu", cost: 43, aid: "стипендии за успехи" },
+    { name: "Temple University", city: "Филадельфия", sel: 1, tag: "большой городской вуз, дружелюбный к иностранцам", fit: ["biz", "art", "med"], url: "https://www.temple.edu", cost: 36, aid: "стипендии за успехи" },
+    { name: "Iowa State University", city: "Айова", sel: 1, tag: "инженерия и агротех, доступные цены", fit: ["it"], url: "https://www.iastate.edu" },
+    { name: "University of Miami", city: "Coral Gables", sel: 3, tag: "гуманитарные направления и искусство; приём ≈19%", fit: ["art", "biz", "it"], url: "https://bulletin.miami.edu", cost: 63, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Emory University", city: "Atlanta", sel: 3, tag: "бизнес и экономика; приём ≈11%", fit: ["biz", "art", "it"], url: "https://apply.emory.edu", cost: 67, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "University of Pennsylvania", city: "Philadelphia", sel: 3, tag: "гуманитарные направления и искусство; приём ≈6%", fit: ["art", "biz"], url: "https://admissions.upenn.edu", cost: 63, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Tulane University", city: "New Orleans", sel: 3, tag: "гуманитарные направления и искусство; приём ≈15%", fit: ["art", "biz", "med"], url: "https://admission.tulane.edu", cost: 72, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Northwestern University", city: "Evanston", sel: 3, tag: "бизнес и экономика; приём ≈7%", fit: ["biz", "art"], url: "https://admissions.northwestern.edu", cost: 69, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Rice University", city: "Houston", sel: 3, tag: "гуманитарные направления и искусство; приём ≈9%", fit: ["art", "biz", "it"], url: "https://www.rice.edu", cost: 67, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "University of Notre Dame", city: "Notre Dame", sel: 3, tag: "гуманитарные направления и искусство; приём ≈12%", fit: ["art", "biz"], url: "https://admissions.nd.edu", cost: 68, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Washington University in St. Louis", city: "St. Louis", sel: 3, tag: "гуманитарные направления и искусство; приём ≈12%", fit: ["art", "biz"], url: "https://admissions.washu.edu", cost: 68, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Lehigh University", city: "Bethlehem", sel: 2, tag: "бизнес и экономика; приём ≈29%", fit: ["biz", "art", "it"], url: "https://www2.lehigh.edu", cost: 67, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "University of Rochester", city: "Rochester", sel: 2, tag: "бизнес и экономика; приём ≈36%", fit: ["biz", "art", "it"], url: "https://admissions.rochester.edu", cost: 69, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Case Western Reserve University", city: "Cleveland", sel: 2, tag: "бизнес и экономика; приём ≈29%", fit: ["biz", "med", "it"], url: "https://case.edu", cost: 69, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Brandeis University", city: "Waltham", sel: 2, tag: "бизнес и экономика; приём ≈35%", fit: ["biz", "it", "med"], url: "https://www.brandeis.edu", cost: 70, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "University of Florida", city: "Gainesville", sel: 2, tag: "гуманитарные направления и искусство; приём ≈24%", fit: ["art", "biz", "it"], url: "https://admissions.ufl.edu", cost: 30, aid: "стипендии за успехи" },
+    { name: "Clark University", city: "Worcester", sel: 2, tag: "гуманитарные направления и искусство; приём ≈42%", fit: ["art", "biz", "med"], url: "https://www.clarku.edu", cost: 60, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Loyola Marymount University", city: "Los Angeles", sel: 2, tag: "бизнес и экономика; приём ≈40%", fit: ["biz", "art"], url: "https://international.lmu.edu", cost: 65, aid: "стипендии за успехи" },
+    { name: "Macalester College", city: "St Paul", sel: 2, tag: "бизнес и экономика; приём ≈29%", fit: ["biz", "art", "med"], url: "https://www.macalester.edu", cost: 73, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Trinity College", city: "Hartford", sel: 2, tag: "бизнес и экономика; приём ≈34%", fit: ["biz", "art", "med"], url: "https://www.trincoll.edu", cost: 72, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Connecticut College", city: "New London", sel: 2, tag: "бизнес и экономика; приём ≈37%", fit: ["biz", "art", "med"], url: "https://www.conncoll.edu", cost: 80, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "George Washington University", city: "Washington", sel: 2, tag: "бизнес и экономика; приём ≈44%", fit: ["biz", "art"], url: "https://undergraduate.admissions.gwu.edu", cost: 70, aid: "стипендии за успехи" },
+    { name: "Rollins College", city: "Winter Park", sel: 2, tag: "бизнес и экономика; приём ≈41%", fit: ["biz", "art", "med"], url: "https://www.rollins.edu", cost: 63, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Drexel University", city: "Philadelphia", sel: 1, tag: "гуманитарные направления и искусство; приём ≈78%", fit: ["art", "biz", "it"], url: "https://drexel.edu", cost: 64, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Baylor University", city: "Waco", sel: 1, tag: "гуманитарные направления и искусство; приём ≈51%", fit: ["art", "biz", "it"], url: "https://admissions.web.baylor.edu", cost: 64, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "DePaul University", city: "Chicago", sel: 1, tag: "бизнес и экономика; приём ≈73%", fit: ["biz", "art", "it"], url: "https://offices.depaul.edu", cost: 48, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Fordham University", city: "Bronx", sel: 1, tag: "бизнес и экономика; приём ≈56%", fit: ["biz", "art", "med"], url: "https://www.fordham.edu", cost: 66, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Rochester Institute of Technology", city: "Rochester", sel: 1, tag: "гуманитарные направления и искусство; приём ≈71%", fit: ["art", "it", "biz"], url: "https://www.rit.edu", cost: 61, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "American University", city: "Washington", sel: 1, tag: "гуманитарные направления и искусство; приём ≈50%", fit: ["art", "biz"], url: "https://www.american.edu", cost: 45, aid: "стипендии за успехи" },
+    { name: "Pace University", city: "NYC", sel: 1, tag: "бизнес и экономика; приём ≈77%", fit: ["biz", "art"], url: "https://www.pace.edu", cost: 52, aid: "стипендии за успехи" },
+    { name: "Pratt Institute", city: "Brooklyn", sel: 1, tag: "гуманитарные направления и искусство; приём ≈53%", fit: ["art"], url: "https://www.pratt.edu", cost: 62, aid: "стипендии за успехи" },
+    { name: "Rhodes College", city: "Memphis", sel: 1, tag: "бизнес и экономика; приём ≈50%", fit: ["biz", "art", "med"], url: "https://www.rhodes.edu", cost: 58, aid: "стипендии за успехи и помощь по потребности" },
+    { name: "Suffolk University", city: "Boston", sel: 1, tag: "гуманитарные направления и искусство; приём ≈85%", fit: ["art", "biz"], url: "https://www.suffolk.edu", cost: 49, aid: "стипендии за успехи и помощь по потребности" },
   ],
   europe: [
     { name: "University of Amsterdam", city: "Нидерланды", sel: 3, tag: "топ-100 мира, много программ на английском", fit: ["biz", "art", "med"], url: "https://www.uva.nl/en" },
@@ -636,7 +673,7 @@ const UNIVERSITIES = {
     { name: "Technical University of Denmark (DTU)", city: "Дания", sel: 2, tag: "инженерия мирового уровня, англ. бакалавриат General Engineering", fit: ["it"], url: "https://www.dtu.dk" },
     { name: "Copenhagen Business School", city: "Дания", sel: 2, tag: "одна из крупнейших бизнес-школ Европы, программы на английском", fit: ["biz"], url: "https://www.cbs.dk" },
     { name: "Lund University", city: "Швеция", sel: 2, tag: "классический исследовательский вуз, бакалавриат на английском", fit: ["it", "biz", "art"], url: "https://www.lunduniversity.lu.se" },
-    { name: "Jönköping University", city: "Швеция", sel: 1, tag: "стипендии до 30% и pathway с гарантированным зачислением", fit: ["biz", "it"], url: "https://ju.se" },
+    { name: "Jönköping University", city: "Швеция", sel: 1, tag: "стипендии до 30% и подготовительная программа с гарантией зачисления", fit: ["biz", "it"], url: "https://ju.se" },
   ],
   // Китай — из собственного каталога StudyChina (studychina.ru): вузы-партнёры, карточки открываются по ссылке
   china: [
@@ -668,6 +705,11 @@ const UNIVERSITIES = {
 // ============ НАПРАВЛЕНИЯ ПО ВУЗАМ (черновик: «кем учиться» по профилям вуза; валидирует эксперт) ============
 const UNI_PROGRAMS = {
   // США
+  "Tufts University": { it: "Computer Science, инженерия", med: "биология, биомедицинские науки — сильный pre-med", art: "международные отношения, гуманитарные науки" },
+  "Cornell University": { it: "Computer Science, информационные науки", biz: "Applied Economics, гостиничный бизнес (мировой топ)", med: "биология, human biology — путь в медицину" },
+  "Carnegie Mellon University": { it: "Computer Science — мировой топ, робототехника, AI", art: "дизайн, драма, компьютерные искусства" },
+  "University of Illinois Urbana-Champaign": { it: "Computer Science, электроинженерия" },
+  "Indiana University Bloomington": { biz: "Kelley School: финансы, маркетинг, менеджмент", art: "медиа, музыка, гуманитарные науки" },
   "Columbia University": { biz: "Economics, Financial Economics", art: "Film and Media Studies, Creative Writing, журналистика", med: "Neuroscience, Biological Sciences, Public Health" },
   "New York University": { biz: "Stern School: Business, Finance, маркетинг", art: "Tisch School: кино, театр, гейм-дизайн; медиакоммуникации" },
   "Boston University": { med: "Human Physiology, Neuroscience, pre-med трек", biz: "Questrom School: Business Administration", art: "Film & Television, Communication" },
@@ -820,7 +862,7 @@ const DEMO_STUDENTS = [
     eng: "B2 — уверенный", countries: ["usa", "china"], budget: "0,5–1,5 млн ₽/год", field: "it", geo: "city",
     email: "alisa.k@mail.ru", paidTill: "02.08.2026", lastSeen: "сегодня, 14:20", stageDone: 4, book: true,
     opens: ["Мечтаю делать игры, которые учат", "Горжусь победой в региональной олимпиаде по информатике", "Боюсь не потянуть эссе на английском", "Через 10 лет — своя студия"],
-    chat: [["Что сдавать для Columbia?", "Разобрала связку TOEFL + SAT, дала план на 12 месяцев"], ["А вдруг я не поступлю?", "Поддержала, показала стратегию reach/match/safety"], ["Сколько стоит сопровождение?", "Пригласила на консультацию (цены не называла)"]],
+    chat: [["Что сдавать для Columbia?", "Разобрала связку TOEFL + SAT, дала план на 12 месяцев"], ["А вдруг я не поступлю?", "Поддержала, показала сбалансированный список: мечта / твой уровень / надёжный тыл"], ["Сколько стоит сопровождение?", "Пригласила на консультацию (цены не называла)"]],
     acts: "Призёр региональной олимпиады по информатике, делаю игру на Unity, веду школьный кружок",
     consultQs: "Реально ли успеть на осень 2027, если я сейчас в 10 классе? Хватит ли моей олимпиады для Columbia или нужно что-то ещё?",
     feedback: "Карта талантов — огонь, впервые почувствовала, что мой профиль реален. Хочу больше про стипендии в Китае." },
@@ -884,7 +926,7 @@ function buildProgressRow(st) {
     consult_qs: clip(st.consultQs, 800) || null,
     feedback: clip(st.feedback, 800) || null,
     chat_user_msgs: st.helpMsgs.filter(m => m.role === "user").slice(-30).map(m => clip(m.content, 200)),
-    snapshot: { v: 2, anketa: st.anketa, picked: st.picked, scores: st.scores, typing: st.typing ? { code: st.typing.code, confidence: st.typing.confidence, margin: st.typing.margin, runner: st.typing.runner } : null, book: st.book, done: st.done, ansE: st.ansE, engAns: st.engAns, aiCard: st.aiCard, liveActs: st.liveActs, fbSent: !!st.fbSent },
+    snapshot: { v: 2, anketa: st.anketa, picked: st.picked, scores: st.scores, typing: st.typing ? { code: st.typing.code, confidence: st.typing.confidence, margin: st.typing.margin, runner: st.typing.runner } : null, book: st.book, done: st.done, ansE: st.ansE, engAns: st.engAns, aiCard: st.aiCard, liveActs: st.liveActs, fbSent: !!st.fbSent, euCompare: st.euCompare || [] },
   };
 }
 // Восстановление маршрута ученика из снимка (вход с любого устройства). Терпимо к старым снимкам без части полей.
@@ -905,6 +947,7 @@ function restoreFromProgress(row) {
   if (row.consult_qs) patch.consultQs = row.consult_qs;
   if (row.feedback) patch.feedback = row.feedback;
   if (sn.fbSent) patch.fbSent = true;
+  if (Array.isArray(sn.euCompare)) patch.euCompare = sn.euCompare;
   return patch;
 }
 // Слияние users + progress в строки кабинета куратора (чистая функция — покрыта тестами)
@@ -945,11 +988,11 @@ async function sbMyRow(accessToken) {
   return Array.isArray(rows) && rows.length ? rows[0] : null; // RLS: ученику видна только своя строка
 }
 
-async function askClaude(messages, system, tools) {
+async function askClaude(messages, system, tools, maxTokens) {
   const res = await fetch(AI_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: tools ? 2000 : 1000, system, messages, ...(tools ? { tools } : {}) }),
+    body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: maxTokens || (tools ? 2000 : 1000), system, messages, ...(tools ? { tools } : {}) }),
   });
   // Диагностика сбоев: статус и текст ошибки шлюза — в консоль (на экран ученику технику не выносим)
   const raw = await res.text();
@@ -1054,7 +1097,7 @@ const STAGES = [
   { id: 1, t: "Кто я?", s: "Карта талантов", time: "≈15 мин" },
   { id: 2, t: "Куда я могу поступить?", s: "Готовность и география", time: "≈20 мин" },
   { id: 3, t: "Сколько это стоит?", s: "Экономика образования", time: "≈10 мин" },
-  { id: 4, t: "Как туда попасть?", s: "Strategy Book", time: "≈10 мин" },
+  { id: 4, t: "Как туда попасть?", s: "Стратегия поступления", time: "≈10 мин" },
 ];
 function Route({ done, current, onGo }) {
   return (
@@ -1133,7 +1176,7 @@ export default function App() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginState, setLoginState] = useState("form"); // form | sent | notfound | expired
   const [loginBusy, setLoginBusy] = useState(false);
-  // Просмотр документов (карта талантов, Strategy Book)
+  // Просмотр документов (карта талантов, книга стратегии)
   const [docView, setDocView] = useState(null); // { title, fname, html }
   const docFrame = useRef(null);
   const [pdfBusy, setPdfBusy] = useState(false);
@@ -1279,6 +1322,7 @@ export default function App() {
                   if (patch.consultQs) setConsultQs(patch.consultQs);
                   if (patch.feedback) setFeedback(patch.feedback);
                   if (patch.fbSent) setFbSent(true);
+                  if (patch.euCompare) setEuCompare(patch.euCompare);
                 }
               }
             } catch (e) { console.warn("восстановление маршрута:", e && e.message); }
@@ -1367,7 +1411,7 @@ export default function App() {
     else { setS1("result"); makeAiPortrait(typing, a); }
   };
 
-  // ——— Этап 2: уровень языка по модели placement-теста ———
+  // ——— Этап 2: уровень языка по модели входного теста ———
   const bandOf = (band, ans) => {
     const idxs = ENG_TEST.map((q, i) => (q.lvl === band ? i : -1)).filter(i => i >= 0);
     return { total: idxs.length, correct: idxs.filter(i => ans[i] === ENG_TEST[i].a).length };
@@ -1441,8 +1485,26 @@ export default function App() {
       pools[cat].push({ ...u, country: c });
     }));
     const field = anketa.field && anketa.field !== "none" ? anketa.field : null;
-    if (field) for (const cat of ["reach", "match", "safety"])
-      pools[cat].sort((a, b) => (((b.fit || []).includes(field) ? 1 : 0) - ((a.fit || []).includes(field) ? 1 : 0)));
+    // Персональный порядок: специальность важнее всего, дальше бюджет и подбор стран Европы под профиль.
+    // Детерминированно (правило журнала §2.2): никакого ИИ, только явные веса.
+    const lowBudget = (anketa.budget ?? 1) === 0;
+    const euOrder = {};
+    euRanked(anketa).forEach((e, i) => { euOrder[e.name] = i; });
+    const CHEAP_EU = { "Германия": 1, "Австрия": 1, "Италия": 1, "Испания": 1, "Франция": 1 };
+    const score = (u) => {
+      let sc = 0;
+      if (field && (u.fit || []).includes(field)) sc += 40;                       // твоя специальность
+      if (u.country === "europe" && euOrder[u.city] !== undefined) sc += 18 - euOrder[u.city]; // страна выше в твоём рейтинге Европы — вуз выше
+      if (u.country === "europe" && euCompare.length && euCompare.some(id => (EU_COUNTRIES.find(x => x.id === id) || {}).name === u.city)) sc += 25; // страна отмечена учеником в «Европе изнутри»
+      if (lowBudget) {
+        if (u.country === "europe" && CHEAP_EU[u.city]) sc += 14;                // дешёвое гос. образование
+        if (u.country === "china" || u.country === "russia") sc += 10;           // грантовые и бюджетные маршруты
+        if (u.aid) sc += 8;                                                      // вуз даёт финансирование
+        if (typeof u.cost === "number") sc += u.cost <= 35 ? 6 : u.cost >= 60 ? -6 : 0;
+      }
+      return sc;
+    };
+    for (const cat of ["reach", "match", "safety"]) pools[cat].sort((a, b) => score(b) - score(a));
     const take = (arr, n) => {
       const out = [], seen = {};
       for (const u of arr) { if (out.length >= n) break; if (!seen[u.country]) { out.push(u); seen[u.country] = 1; } }
@@ -1513,7 +1575,7 @@ export default function App() {
     if (!AUTH_ON || !authEmail) return;
     const token = await freshToken();
     if (!token) return;
-    const row = buildProgressRow({ email: authEmail, name, anketa, typing, done, readinessIndex, engLevel, picked, book, ansE, engAns, aiCard, liveActs, fbSent, consultQs, feedback, helpMsgs, scores });
+    const row = buildProgressRow({ email: authEmail, name, anketa, typing, done, readinessIndex, engLevel, picked, book, ansE, engAns, aiCard, liveActs, fbSent, euCompare, consultQs, feedback, helpMsgs, scores });
     const r = await fetch(`${SUPABASE_URL}/rest/v1/progress`, {
       method: "POST",
       headers: { apikey: SUPABASE_ANON, Authorization: "Bearer " + token, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates" },
@@ -1521,14 +1583,14 @@ export default function App() {
     });
     if (!r.ok) console.warn("сохранение истории:", r.status, (await r.text().catch(() => "")).slice(0, 150));
   };
-  // Дебаунс: пишем историю через 2,5 с после значимого изменения (тип, чекпоинты, страны, книга, вопросы, отзыв)
+  // Дебаунс: пишем историю через 2,5 с после значимого изменения (тип, этапы, страны, книга, вопросы, отзыв)
   useEffect(() => {
     if (!AUTH_ON || !authEmail) return;
     const t = setTimeout(() => { syncProgress().catch(e => console.warn("сохранение истории:", e && e.message)); }, 2500);
     return () => clearTimeout(t);
   }, [authEmail, typing, done.length, picked, book, fbSent, consultQs, feedback, anketa.actsText, anketa.grade]);
 
-  // ——— Этап 4: Strategy Book ———
+  // ——— Этап 4: стратегия поступления ———
   async function makeBook() {
     setBookBusy(true); setBookErr(""); setBook(null);
     const topKeys = picked.length ? picked : ranked.slice(0, 2).map(r => r[0]);
@@ -1538,16 +1600,16 @@ export default function App() {
 Индекс готовности заявки: ${readinessIndex}/100 (${readinessDims.map(d => d.name + " " + d.val + "%").join(", ")}).${anketa.lang2 === "china" ? " Второй язык: китайский/HSK — актив для Китая." : anketa.lang2 === "europe" ? " Второй язык: немецкий/французский — актив для Европы." : ""}
 Тип по Эниостиль: ${typing ? `${typing.code} «${typing.card.name}» — ${typing.card.tagline}. Сильные стороны: ${typing.card.strengths.slice(0, 3).join("; ")}` : "не определён"}.
 Открытые ответы:\n${opens}
-Выбранные направления: ${topNames.join(", ")}.${anketa.field && anketa.field !== "none" ? " Пожелание по специализации: " + FIELD_LABELS[anketa.field] + " — учитывай в векторе, сценариях и roadmap." : ""}${anketa.geo && anketa.geo !== "any" ? " Пожелание по климату/географии: " + GEO_LABELS[anketa.geo] + "." : ""}${shortProfs.length ? "\nСильные профессиональные роли ученика (тип × специализация): " + shortProfs.join(", ") + " — опирайся на них в векторе и сценариях." : ""}${anketa.actsText ? "\nАктивности ученика сейчас (его словами): «" + anketa.actsText.slice(0, 300) + "» — оцени их уровень и строй план активностей ступенькой выше: развивай имеющееся до измеримых результатов, не предлагай дубли и не обесценивай сделанное." : ""}
-${topKeys.includes("europe") ? EU_BRIEF + "\nПо Европе опирайся на страны из справочника (визовое правило из фактов компании соблюдай строго).\n" : ""}Пиши КОРОТКО (каждая формулировка — одно предложение). Не выдумывай точные цены, названия вузов и стипендий. По Китаю упоминай только стипендии университетов (не правительственные гранты). Ответ — СТРОГО валидный JSON без markdown.`;
+Выбранные направления: ${topNames.join(", ")}.${anketa.field && anketa.field !== "none" ? " Пожелание по специализации: " + FIELD_LABELS[anketa.field] + " — учитывай в векторе, сценариях и плане по датам." : ""}${anketa.geo && anketa.geo !== "any" ? " Пожелание по климату/географии: " + GEO_LABELS[anketa.geo] + "." : ""}${shortProfs.length ? "\nСильные профессиональные роли ученика (тип × специализация): " + shortProfs.join(", ") + " — опирайся на них в векторе и сценариях." : ""}${anketa.actsText ? "\nАктивности ученика сейчас (его словами): «" + anketa.actsText.slice(0, 300) + "» — оцени их уровень и строй план активностей ступенькой выше: развивай имеющееся до измеримых результатов, не предлагай дубли и не обесценивай сделанное." : ""}
+${topKeys.includes("europe") ? EU_BRIEF + "\nПо Европе опирайся на страны из справочника (визовое правило из фактов компании соблюдай строго).\n" : ""}Пиши КОРОТКО (каждая формулировка — одно завершённое предложение, никаких оборванных фраз). Пиши по-русски; иностранные слова — только названия экзаменов, программ и вузов (например: «единая заявка Common App», «мотивационное письмо», не «essay»). Не выдумывай точные цены, названия вузов и стипендий. По Китаю упоминай только стипендии университетов (не правительственные гранты). Ответ — СТРОГО валидный JSON без markdown.`;
     const pA = base + `\nСформируй часть 1 стратегии. JSON: {"vector":"1-2 предложения о профессиональном векторе с опорой на тип","scenarios":[{"title":"название сценария со страной","why":"почему подходит, 1 предложение","step":"первый шаг, 1 предложение"}],"next":"тёплый призыв в голосе Веги: порадуйся пути ученика и пригласи на консультацию с экспертом StudyGlobal, без давления, 2 предложения"}. Сценариев ровно ${Math.min(3, Math.max(2, topNames.length))}.`;
-    const pB = base + `\nСформируй часть 2 стратегии. JSON: {"swot":{"s":["2-3 сильные стороны с опорой на тип"],"w":["2-3 зоны роста из слабых измерений индекса"],"o":["2 возможности"],"t":["2 риска"]},"roadmap":[{"period":"например: ${anketa.grade || 9} класс, осень","tasks":["2-3 короткие задачи"]}]}. Периодов в roadmap 3-4 (от ${anketa.grade || 9} класса до подачи документов); в каждом period укажи направление, к которому относятся задачи (например: "10 класс, осень · США"); первые задачи — из слабых измерений индекса; ОБЯЗАТЕЛЬНО включи подготовку всех документов для поступления: эссе/мотивационные письма, рекомендации, транскрипт оценок, сертификаты экзаменов, список активностей, переводы документов.${topKeys.includes("russia") ? " Для российского направления включи: перечневые олимпиады (отборочные осенью — дают БВИ или 100 баллов), итоговое сочинение в декабре, подготовку к ЕГЭ, и — спокойно, без давления — параллельную сдачу TOEFL, чтобы держать открытой дверь к зарубежной магистратуре." : ""}`;
+    const pB = base + `\nСформируй часть 2 стратегии. JSON: {"swot":{"s":["2-3 сильные стороны с опорой на тип"],"w":["2-3 зоны роста из слабых измерений индекса"],"o":["2 возможности"],"t":["2 риска"]},"roadmap":[{"period":"например: ${anketa.grade ? anketa.grade + " класс, осень" : "ближайшие 3 месяца"}","tasks":["2-3 короткие задачи"]}]}. Периодов в roadmap 3-4 (${anketa.grade ? "от " + anketa.grade + " класса" : "от текущего момента"} до подачи документов; класс ученика ${anketa.grade ? "— " + anketa.grade : "неизвестен — периоды без номеров классов"}); в каждом period укажи направление, к которому относятся задачи (например: "10 класс, осень · США"); первые задачи — из слабых измерений индекса; ОБЯЗАТЕЛЬНО включи подготовку всех документов для поступления: эссе/мотивационные письма, рекомендации, транскрипт оценок, сертификаты экзаменов, список активностей, переводы документов.${topKeys.includes("russia") ? " Для российского направления включи: перечневые олимпиады (отборочные осенью — дают БВИ или 100 баллов), итоговое сочинение в декабре, подготовку к ЕГЭ, и — спокойно, без давления — параллельную сдачу TOEFL, чтобы держать открытой дверь к зарубежной магистратуре." : ""}`;
     const SYS = "Ты эксперт StudyGlobal по стратегии поступления за рубеж. Отвечаешь только валидным JSON на русском." + FACTS_GUARD;
     // до 2 попыток на секцию, парсер чинит обрезанный JSON
     const callSection = async (prompt) => {
       let lastErr;
       for (let attempt = 0; attempt < 2; attempt++) {
-        try { return parseJsonLoose(await askClaude([{ role: "user", content: prompt }], SYS)); }
+        try { return parseJsonLoose(await askClaude([{ role: "user", content: prompt }], SYS, null, 1800)); }
         catch (e) { lastErr = e; }
       }
       throw lastErr;
@@ -1607,7 +1669,7 @@ ${topKeys.includes("europe") ? EU_BRIEF + "\nПо Европе опирайся 
     : stage === 1 ? (s1 === "result" ? "Как сильные стороны моего типа усилят заявку?" : "Зачем мне знать свой тип, чтобы поступить?")
     : stage === 2 ? (s2 === "eng" ? "Какой уровень английского нужен для зарубежного вуза?" : s2 === "ready" ? "Что такое личный бренд для приёмной комиссии?" : "Как выбрать страну, если я сомневаюсь?")
     : stage === 3 ? "Что делать, если бюджет меньше нужного?"
-    : stage === 4 ? (book ? "С чего начать прямо на этой неделе?" : "Что войдёт в мой Strategy Book?")
+    : stage === 4 ? (book ? "С чего начать прямо на этой неделе?" : "Что войдёт в мою стратегию поступления?")
     : "О чём меня можно спрашивать?";
   useEffect(() => {
     if (screen !== "cabinet" || !vegaHint || helpOpen) return;
@@ -1641,12 +1703,12 @@ ${topKeys.includes("europe") ? EU_BRIEF + "\nПо Европе опирайся 
     setHelpBusy(false);
   }
 
-  // ——— Полный именной Strategy Book: документ для печати ———
+  // ——— Полная именная книга стратегии: документ для печати ———
   function downloadFullBook() {
     const cs = pickedOrTop;
     const dt = new Date().toLocaleDateString("ru-RU");
     const li = arr => (arr || []).map(x => `<li>${x}</li>`).join("");
-    // Заголовки-плашки в стиле макета: синяя лента + жёлтый номер чекпоинта
+    // Заголовки-плашки в стиле макета: синяя лента + жёлтый номер этапа
     const H2 = (num, txt, sub, id) => `<div class="h2"${id ? ` id="${id}"` : ""}><span class="num">${num}</span><span>${txt}</span>${sub ? `<span class="sub">${sub}</span>` : ""}</div>`;
     const H3 = txt => `<div class="h3"><span class="sq"></span>${txt}</div>`;
     const H3i = (ico, txt) => `<div class="h3"><span class="ico">${ico}</span>${txt}</div>`;
@@ -1655,44 +1717,51 @@ ${topKeys.includes("europe") ? EU_BRIEF + "\nПо Европе опирайся 
     const ring = `<div style="position:relative;width:112px;height:112px;flex:none"><svg width="112" height="112" viewBox="0 0 112 112"><circle cx="56" cy="56" r="47" fill="none" stroke="#EDE9E2" stroke-width="14"/><circle cx="56" cy="56" r="47" fill="none" stroke="#00337B" stroke-width="14" stroke-linecap="round" stroke-dasharray="${(readinessIndex / 100 * RING).toFixed(1)} ${RING.toFixed(1)}" transform="rotate(-90 56 56)"/></svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-family:'Inter Tight',sans-serif;font-size:31px;font-weight:800;color:#00337B;line-height:1">${readinessIndex}</div><div style="font-size:10.5px;color:#6E675E;font-weight:600">из 100</div></div></div>`;
     const bandPills = bandStats.map(b => `<span class="${b.correct >= b.need ? "bandOn" : "bandOff"}">${b.code} · ${b.correct}/${b.total}</span>`).join(" ");
     const dims = readinessDims.map(d => `<span style="font-size:12.5px">${d.name}</span><div class="track" style="height:9px"><i style="height:9px;width:${d.val}%"></i></div><b style="font-size:12.5px;text-align:right;color:#00337B">${d.val}%</b>`).join("");
+    // Конкретные шаги прокачки — детерминированно из слабых измерений и выбранных стран, БЕЗ ссылок (правка ментора 17.07)
+    const weakDims = readinessDims.filter(d => d.val < 60).map(d => d.name);
+    const growSteps = [];
+    if (weakDims.some(n => n.includes("Английский"))) growSteps.push(["Английский — по расписанию, а не по настроению", "3–4 занятия в неделю и пробный TOEFL раз в месяц; цель — стабильный балл на порог твоих стран, а не разовое везение"]);
+    if (weakDims.some(n => n.includes("Академические"))) growSteps.push(["Успеваемость — твой фундамент", "подтяни средний балл и держи его выше 4,5 из 5: приёмные комиссии смотрят оценки за все годы, а не только выпускной"]);
+    if (weakDims.some(n => n.includes("Достижения"))) growSteps.push(["Одна главная активность вместо десяти разовых", "выбери направление по специальности и доведи до измеримого результата за 3–6 месяцев: место на конкурсе, готовый проект, публикация — вузы ценят постоянство интересов"]);
+    if (weakDims.some(n => n.includes("бренд") || n.includes("лидерство"))) growSteps.push(cs.includes("usa") ? ["Вклад в своё сообщество", "найди способ регулярно помогать школе, району или секции — для вузов США вклад в общество весит не меньше оценок"] : ["Небольшая лидерская роль", "стань организатором там, где ты уже есть: капитан команды, староста проекта, ведущий школьного события"]);
+    if (weakDims.some(n => n.includes("Другие языки"))) growSteps.push(cs.includes("china") ? ["Китайский — ступень за ступенью", "полчаса в день и экзамен HSK раз в полгода: каждый уровень открывает новые стипендии университетов"] : cs.includes("europe") ? ["Язык страны — понемногу, но каждый день", "полчаса в день на язык твоей страны Европы: для учёбы хватит английского, а для жизни и стажировок язык страны — суперсила"] : ["Второй язык — задел на будущее", "полчаса в день: второй иностранный усиливает заявку в любую страну"]);
+    if (weakDims.some(n => n.includes("Документы"))) growSteps.push(["Папка достижений — с этого месяца", "заведи папку: грамоты, сертификаты, лучшие работы; заранее выбери двух учителей, которые напишут рекомендации, и дай им время узнать тебя лучше"]);
+    if (!growSteps.length) growSteps.push(["Держи планку и углубляй сильное", "твои измерения в хорошей форме — теперь важно постоянство: те же активности, но с растущими результатами от полугодия к полугодию"]);
+    const growBlock = growSteps.slice(0, 6).map(g => `<div class="chk"><div class="box"></div><div><b>${g[0]}</b><br><span class="mut">${g[1]}</span></div></div>`).join("");
     // География: карточки стран с процентом совместимости и колонками плюсов/минусов
-    const countriesBlock = cs.map(k => { const c = COUNTRIES[k]; return `<div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:20px">${c.flag}</span><span style="font-size:16px;font-weight:800;color:#00337B">${c.name}</span><div style="flex:1"></div><div style="text-align:right"><div style="font-family:'Inter Tight',sans-serif;font-size:21px;font-weight:800;color:#00337B;line-height:1.1">${scores[k]}%</div><div style="font-size:10px;color:#6E675E;letter-spacing:0.05em">СОВМЕСТИМОСТЬ</div></div></div><div class="track" style="margin-bottom:14px"><i style="width:${scores[k]}%"></i></div><div class="grid2" style="gap:4px 20px"><div><div style="font-size:10.5px;font-weight:800;letter-spacing:0.09em;color:#00337B">ПЛЮСЫ</div><ul style="margin:6px 0 0;padding-left:16px">${li(c.pros)}</ul></div><div><div style="font-size:10.5px;font-weight:800;letter-spacing:0.09em;color:#CC3A00">МИНУСЫ</div><ul style="margin:6px 0 0;padding-left:16px">${li(c.cons)}</ul></div></div><div style="border-top:1px solid #EDE7DC;margin-top:12px;padding-top:10px;font-size:12.5px"><b style="color:#00337B">Перспективы:</b> ${c.future}</div></div>${c.bridge ? `<div class="soft" style="font-size:12.5px;margin:0 0 12px">${c.bridge}</div>` : ""}`; }).join("");
+    const countriesBlock = cs.map(k => { const c = COUNTRIES[k]; return `<div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:20px">${c.flag}</span><span style="font-size:16px;font-weight:800;color:#00337B">${c.name}</span><div style="flex:1"></div><div style="text-align:right"><div style="font-family:'Inter Tight',sans-serif;font-size:21px;font-weight:800;color:#00337B;line-height:1.1">${scores[k]}%</div><div style="font-size:10px;color:#6E675E;letter-spacing:0.05em">СОВМЕСТИМОСТЬ</div></div></div><div class="track" style="margin-bottom:14px"><i style="width:${scores[k]}%"></i></div><div class="grid2" style="gap:4px 20px"><div><div style="font-size:10.5px;font-weight:800;letter-spacing:0.09em;color:#00337B">ПЛЮСЫ</div><ul style="margin:6px 0 0;padding-left:16px">${li(c.pros)}</ul></div><div><div style="font-size:10.5px;font-weight:800;letter-spacing:0.09em;color:#CC3A00">СТОИТ УЧЕСТЬ</div><ul style="margin:6px 0 0;padding-left:16px">${li(c.cons)}</ul></div></div><div style="border-top:1px solid #EDE7DC;margin-top:12px;padding-top:10px;font-size:12.5px"><b style="color:#00337B">Перспективы:</b> ${c.future}</div></div>${c.bridge ? `<div class="soft" style="font-size:12.5px;margin:0 0 12px">${c.bridge}</div>` : ""}`; }).join("");
     // Финансовый план: карточки сценариев с крупными суммами
     const costBlock = cs.filter(c => COST[c]).map(c => { const d = COST[c]; const scen = d.scen || SCEN; return `<div style="break-inside:avoid;margin:0 0 18px">${H3i(COUNTRIES[c].flag, COUNTRIES[c].name + " — обучение в год")}<div class="grid3">${scen.map((s, i) => `<div class="kv"><div class="k">${s.name.toUpperCase()}</div><div class="v">${d.tuition[i] === 0 ? (d.zeroLabel || "0 (грант)") : "≈ " + d.tuition[i] + " " + d.cur}</div></div>`).join("")}</div><p style="margin:9px 0 4px;font-size:12.5px">Проживание <b>≈ ${d.living} ${d.cur}/год</b> · перелёты <b>≈ ${d.flight} ${d.cur}/год</b> · страховка <b>≈ ${d.insurance} ${d.cur}/год</b></p><p class="mut" style="margin:0">Разово на старте: ${(d.once || []).map(o => o[0] + " — " + o[1]).join(" · ")}</p></div>`; }).join("");
     // Календарь: таблицы КОГДА/ЧТО
     const dlBlock = cs.filter(c => DEADLINES[c]).map(c => `${H3i(COUNTRIES[c].flag, COUNTRIES[c].name)}<table class="tbl"><thead><tr><th style="width:140px">КОГДА</th><th>ЧТО</th></tr></thead><tbody>${DEADLINES[c].map(r => `<tr><td class="dt">${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</tbody></table>`).join("");
     const acts = buildActivityIdeas().map(a => `<div class="chk"><div class="box"></div><div><b>${a[0]}</b><br><span class="mut">Зачем: ${a[1]}</span></div></div>`).join("");
-    const catAct = [...(ACTIVITIES_CATALOG[shortField] || []), ...ACTIVITIES_CATALOG.any].slice(0, 5).map(([n, w, u]) => `<div class="card" style="padding:11px 14px;margin:0"><a href="${u}" style="font-weight:700;text-decoration:none">${n}</a><div class="mut" style="font-size:11.5px;margin-top:3px">${w} · ${u.replace("https://", "")}</div></div>`).join("");
-    const liveBlock = liveActs && liveActs.length ? `${H3("🔎 Актуально на " + new Date().toLocaleDateString("ru-RU") + " — найдено при прохождении")}<div class="grid2">${liveActs.map(a => `<div class="card" style="padding:11px 14px;margin:0"><a href="${a.url}" style="font-weight:700;text-decoration:none">${a.name}</a><div class="mut" style="font-size:11.5px;margin-top:3px">${a.what}${a.when ? " · " + a.when : ""} · ${(a.url || "").replace("https://", "")}</div></div>`).join("")}</div><p class="mut" style="margin-top:8px">Перед стартом проверь условия на официальном сайте организатора.</p>` : "";
+    const catAct = [...(ACTIVITIES_CATALOG[shortField] || []), ...ACTIVITIES_CATALOG.any].slice(0, 5).map(([n, w]) => `<div class="card" style="padding:11px 14px;margin:0"><b>${n}</b><div class="mut" style="font-size:11.5px;margin-top:3px">${w}</div></div>`).join("");
     // Стратегия: нумерованные сценарии, SWOT-квадранты, roadmap-таймлайн
     const scenCards = book ? (book.scenarios || []).map((s, i) => `<div class="card" style="display:flex;gap:14px;padding:14px 16px;margin:0 0 10px"><div style="flex:none;width:28px;height:28px;background:#00337B;color:#FFCC00;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">${i + 1}</div><div><b>${s.title}</b><br>${s.why}<br><span style="color:#FF3300;font-weight:700">→ Первый шаг: ${s.step}</span></div></div>`).join("") : "";
     const swotBox = (label, color, bg, items) => `<div style="background:${bg};border-radius:10px;padding:13px 16px;break-inside:avoid"><div style="font-size:10.5px;font-weight:800;letter-spacing:0.09em;color:${color};margin-bottom:6px">${label}</div><ul style="margin:0;padding-left:16px;font-size:12.5px">${li(items)}</ul></div>`;
-    const roadmap = book ? (book.roadmap || []).map((r, i, arr) => { const last = i === arr.length - 1; return `<div style="display:grid;grid-template-columns:16px 1fr;gap:0 14px;break-inside:avoid;margin-bottom:6px"><div style="display:flex;flex-direction:column;align-items:center"><div style="width:13px;height:13px;border-radius:50%;background:${last ? "#FF3300" : "#FFCC00"};border:3px solid #00337B;flex:none;margin-top:3px"></div>${last ? "" : `<div style="flex:1;width:2px;background:#E7E1D6;margin-top:4px"></div>`}</div><div style="padding-bottom:${last ? 0 : 14}px"><b style="color:#00337B">${r.period}</b><ul style="margin:6px 0 0;padding-left:16px">${li(r.tasks)}</ul></div></div>`; }).join("") : "";
-    const bookBlock = book ? `<p style="font-size:15px">${book.vector || ""}</p>${H3("Сценарии")}${scenCards}${H3("SWOT заявки")}<div class="grid2">${swotBox("СИЛЬНЫЕ СТОРОНЫ", "#00337B", "rgba(0,51,123,0.06)", book.swot && book.swot.s)}${swotBox("ЗОНЫ РОСТА", "#8A6D3B", "#FFF8E0", book.swot && book.swot.w)}${swotBox("ВОЗМОЖНОСТИ", "#00337B", "#F4F1EA", book.swot && book.swot.o)}${swotBox("РИСКИ", "#CC3A00", "rgba(255,51,0,0.06)", book.swot && book.swot.t)}</div>${H3("Roadmap")}${roadmap}` : `<p class="mut">Сформируй стратегию на чекпоинте 4 — и она появится в этом документе.</p>`;
     // Шорт-лист: карточки вузов в две колонки, цветные категории
-    const uniCard = u => { const pr = progFor(u, shortField); return `<div class="card" style="padding:12px 14px;margin:0">${u.url ? `<a href="${u.url}" style="font-weight:700;text-decoration:none">${u.name}</a>` : `<b>${u.name}</b>`}<div class="mut" style="font-size:11.5px;margin-top:3px">${COUNTRIES[u.country].flag} ${u.city} · ${u.tag}${u.url ? " · " + u.url.replace("https://", "").split("/")[0] : ""}</div>${pr ? `<div style="color:#00337B;font-size:12px;margin-top:5px">🎓 Учиться: ${pr}</div>` : ""}</div>`; };
+    const uniCard = u => { const pr = progFor(u, shortField); const money = [typeof u.cost === "number" ? `обучение ≈ $${u.cost} тыс/год` : "", u.aid || ""].filter(Boolean).join(" · "); return `<div class="card" style="padding:12px 14px;margin:0">${u.url ? `<a href="${u.url}" style="font-weight:700;text-decoration:none">${u.name}</a>` : `<b>${u.name}</b>`}<div class="mut" style="font-size:11.5px;margin-top:3px">${COUNTRIES[u.country].flag} ${u.city} · ${u.tag}${u.url ? " · " + u.url.replace("https://", "").split("/")[0] : ""}</div>${money ? `<div style="font-size:11.5px;margin-top:4px">💶 ${money}</div>` : ""}${pr ? `<div style="color:#00337B;font-size:12px;margin-top:5px">🎓 Учиться: ${pr}</div>` : ""}</div>`; };
     const uniCat = (ico, t, color, arr, hint) => `<div style="display:flex;align-items:baseline;gap:9px;margin:18px 0 10px;break-after:avoid"><span style="font-size:15px">${ico}</span><span style="font-size:15px;font-weight:800;color:${color}">${t}</span></div>` + (arr.length ? `<div class="grid2">${arr.map(uniCard).join("")}</div>` : `<p class="mut">${hint}</p>`);
     const products = cs.filter(k => NEXT_PRODUCTS[k]).map(k => `<div class="card" style="border:1.5px solid rgba(0,51,123,0.25);background:rgba(0,51,123,0.04);padding:15px 18px;margin:0"><div style="font-size:15px;font-weight:800;color:#00337B;margin-bottom:5px">${NEXT_PRODUCTS[k].t}</div><div style="font-size:12.5px;color:#454B54">${NEXT_PRODUCTS[k].d}</div></div>`).join("") || `<div class="card" style="border:1.5px solid rgba(0,51,123,0.25);background:rgba(0,51,123,0.04);padding:15px 18px;margin:0"><div style="font-size:15px;font-weight:800;color:#00337B;margin-bottom:5px">StudyGlobal · Консультация с экспертом</div><div style="font-size:12.5px;color:#454B54">Разберём твою стратегию, честно сравним российский и зарубежные маршруты и соберём персональное решение.</div></div>`;
     // Обложка: маршрут экспедиции по шести точкам
     const stop = (label, hot) => `<div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:92px;flex:none"><div style="width:15px;height:15px;border-radius:50%;background:${hot ? "#FF3300" : "#FFCC00"};border:3px solid ${hot ? "#FFCC00" : "rgba(255,255,255,0.9)"}"></div><div style="font-size:9.5px;letter-spacing:0.07em;color:${hot ? "#FFCC00" : "#9DB6DC"};${hot ? "font-weight:700;" : ""}text-align:center">${label}</div></div>`;
     const routeDash = `<div style="flex:1;border-top:2px dashed rgba(255,255,255,0.4);margin-top:9px"></div>`;
-    const coverRoute = [stop("ТАЛАНТЫ"), stop("ГОТОВНОСТЬ"), stop("ФИНАНСЫ"), stop("СТРАТЕГИЯ"), stop("ВУЗЫ"), stop("ПЛАН 90 ДНЕЙ", true)].join(routeDash);
+    const coverRoute = [stop("ЛИЧНОСТЬ"), stop("СИТУАЦИЯ"), stop("СТРАНЫ И СЦЕНАРИИ"), stop("СТРАТЕГИЯ"), stop("ЧЕК-ЛИСТ"), stop("СЛЕДУЮЩИЙ ШАГ", true)].join(routeDash);
     // Оглавление: кликабельные якоря на разделы (работают в просмотрщике; в печатном PDF — визуальная карта документа)
     const tocRows = [
       ["СТАРТ", "Письмо от Веги", "s-start"],
-      ["01", "Карта талантов", "s-talents"],
-      ["02", "Готовность заявки", "s-ready"],
-      ["ГЕО", "География: куда я могу поступить", "s-geo"],
-      ["03", "Финансовый план", "s-money"],
-      ["04", "Стратегия", "s-strategy"],
-      ["05", "Черновик шорт-листа университетов", "s-unis"],
-      ["06", "Календарь дедлайнов семьи", "s-calendar"],
-      ...(typing ? [["07", "Страница для родителей", "s-parents"]] : []),
-      ["08", "Черновик списка активностей", "s-acts"],
-      ["ФИНИШ", "Твой маршрут в StudyGlobal", "s-finish"],
+      ["01", "Кто ты: личность и профориентация", "s-talents"],
+      ["02", "Твоя ситуация: что сильно и что прокачать", "s-ready"],
+      ["03", "Твои страны и сценарии поступления", "s-geo"],
+      ["04", "Страница для родителей: экономика и поддержка", "s-parents"],
+      ["05", "Стратегия: вектор и разбор заявки", "s-strategy"],
+      ["06", "Чек-лист поступления с календарём", "s-calendar"],
+      ["07", "Твои программы в StudyGlobal", "s-products"],
+      ["＋", "Приложение: черновики к следующим этапам", "s-app"],
+      ["ФИНИШ", "Твой маршрут дальше", "s-finish"],
     ];
     const toc = `<div class="toc" style="break-inside:avoid"><div style="font-family:'Inter Tight',sans-serif;font-size:19px;font-weight:800;color:#00337B;margin:0 0 12px">Оглавление<span style="color:#FF3300">.</span></div>${tocRows.map(r => `<a class="tocRow" href="#${r[2]}"><span class="num">${r[0]}</span><span class="t">${r[1]}</span><span class="dots"></span><span class="go">→</span></a>`).join("")}</div>`;
-    const html = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Personal Global Strategy Book — ${name || "Ученик"}</title>
+    const html = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Стратегия поступления — ${name || "Ученик"}</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Inter+Tight:wght@700;800&family=Caveat:wght@600;700&display=swap');
 *{box-sizing:border-box}body{margin:0;font-family:'Inter',sans-serif;color:#222831;font-size:13.5px;line-height:1.6;background:#fff}
@@ -1751,7 +1820,7 @@ a{text-decoration:none}
 <div style="position:absolute;right:-30px;bottom:-30px;width:180px;height:180px;border-radius:50%;border:2px dashed rgba(255,204,0,0.2)"></div>
 <span style="align-self:flex-start;font-size:10.5px;font-weight:800;color:#FFCC00;border:1.5px solid #FFCC00;border-radius:999px;padding:6px 15px;letter-spacing:0.14em">STUDYGLOBAL · НАВИГАТОР · ЭКСПЕДИЦИЯ ПРОЙДЕНА</span>
 <div style="flex:1"></div>
-<h1 style="font-family:'Inter Tight',sans-serif;font-size:48px;font-weight:800;letter-spacing:-0.02em;line-height:1.05;margin:0 0 16px">Personal Global<br>Strategy Book<span style="color:#FF3300">.</span></h1>
+<h1 style="font-family:'Inter Tight',sans-serif;font-size:48px;font-weight:800;letter-spacing:-0.02em;line-height:1.05;margin:0 0 16px">Твоя стратегия<br>поступления<span style="color:#FF3300">.</span></h1>
 <p style="font-size:17px;color:#DFE6F2;margin:0">${name || "Ученик"}${anketa.grade ? " · " + anketa.grade + " класс" : ""}${typing ? " · тип " + typing.code + " «" + typing.card.name + "»" : ""}</p>
 <div style="display:flex;align-items:flex-start;margin:44px 0 0">${coverRoute}</div>
 <div style="flex:1"></div>
@@ -1768,50 +1837,58 @@ ${aiCard && aiCard.study_fit ? `<p style="margin:0">${aiCard.study_fit}</p>` : "
 <div style="display:flex;align-items:center;gap:9px"><span style="font-family:'Caveat',cursive;font-size:38px;font-weight:700;color:#00337B;line-height:1">Вега</span><span style="color:#00337B;font-size:20px">✦</span></div>
 <div style="display:flex;align-items:center;gap:11px;color:#FFCC00;margin-top:6px"><span style="font-size:12px">✦</span><span style="font-size:8px">✦</span><span style="font-size:12px">✦</span></div>
 </div>
-<div style="background:#F4F1EA;border-radius:10px;padding:12px 16px;font-size:12px;color:#6E675E;break-inside:avoid"><b style="color:#222831">Как читать документ:</b> каждый раздел — это один чекпоинт твоей экспедиции. В конце — план на ближайшие 90 дней и следующий шаг. И главный совет: распечатай эти страницы — это твой персональный план поступления, и на столе он работает лучше, чем в файле.</div>
-${H2("01", "Карта талантов", "", "s-talents")}
-${typing ? `<div style="display:flex;align-items:center;gap:18px;background:#F4F1EA;border-radius:12px;padding:16px 20px;break-inside:avoid"><div style="font-family:'Inter Tight',sans-serif;font-size:33px;font-weight:800;color:#00337B;flex:none;letter-spacing:-0.01em">${typing.code}</div><div style="width:1px;align-self:stretch;background:#E0D9CB"></div><div><div style="font-size:16px;font-weight:800">«${typing.card.name}»</div><div style="font-size:13px;color:#6E675E;margin-top:2px">${typing.card.tagline}</div></div></div>${H3("В багаже")}<div class="pills">${(typing.card.strengths || []).map(p => `<span class="pb">${p}</span>`).join("")}</div>${H3("Прокачать в дороге (зоны роста)")}<ul>${li(typing.card.grow.length ? typing.card.grow : typing.card.weaknesses)}</ul>${(typing.card.prof_fit || []).length ? `${H3("Профессии, где ты раскроешься")}<div class="pills">${typing.card.prof_fit.map(p => `<span class="pg">${p}</span>`).join("")}</div>` : ""}${(typing.card.prof_less || []).length ? `${H3("Куда лучше не идти (подсказка, не запрет)")}<div class="pills" style="margin-bottom:10px">${typing.card.prof_less.map(p => `<span class="pl">${p}</span>`).join("")}</div>` : ""}<p class="mut">Предварительная оценка по онлайн-типированию (Эниостиль). Точное типирование проводит типолог StudyGlobal по видео; по типу подбирается личный ментор.</p>` : `<p class="mut">Пройди чекпоинт 1.</p>`}
-${H2("02", "Готовность заявки: " + readinessIndex + " из 100", "", "s-ready")}
-<div style="display:flex;align-items:center;gap:24px;break-inside:avoid;margin:0 0 16px">${ring}<div><p style="margin:0 0 8px">Английский по placement-тесту: <b>${engLevel.name}</b></p><div class="pills">${bandPills}</div></div></div>
+<div style="background:#F4F1EA;border-radius:10px;padding:12px 16px;font-size:12px;color:#6E675E;break-inside:avoid"><b style="color:#222831">Как читать документ:</b> мы идём этап за этапом — как в настоящей работе над поступлением. Сначала личность и твоя ситуация, потом страны со сценариями, стратегия и чек-лист. Список вузов и план активностей — отдельные следующие этапы: их собирают с экспертом после утверждения стратегии, поэтому здесь они лежат в приложении как черновой ориентир. И главный совет: распечатай эти страницы — план на столе работает лучше, чем в файле.</div>
+${H2("01", "Кто ты: личность и профориентация", "", "s-talents")}
+${typing ? `<div style="display:flex;align-items:center;gap:18px;background:#F4F1EA;border-radius:12px;padding:16px 20px;break-inside:avoid"><div style="font-family:'Inter Tight',sans-serif;font-size:33px;font-weight:800;color:#00337B;flex:none;letter-spacing:-0.01em">${typing.code}</div><div style="width:1px;align-self:stretch;background:#E0D9CB"></div><div><div style="font-size:16px;font-weight:800">«${typing.card.name}»</div><div style="font-size:13px;color:#6E675E;margin-top:2px">${typing.card.tagline}</div></div></div>${H3("В багаже")}<div class="pills">${(typing.card.strengths || []).map(p => `<span class="pb">${p}</span>`).join("")}</div>${H3("Прокачать в дороге (зоны роста)")}<ul>${li(typing.card.grow.length ? typing.card.grow : typing.card.weaknesses)}</ul>${(typing.card.prof_fit || []).length ? `${H3("Профессии, где ты раскроешься")}<div class="pills">${typing.card.prof_fit.map(p => `<span class="pg">${p}</span>`).join("")}</div>` : ""}${(typing.card.prof_less || []).length ? `${H3("Куда лучше не идти (подсказка, не запрет)")}<div class="pills" style="margin-bottom:10px">${typing.card.prof_less.map(p => `<span class="pl">${p}</span>`).join("")}</div>` : ""}<p class="mut">Предварительная оценка по онлайн-типированию (Эниостиль). Точное типирование проводит типолог StudyGlobal по видео; по типу подбирается личный ментор.</p>` : `<p class="mut">Пройди этап 1.</p>`}
+${H2("02", "Твоя ситуация: " + readinessIndex + " из 100 — что сильно и что прокачать", "", "s-ready")}
+<div style="display:flex;align-items:center;gap:24px;break-inside:avoid;margin:0 0 16px">${ring}<div><p style="margin:0 0 8px">Английский по входному тесту: <b>${engLevel.name}</b></p><div class="pills">${bandPills}</div></div></div>
 <div style="display:grid;grid-template-columns:215px 1fr 44px;gap:9px 12px;align-items:center;break-inside:avoid">${dims}</div>
-<p class="mut" style="margin-top:12px">Низкие проценты — не приговор, а список задач: из них собран план активностей и roadmap в этом документе.</p>
-${H2("ГЕО", "География: куда я могу поступить", "", "s-geo")}
+${H3("Конкретные шаги прокачки — начни с них")}
+<p class="mut" style="margin-top:0">Собраны из твоих слабых измерений и выбранных стран. Это направления работы, а не список ссылок: конкретные конкурсы и программы под каждую задачу подберёт эксперт на следующих этапах.</p>
+${growBlock}
+${H2("03", "Твои страны и сценарии поступления", "", "s-geo")}
 ${countriesBlock}
 ${cs.includes("europe") ? (() => {
-      const top3 = euRanked(anketa).slice(0, 3);
+      const chosenEu = euCompare.map(id => EU_COUNTRIES.find(x => x.id === id)).filter(Boolean);
+      const top3 = [...chosenEu, ...euRanked(anketa).filter(e => !chosenEu.includes(e))].slice(0, 3);
       const rows = EU_COMPARE_ROWS.filter(r => ["study", "living", "eng", "path11", "dl", "after"].includes(r[1]));
-      return `${H3("🧭 Европа ближе: три страны под твой профиль")}<p class="mut" style="margin-top:0">Подобраны по твоему бюджету, языкам и пожеланиям из анкеты. Данные — из методички StudyEurope 2026/27; точный маршрут под программу собирает эксперт.</p><div class="grid3">${top3.map(e => `<div class="kv" style="padding:12px 14px"><div style="font-size:15px;font-weight:800;color:#00337B">${e.flag} ${e.name}</div><div style="font-size:11.5px;color:#6E675E;margin-top:2px">${e.slog}</div></div>`).join("")}</div><table class="tbl" style="margin-top:12px"><thead><tr><th></th>${top3.map(e => `<th>${e.flag} ${e.name}</th>`).join("")}</tr></thead><tbody>${rows.map(([label, key]) => `<tr><td class="dt" style="white-space:normal;width:120px">${label}</td>${top3.map(e => `<td>${e[key]}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+      return `${H3("🧭 Европа ближе: твои страны")}<p class="mut" style="margin-top:0">${chosenEu.length ? "Первыми — страны, которые ты сам(а) отметил(а) в «Европе изнутри», дальше — подбор под твой профиль." : "Подобраны по твоему бюджету, языкам и пожеланиям из анкеты."} Ориентиры команды StudyEurope на 2026/27; точный маршрут под программу собирает эксперт.</p><div class="grid3">${top3.map(e => `<div class="kv" style="padding:12px 14px"><div style="font-size:15px;font-weight:800;color:#00337B">${e.flag} ${e.name}</div><div style="font-size:11.5px;color:#6E675E;margin-top:2px">${e.slog}</div></div>`).join("")}</div><table class="tbl" style="margin-top:12px"><thead><tr><th></th>${top3.map(e => `<th>${e.flag} ${e.name}</th>`).join("")}</tr></thead><tbody>${rows.map(([label, key]) => `<tr><td class="dt" style="white-space:normal;width:120px">${label}</td>${top3.map(e => `<td>${e[key]}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
     })() : ""}
-${H2("03", "Финансовый план", "", "s-money")}
-${costBlock}<p class="foot">Суммы ориентировочные (тарифы 2026), курсы и цены меняются — точный расчёт под семью делает эксперт StudyGlobal.</p>
-${H2("04", "Стратегия", "· подготовлена StudyGlobal, эксперт проверит на консультации", "s-strategy")}
-${bookBlock}
-${H2("05", "Черновик шорт-листа университетов", "", "s-unis")}
-<p class="mut">Классификация по силе твоего текущего профиля (индекс ${readinessIndex}/100, английский ${engLevel.name}). Китайские вузы — из каталога StudyChina (studychina.ru, 400+ вузов-партнёров, у 90% студентов — полная или частичная стипендия от университета); ссылки на карточки кликабельны. Это предварительный ориентир: полный валидированный список под твою специальность, бюджет и шансы собирает эксперт StudyGlobal — это отдельная глубокая работа.</p>
-${typing && shortProfs.length ? `<div style="background:rgba(0,51,123,0.06);border:1px solid rgba(0,51,123,0.2);border-radius:10px;padding:11px 15px;break-inside:avoid;font-size:12.5px">💼 <b>Кем работать после:</b> с типом ${typing.code} «${typing.card.name}»${shortField ? " в направлении «" + FIELD_LABELS[shortField] + "»" : ""} сильные роли — ${shortProfs.join(", ")}. Под вузами — направления, где к ним ведёт учёба.</div>` : ""}
-${uniCat("🎯", "Reach — цель-мечта", "#FF3300", shortlist.reach, "На текущем профиле фокус — на match и safety; reach-вузы добавит эксперт по мере усиления заявки.")}
-${uniCat("✅", "Match — твой уровень", "#00337B", shortlist.match, "Подберёт эксперт под специальность.")}
-${uniCat("🛡", "Safety — надёжный тыл", "#6E675E", shortlist.safety, "С твоим сильным профилем эту роль играют match-вузы уровнем ниже — уточнит эксперт.")}
-${H2("06", "Календарь дедлайнов семьи", "", "s-calendar")}
-<p class="mut">По США — гарантийные дедлайны методики StudyGlobal, по остальным странам — типовые даты приёмных кампаний. Год к году они уточняются: контроль дедлайнов входит в сопровождение StudyGlobal.</p>
+${book && (book.scenarios || []).length ? `${H3("Сценарии — как это может сложиться")}${scenCards}` : ""}
+${H2("04", "Страница для родителей: экономика и поддержка", "", "s-parents")}
+${typing ? `<div class="soft" style="margin:0 0 10px"><b style="color:#00337B">Какой ваш ребёнок.</b> ${name || "Ваш ребёнок"} — ${typing.card.name} (${typing.code}). ${typing.card.tagline} Суперсилы типа: ${(typing.card.strengths || []).slice(0, 4).join(", ").toLowerCase()}.</div><div class="soft" style="margin:0 0 14px"><b style="color:#00337B">Как понять и поддержать.</b> Замечайте и применяйте сильные стороны — из них рождаются энергия и самостоятельность. Зоны роста написаны в карте талантов как советы самому ребёнку: не критикуйте за них, а подбирайте задачи и среду, где эти навыки тренируются сами собой. Интересуйтесь выбором ребёнка, помогайте со структурой и сроками — и доверяйте ему руль собственного маршрута.</div>` : ""}
+${H3("Сколько это стоит: обучение, проживание, финансирование")}
+${costBlock}<p class="mut">Суммы ориентировочные (тарифы 2026), курсы и цены меняются — точный расчёт под семью делает эксперт StudyGlobal. Образование за рубежом окупается, когда программа выбрана от сильных сторон ребёнка: выше шанс доучиться с удовольствием и вернуть вложенное.</p>
+${H2("05", "Стратегия: вектор и разбор заявки", "· собрана ИИ, проверяется экспертом", "s-strategy")}
+${book ? `<p style="font-size:15px">${book.vector || ""}</p>${H3("Разбор заявки: силы и риски")}<div class="grid2">${swotBox("СИЛЬНЫЕ СТОРОНЫ", "#00337B", "rgba(0,51,123,0.06)", book.swot && book.swot.s)}${swotBox("ЗОНЫ РОСТА", "#8A6D3B", "#FFF8E0", book.swot && book.swot.w)}${swotBox("ВОЗМОЖНОСТИ", "#00337B", "#F4F1EA", book.swot && book.swot.o)}${swotBox("РИСКИ", "#CC3A00", "rgba(255,51,0,0.06)", book.swot && book.swot.t)}</div><p class="mut">Стратегия — это выбор на макроуровне: вектор и сценарии. Конкретные вузы и активности прорабатываются на следующих этапах, когда стратегия утверждена, — поэтому здесь их нет, а черновые ориентиры ждут в приложении.</p>` : `<p class="mut">Сформируй стратегию на этапе 4 — и она появится в этом документе.</p>`}
+${H2("06", "Чек-лист поступления с календарём", "", "s-calendar")}
+${book && (book.roadmap || []).length ? `${H3("Твой план по периодам — отмечай сделанное")}${(book.roadmap || []).map(r => `<div style="break-inside:avoid;margin:0 0 12px"><b style="color:#00337B">${r.period}</b>${(r.tasks || []).map(t => `<div class="chk" style="margin:7px 0 0"><div class="box"></div><div>${t}</div></div>`).join("")}</div>`).join("")}` : ""}
+${H3("Календарь дедлайнов семьи")}
+<p class="mut" style="margin-top:0">По США — гарантийные дедлайны методики StudyGlobal, по остальным странам — типовые даты приёмных кампаний. Год к году они уточняются: контроль дедлайнов входит в сопровождение StudyGlobal.</p>
 ${dlBlock}
-${typing ? `${H2("07", "Страница для родителей", "", "s-parents")}<div class="soft" style="margin:0 0 10px"><b style="color:#00337B">Какой ваш ребёнок.</b> ${name || "Ваш ребёнок"} — ${typing.card.name} (${typing.code}). ${typing.card.tagline} Суперсилы типа: ${(typing.card.strengths || []).slice(0, 4).join(", ").toLowerCase()}.</div><div class="soft" style="margin:0 0 10px"><b style="color:#00337B">Как понять и поддержать.</b> Замечайте и применяйте сильные стороны — из них рождаются энергия и самостоятельность. Зоны роста перечислены в карте талантов (раздел «Прокачать в дороге») и написаны как советы самому ребёнку: не критикуйте за них, а подбирайте задачи и среду, где эти навыки тренируются сами собой. Интересуйтесь выбором ребёнка, помогайте со структурой и дедлайнами — и доверяйте ему руль собственного маршрута.</div><div class="soft"><b style="color:#00337B">Лучший старт — как грамотная инвестиция.</b> Образование за рубежом окупается, когда программа выбрана от сильных сторон ребёнка: выше шанс доучиться с удовольствием, найти работу по душе и вернуть вложенное. Экономика вариантов — в разделе «Финансовый план» этого документа; превратить её в семейный финансовый план поможет эксперт StudyGlobal на консультации.</div>` : ""}
-${H2("08", "Черновик списка активностей", "", "s-acts")}
-<p class="mut">Составлен из слабых зон твоего индекса готовности и сильных сторон типа — чтобы каждая активность работала на заявку, а не «для галочки».</p>
+<div style="background:#00337B;color:#fff;border-radius:12px;padding:16px 20px;margin:18px 0 0;break-inside:avoid"><div style="font-family:'Inter Tight',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">Первые 90 дней<span style="color:#FFCC00">.</span></div><div style="display:flex;gap:12px;margin:0 0 8px"><div style="width:15px;height:15px;border:2px solid #FFCC00;border-radius:4px;flex:none;margin-top:3px"></div><div>Начать 2–3 шага прокачки из раздела «Твоя ситуация» — регулярность важнее масштаба</div></div><div style="display:flex;gap:12px;margin:0 0 8px"><div style="width:15px;height:15px;border:2px solid #FFCC00;border-radius:4px;flex:none;margin-top:3px"></div><div>Зафиксировать план подготовки к языковому экзамену</div></div><div style="display:flex;gap:12px"><div style="width:15px;height:15px;border:2px solid #FFCC00;border-radius:4px;flex:none;margin-top:3px"></div><div>Обсудить стратегию с экспертом StudyGlobal и утвердить её — это откроет следующие этапы</div></div></div>
+${H2("07", "Твои программы в StudyGlobal", "", "s-products")}
+<p class="mut" style="margin-top:0">Под твои направления. Результаты компании: 100% учеников программ сопровождения «под ключ» поступили в университеты США; в 2022 году все ученики StudyAmerica получили финансовую помощь; у 90% студентов StudyChina — полная или частичная стипендия университета.</p>
+<div class="grid2">${products}</div>
+${H2("＋", "Приложение: черновики к следующим этапам", "", "s-app")}
+<div style="background:rgba(0,51,123,0.06);border:1px solid rgba(0,51,123,0.2);border-radius:10px;padding:12px 16px;break-inside:avoid;font-size:12.5px;margin:0 0 14px"><b style="color:#00337B">Почему это приложение, а не главы.</b> В методике StudyGlobal список вузов собирается только после утверждённой стратегии, а план активностей — после стратегии личного бренда. Это следующие этапы работы с экспертом. Здесь — черновые ориентиры, чтобы ты видел(а), куда ведёт маршрут.</div>
+${H3("Черновик списка университетов")}
+<p class="mut" style="margin-top:0">Классификация по силе твоего текущего профиля (индекс ${readinessIndex}/100, английский ${engLevel.name}); при отмеченных странах Европы их вузы — выше. Китайские вузы — из каталога StudyChina (studychina.ru); ссылки кликабельны. Полный валидированный список собирает эксперт.</p>
+${typing && shortProfs.length ? `<div style="background:rgba(0,51,123,0.06);border:1px solid rgba(0,51,123,0.2);border-radius:10px;padding:11px 15px;break-inside:avoid;font-size:12.5px">💼 <b>Кем работать после:</b> с типом ${typing.code} «${typing.card.name}»${shortField ? " в направлении «" + FIELD_LABELS[shortField] + "»" : ""} сильные роли — ${shortProfs.join(", ")}. Под вузами — направления, где к ним ведёт учёба.</div>` : ""}
+${uniCat("🎯", "Цель-мечта", "#FF3300", shortlist.reach, "На текущем профиле фокус — на твоём уровне и надёжном тыле; вузы-мечты добавит эксперт по мере усиления заявки.")}
+${uniCat("✅", "Твой уровень", "#00337B", shortlist.match, "Подберёт эксперт под специальность.")}
+${uniCat("🛡", "Надёжный тыл", "#6E675E", shortlist.safety, "С твоим сильным профилем эту роль играют вузы твоего уровня ступенью ниже — уточнит эксперт.")}
+${H3("Черновик идей для активностей")}
+<p class="mut" style="margin-top:0">Направления, а не ссылки: конкретные конкурсы и программы под каждую идею подберёт эксперт после стратегии личного бренда — чтобы каждая активность работала на заявку, а не «для галочки».</p>
 ${anketa.actsText ? `<div class="soft" style="font-size:12.5px;margin:0 0 12px"><b style="color:#00337B">Твоя база (как ты её описал):</b> «${anketa.actsText}»</div>` : ""}
 ${acts}
-${H3("Проверенные конкурсы и олимпиады")}
-<p class="mut" style="margin-top:0">Официальные сайты — даты нового сезона всегда там. Полный план активностей под заявку собирает эксперт StudyGlobal.</p>
 <div class="grid2">${catAct}</div>
-${liveBlock}
-<div style="background:#00337B;color:#fff;border-radius:12px;padding:16px 20px;margin:18px 0 0;break-inside:avoid"><div style="font-family:'Inter Tight',sans-serif;font-size:16px;font-weight:800;margin-bottom:10px">Первые 90 дней<span style="color:#FFCC00">.</span></div><div style="display:flex;gap:12px;margin:0 0 8px"><div style="width:15px;height:15px;border:2px solid #FFCC00;border-radius:4px;flex:none;margin-top:3px"></div><div>Выбрать 2–3 активности из списка и начать — регулярность важнее масштаба</div></div><div style="display:flex;gap:12px;margin:0 0 8px"><div style="width:15px;height:15px;border:2px solid #FFCC00;border-radius:4px;flex:none;margin-top:3px"></div><div>Зафиксировать план подготовки к языковому экзамену</div></div><div style="display:flex;gap:12px"><div style="width:15px;height:15px;border:2px solid #FFCC00;border-radius:4px;flex:none;margin-top:3px"></div><div>Обсудить стратегию и шорт-лист с экспертом StudyGlobal</div></div></div>
 ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#FFCC00">✦</span>`, "", "s-finish")}
 <div style="break-inside:avoid;margin:6px 0 20px"><div style="display:flex;align-items:center"><div style="flex:0 0 36%;height:3px;background:#00337B;border-radius:2px"></div><div style="width:18px;height:18px;border-radius:50%;background:#FFCC00;display:flex;align-items:center;justify-content:center;flex:none;margin:0 3px"><div style="width:10px;height:10px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center"><div style="width:4px;height:4px;border-radius:50%;background:#FFCC00"></div></div></div><div style="flex:1;border-top:3px dotted #C9C4BA;margin:0 10px"></div><span style="color:#FF3300;font-size:22px;line-height:1;flex:none">✦</span></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:10px;font-weight:800;letter-spacing:0.11em;color:#00337B">ЭКСПЕДИЦИЯ ПРОЙДЕНА — ТЫ ЗДЕСЬ</span><span style="font-size:10px;font-weight:800;letter-spacing:0.11em;color:#6E675E">ПОСТУПЛЕНИЕ</span></div></div>
-<div class="grid2">${products}</div>
 <div class="vega"><span class="vtag">ВЕГА</span><br>${book && book.next ? book.next : "Стратегия готова. Приходи на консультацию с экспертом — превратим план в поступление."}</div>
 <p class="foot">Документ сформирован платформой «Навигатор StudyGlobal» ${dt} · Условия программ, вузов, визы, стипендии и дедлайны финально проверяет эксперт на консультации · studyglobal.ru</p>
 </div></body></html>`;
-    setDocView({ title: "Personal Global Strategy Book", hint: "Распечатай этот документ — это твой персональный план поступления", fname: `Strategy_Book_${(name || "ученик").replace(/\s+/g, "_")}`, html });
+    setDocView({ title: "Персональная стратегия поступления", hint: "Распечатай этот документ — это твой персональный план поступления", fname: `Стратегия_поступления_${(name || "ученик").replace(/\s+/g, "_")}`, html });
   }
 
   // ============ ЭКРАНЫ ============
@@ -1833,7 +1910,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
           <span style={{ fontSize: 11, fontWeight: 600, color: C.yellow, textTransform: "uppercase", letterSpacing: "0.09em" }}>Навигатор</span>
         </div>
         <div style={{ maxWidth: 620, width: "100%", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", position: "relative", zIndex: 1 }}>
-          <span style={{ fontSize: 10.5, fontWeight: 700, color: C.yellow, border: "1px solid rgba(255,204,0,0.5)", borderRadius: 999, padding: "6px 14px", letterSpacing: "0.14em" }}>ЭКСПЕДИЦИЯ · 4 ЧЕКПОИНТА · ДОСТУП 30 ДНЕЙ</span>
+          <span style={{ fontSize: 10.5, fontWeight: 700, color: C.yellow, border: "1px solid rgba(255,204,0,0.5)", borderRadius: 999, padding: "6px 14px", letterSpacing: "0.14em" }}>ЭКСПЕДИЦИЯ · 4 ЭТАПА · ДОСТУП 30 ДНЕЙ</span>
           <div style={{ fontFamily: fontHead, fontWeight: 800, fontSize: 58, color: "#fff", letterSpacing: "-0.02em", marginTop: 18, lineHeight: 1 }}>Навигатор<span style={{ color: C.red }}>.</span></div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginTop: 22, alignItems: "center" }}>
             <span style={pill}>кто ты</span><span style={dash} />
@@ -1850,7 +1927,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
               style={{ flex: 1, background: "#fff", border: "2px solid #FFCC00", borderRadius: 12, padding: "15px 18px", color: "#00337B", fontSize: 17, fontWeight: 600, outline: "none", minWidth: 0, fontFamily: font, boxShadow: "0 6px 22px rgba(0,20,52,0.35)" }} />
             <Btn onClick={() => setScreen("cabinet")} disabled={!name.trim()} style={{ flex: "none" }}>Начать путь →</Btn>
           </div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 14 }}>≈15 минут до первого чекпоинта · весь маршрут — за пару часов · тебя сопровождает Вега</div>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 14 }}>≈15 минут до первого этапа · весь маршрут — за пару часов · тебя сопровождает Вега</div>
           <div onClick={() => { setLoginState("form"); setScreen("login"); }} style={{ position: "absolute", bottom: -46, fontSize: 10.5, color: "rgba(255,255,255,0.55)", cursor: "pointer", textDecoration: "underline" }}>Уже оплатил(а)? Войти по почте →</div>
         </div>
       </div>
@@ -1866,7 +1943,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
           <span style={{ fontSize: 11, fontWeight: 600, color: C.red, textTransform: "uppercase", letterSpacing: "0.09em" }}>Навигатор</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-          <span style={{ fontSize: 11, fontWeight: 600, color: C.blue, background: "rgba(0,51,123,0.07)", borderRadius: 999, padding: "5px 12px", whiteSpace: "nowrap" }}>Экспедиция · чекпоинт {Math.min(done.length + 1, 4)} из 4</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: C.blue, background: "rgba(0,51,123,0.07)", borderRadius: 999, padding: "5px 12px", whiteSpace: "nowrap" }}>Экспедиция · этап {Math.min(done.length + 1, 4)} из 4</span>
           <div style={{ width: 34, height: 34, borderRadius: "50%", background: C.blue, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600 }}>{(name || "Г").slice(0, 1).toUpperCase()}</div>
         </div>
       </div>
@@ -1883,14 +1960,14 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
             {typing && <Chip>🧬 {typing.code} «{typing.card.name}»</Chip>}
             {picked.length > 0 && <Chip>🌍 {picked.map(k => COUNTRIES[k].flag + " " + COUNTRIES[k].name).join(" · ")}</Chip>}
             {done.includes(3) && <Chip>💰 {COUNTRIES[calcCur].name}: {((COST[calcCur] || {}).scen || SCEN)[calcScen].name.toLowerCase()}</Chip>}
-            {book && <Chip>📘 Strategy Book готова</Chip>}
+            {book && <Chip>📘 Стратегия собрана</Chip>}
           </div>
         )}
 
         {/* ======= ЭТАП 1: ТИПИРОВАНИЕ ЭНИОСТИЛЬ ======= */}
         {stage === 1 && (
           <div>
-            <Eyebrow>Чекпоинт 1 · Кто я? · ≈15 мин</Eyebrow>
+            <Eyebrow>Этап 1 · Кто я? · ≈15 мин</Eyebrow>
             <h2 style={{ fontFamily: fontHead, fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px" }}>Кто я? Карта талантов</h2>
             {s1 !== "result" && (
               <p style={{ color: "#6d675e", margin: "0 0 20px" }}>
@@ -2060,14 +2137,14 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                   <div style={{ fontSize: 13.5, lineHeight: 1.65, color: "#40372a", display: "grid", gap: 8 }}>
                     <div><b>Кто ваш ребёнок по типу.</b> {name || "Ваш ребёнок"} — {typing.card.name}. {typing.card.tagline} Суперсилы этого типа: {(typing.card.strengths || []).slice(0, 3).join(", ").toLowerCase()}.</div>
                     <div><b>Как понять и поддержать.</b> Ребёнку этого типа важно, чтобы его сильные стороны замечали и давали им применение — тогда появляются энергия и самостоятельность. Зоны роста тоже есть — они выше, в разделе «🎒 Прокачать в дороге», и написаны как советы самому ребёнку. Роль родителя здесь — не критиковать за слабые места, а подбирать задачи и среду, где эти навыки тренируются сами собой. И главное: искренне интересоваться его выбором, помогать со структурой и дедлайнами — и доверять ему руль собственного маршрута.</div>
-                    <div><b>Лучший старт — как грамотная инвестиция.</b> Образование за рубежом окупается, когда программа выбрана от сильных сторон ребёнка, а не от моды: выше шанс доучиться с удовольствием, найти работу по душе и вернуть вложенное. Дальше Навигатор покажет честную экономику вариантов (чекпоинт 3), а превратить её в семейный финансовый план поможет эксперт StudyGlobal.</div>
+                    <div><b>Лучший старт — как грамотная инвестиция.</b> Образование за рубежом окупается, когда программа выбрана от сильных сторон ребёнка, а не от моды: выше шанс доучиться с удовольствием, найти работу по душе и вернуть вложенное. Дальше Навигатор покажет честную экономику вариантов (этап 3), а превратить её в семейный финансовый план поможет эксперт StudyGlobal.</div>
                   </div>
                 </Card>
                 <div style={{ fontSize: 12.5, color: "#8a847a" }}>Предварительная оценка: точное типирование методика строит по видео — его проводит типолог StudyGlobal, а по типу резидентам подбирают ментора.</div>
                 <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
                   <button onClick={() => { if (window.confirm("Пройти тест заново? Текущий результат типирования сотрётся.")) { setS1("quiz"); setQi(0); setAnsE({}); setDisc({}); setFamily(null); setTyping(null); setAiCard(null); if (book) setBookStale(true); } }} style={{ fontFamily: font, background: "none", border: "none", color: "#8a847a", cursor: "pointer", fontSize: 13, padding: 0, textDecoration: "underline" }}>↻ Пройти тест заново</button>
                   <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 12, color: "#8a847a", alignSelf: "center" }}>📖 Карта талантов войдёт в твой Strategy Book в финале</span>
+                  <span style={{ fontSize: 12, color: "#8a847a", alignSelf: "center" }}>📖 Карта талантов войдёт в твою книгу стратегии в финале</span>
                   <Btn onClick={() => finishStage(1)} disabled={aiBusy}>Карта готова → к выбору стран</Btn>
                   </div>
                 </div>
@@ -2079,12 +2156,12 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
         {/* ======= ЭТАП 2 ======= */}
         {stage === 2 && (
           <div>
-            <Eyebrow>Чекпоинт 2 · Куда я могу поступить? · ≈20 мин</Eyebrow>
+            <Eyebrow>Этап 2 · Куда я могу поступить? · ≈20 мин</Eyebrow>
             <h2 style={{ fontFamily: fontHead, fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px" }}>Куда я могу поступить?</h2>
 
             {s2 === "eng" && (
               <div>
-                <p style={{ color: "#6d675e", margin: "0 0 20px" }}>Шаг 1 из 2 (≈7 мин): placement-тест английского — 24 вопроса по модели международных тестов уровня: от A1 к C1, по ступеням. Твой уровень — та ступень, где ты отвечаешь стабильно, поэтому угадывание сложных вопросов не поможет, а честные ответы дадут точный результат. Ошибаться — нормально.</p>
+                <p style={{ color: "#6d675e", margin: "0 0 20px" }}>Шаг 1 из 2 (≈7 мин): входной тест английского — 24 вопроса по модели международных тестов уровня: от A1 к C1, по ступеням. Твой уровень — та ступень, где ты отвечаешь стабильно, поэтому угадывание сложных вопросов не поможет, а честные ответы дадут точный результат. Ошибаться — нормально.</p>
                 <Card>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                     <div style={{ fontSize: 13, color: "#8a847a" }}>Вопрос {engIdx + 1} из {ENG_TEST.length}</div>
@@ -2163,7 +2240,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                       <div style={{ width: 44, textAlign: "right", fontWeight: 700, fontSize: 13.5 }}>{d.val}%</div>
                     </div>
                   ))}
-                  <div style={{ fontSize: 13, color: "#8a6d3b", background: "#faf3e3", padding: "8px 12px", borderRadius: 8, marginTop: 6 }}>💡 {engLevel.note} Низкие проценты — не приговор, а список задач: именно из них Strategy Book соберёт твой план на Этапе 4.</div>
+                  <div style={{ fontSize: 13, color: "#8a6d3b", background: "#faf3e3", padding: "8px 12px", borderRadius: 8, marginTop: 6 }}>💡 {engLevel.note} Низкие проценты — не приговор, а список задач: именно из них соберётся твой план на этапе 4.</div>
                 </Card>
                 <div style={{ textAlign: "right" }}>
                   <Btn onClick={() => setS2("countries")}>Готовность ясна → к выбору стран</Btn>
@@ -2199,7 +2276,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                               <ul style={{ margin: 0, paddingLeft: 16, fontSize: 13, lineHeight: 1.55 }}>{c.pros.map((f, i) => <li key={i}>{f}</li>)}</ul>
                             </div>
                             <div style={{ background: "#fdeeea", borderRadius: 10, padding: 12 }}>
-                              <div style={{ fontWeight: 700, fontSize: 12.5, color: "#a33333", marginBottom: 6 }}>⚠️ Минусы</div>
+                              <div style={{ fontWeight: 700, fontSize: 12.5, color: "#a33333", marginBottom: 6 }}>✋ Стоит учесть</div>
                               <ul style={{ margin: 0, paddingLeft: 16, fontSize: 13, lineHeight: 1.55 }}>{c.cons.map((f, i) => <li key={i}>{f}</li>)}</ul>
                             </div>
                             <div style={{ background: "#eaf1fb", borderRadius: 10, padding: 12 }}>
@@ -2235,7 +2312,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                               const cmp = euCompare.map(id => EU_COUNTRIES.find(x => x.id === id)).filter(Boolean);
                               return (
                                 <div style={{ marginTop: 12 }}>
-                                  <div style={{ fontSize: 12.5, color: "#6d675e", marginBottom: 10 }}>Отсортированы под твой профиль — сверху самые подходящие. Открой детали и отметь 2–3 страны, чтобы сравнить. Все данные — из методички StudyEurope; точный маршрут под программу собирает эксперт.</div>
+                                  <div style={{ fontSize: 12.5, color: "#6d675e", marginBottom: 10 }}>Отсортированы под твой профиль — сверху самые подходящие. Открой детали и отметь 2–3 страны — они попадут в сравнение, в твой список вузов и в книгу стратегии. Данные — ориентиры команды StudyEurope на 2026/27; точный маршрут под программу собирает эксперт.</div>
                                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 10 }}>
                                     {list.map((e, i) => {
                                       const open = euShow === e.id, inCmp = euCompare.includes(e.id);
@@ -2288,7 +2365,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                                           ))}
                                         </tbody>
                                       </table>
-                                      <div style={{ fontSize: 11.5, color: "#8a847a", marginTop: 6 }}>Суммы — ориентиры методички StudyEurope (2026/27); точный расчёт под семью и программу делает эксперт на разборе стратегии.</div>
+                                      <div style={{ fontSize: 11.5, color: "#8a847a", marginTop: 6 }}>Суммы — ориентиры команды StudyEurope на 2026/27; точный расчёт под семью и программу делает эксперт на разборе стратегии.</div>
                                     </div>
                                   )}
                                   {euCompare.length === 1 && <div style={{ fontSize: 12, color: "#8a847a", marginTop: 10 }}>Отметь ещё одну страну — и появится таблица сравнения.</div>}
@@ -2312,7 +2389,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
         {/* ======= ЭТАП 3 ======= */}
         {stage === 3 && (
           <div>
-            <Eyebrow>Чекпоинт 3 · Сколько это стоит? · ≈10 мин</Eyebrow>
+            <Eyebrow>Этап 3 · Сколько это стоит? · ≈10 мин</Eyebrow>
             <h2 style={{ fontFamily: fontHead, fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px" }}>Сколько это стоит?</h2>
             <p style={{ color: "#6d675e", margin: "0 0 20px" }}>Сравни сценарии по своим странам. Точный расчёт для вашей семьи делает эксперт StudyGlobal на консультации.</p>
             <Card>
@@ -2376,8 +2453,8 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
         {/* ======= ЭТАП 4 ======= */}
         {stage === 4 && (
           <div>
-            <Eyebrow>Чекпоинт 4 · Как туда попасть? · ≈10 мин</Eyebrow>
-            <h2 style={{ fontFamily: fontHead, fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px" }}>Personal Global Strategy Book</h2>
+            <Eyebrow>Этап 4 · Как туда попасть? · ≈10 мин</Eyebrow>
+            <h2 style={{ fontFamily: fontHead, fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px" }}>Персональная стратегия поступления</h2>
             <p style={{ color: "#6d675e", margin: "0 0 20px" }}>Всё, что ты собрал в экспедиции — твой тип, твои мечты из ответов, страны и бюджет, — сейчас сложится в одну картину: твою личную стратегию поступления. Вега соберёт её за минуту. А на консультации эксперт StudyGlobal проверит каждый шаг и усилит план.</p>
             {!book && (
               <Card style={{ textAlign: "center", padding: 40 }}>
@@ -2386,7 +2463,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                 <div style={{ fontSize: 14, color: "#6d675e", marginBottom: 20 }}>
                   Тип {typing ? `${typing.code} «${typing.card.name}»` : "—"} · {picked.length || 2} направления · финансовый сценарий
                 </div>
-                <Btn onClick={makeBook} disabled={bookBusy}>{bookBusy ? "StudyGlobal готовит твою карту… ~20 секунд" : "Сформировать Strategy Book"}</Btn>
+                <Btn onClick={makeBook} disabled={bookBusy}>{bookBusy ? "StudyGlobal готовит твою карту… ~20 секунд" : "Собрать мою стратегию"}</Btn>
                 {bookErr && <div style={{ color: C.red, fontSize: 13, marginTop: 12 }}>{bookErr}</div>}
               </Card>
             )}
@@ -2394,11 +2471,11 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
               <div style={{ display: "grid", gap: 16 }}>
                 {bookStale && (
                   <Card style={{ background: "#fff8e6", border: "1.5px solid #e8c85a" }}>
-                    <div style={{ fontSize: 13.5, lineHeight: 1.55 }}>⚠ <b>Ты обновил свои ответы после сборки стратегии</b> — тип, уровень языка или анкета изменились, и книга может отставать от тебя. <span onClick={() => { setBookStale(false); setBook(null); }} style={{ color: C.blue, fontWeight: 700, textDecoration: "underline", cursor: "pointer" }}>Пересобрать Strategy Book →</span></div>
+                    <div style={{ fontSize: 13.5, lineHeight: 1.55 }}>⚠ <b>Ты обновил свои ответы после сборки стратегии</b> — тип, уровень языка или анкета изменились, и книга может отставать от тебя. <span onClick={() => { setBookStale(false); setBook(null); }} style={{ color: C.blue, fontWeight: 700, textDecoration: "underline", cursor: "pointer" }}>Пересобрать стратегию →</span></div>
                   </Card>
                 )}
                 <Card style={{ background: C.blue, color: "#fff" }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#9db6dc" }}>Personal Global Strategy Book</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#9db6dc" }}>ПЕРСОНАЛЬНАЯ СТРАТЕГИЯ ПОСТУПЛЕНИЯ</div>
                   <div style={{ fontFamily: fontHead, fontSize: 24, fontWeight: 800, letterSpacing: "-0.01em", margin: "6px 0 4px" }}>{name ? name + " · стратегия поступления" : "Твоя стратегия поступления"}</div>
                   {typing && <div style={{ fontSize: 13, color: "#9db6dc", marginBottom: 8 }}>Тип: {typing.code} «{typing.card.name}»</div>}
                   <div style={{ fontSize: 15, lineHeight: 1.6, color: "#dfe6f2" }}>{book.vector}</div>
@@ -2422,7 +2499,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                   </div>
                 </Card>
                 <Card>
-                  <div style={{ fontWeight: 800, marginBottom: 12 }}>⚖️ SWOT твоей заявки</div>
+                  <div style={{ fontWeight: 800, marginBottom: 12 }}>⚖️ Разбор твоей заявки: силы и риски</div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                     {[["Сильные стороны", book.swot?.s, "#e8f3ea", "#2c6e3f"], ["Зоны роста", book.swot?.w, "#faf3e3", "#8a6d3b"],
                       ["Возможности", book.swot?.o, "#eaf1fb", C.blue], ["Риски", book.swot?.t, "#fdeeea", C.red]].map(([t, arr, bg, col], i) => (
@@ -2434,7 +2511,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                   </div>
                 </Card>
                 <Card>
-                  <div style={{ fontWeight: 800, marginBottom: 12 }}>🗺️ Roadmap до подачи документов</div>
+                  <div style={{ fontWeight: 800, marginBottom: 12 }}>🗺️ План по датам до подачи документов</div>
                   {(book.roadmap || []).map((r, i) => (
                     <div key={i} style={{ display: "flex", gap: 14, marginBottom: 4 }}>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -2455,7 +2532,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                   {typing && shortProfs.length > 0 && (
                     <div style={{ fontSize: 13, color: "#20395c", background: "rgba(0,51,123,0.06)", border: "1px solid rgba(0,51,123,0.2)", padding: "10px 12px", borderRadius: 8, marginBottom: 14, lineHeight: 1.55 }}>💼 <b>Кем работать после:</b> с твоим типом {typing.code} «{typing.card.name}»{shortField ? " в направлении «" + FIELD_LABELS[shortField] + "»" : ""} сильные роли — {shortProfs.join(", ")}. Под каждым вузом — направления, где к ним ведёт учёба.</div>
                   )}
-                  {[["🎯 Reach — цель-мечта", shortlist.reach, C.red], ["✅ Match — твой уровень", shortlist.match, C.blue], ["🛡 Safety — надёжный тыл", shortlist.safety, "#2c6e3f"]].map(([t, arr, col], gi) => (
+                  {[["🎯 Цель-мечта", shortlist.reach, C.red], ["✅ Твой уровень", shortlist.match, C.blue], ["🛡 Надёжный тыл", shortlist.safety, "#2c6e3f"]].map(([t, arr, col], gi) => (
                     <div key={gi} style={{ marginBottom: 12 }}>
                       <div style={{ fontSize: 12, fontWeight: 700, color: col, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>{t}</div>
                       {arr.length === 0 && <div style={{ fontSize: 13, color: "#8a847a" }}>Эту группу дополнит эксперт под твой профиль.</div>}
@@ -2468,6 +2545,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                               : <b style={{ fontSize: 14 }}>{u.name}</b>}
                             <span style={{ fontSize: 12, color: "#8a847a" }}> · {u.city}</span>
                             <div style={{ fontSize: 12.5, color: "#6d675e" }}>{u.tag}{u.url ? (u.country === "china" ? " · карточка в каталоге StudyChina →" : " · сайт вуза →") : ""}</div>
+                            {(typeof u.cost === "number" || u.aid) && <div style={{ fontSize: 12, color: "#454B54", marginTop: 3 }}>💶 {[typeof u.cost === "number" ? `обучение ≈ $${u.cost} тыс/год` : "", u.aid || ""].filter(Boolean).join(" · ")}</div>}
                             {progFor(u, shortField) && <div style={{ fontSize: 12.5, color: C.blue, marginTop: 3 }}>🎓 Учиться: {progFor(u, shortField)}</div>}
                           </div>
                         </div>
@@ -2497,7 +2575,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                       </div>
                     ))}
                   </div>
-                  <div style={{ fontSize: 12, color: "#8a847a", marginTop: 10 }}>Программы, условия и рассрочку эксперт подберёт под твою семью на консультации — запишись после Strategy Book.</div>
+                  <div style={{ fontSize: 12, color: "#8a847a", marginTop: 10 }}>Программы, условия и рассрочку эксперт подберёт под твою семью на консультации — запишись после сборки стратегии.</div>
                 </Card>
                 <Card>
                   <div style={{ fontWeight: 700, marginBottom: 6 }}>🏆 Активности и конкурсы под твой профиль</div>
@@ -2549,10 +2627,10 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                   )}
                   {fbSent && <div style={{ marginTop: 14, fontSize: 13, color: "#3f7d4e" }}>✅ Спасибо! Куратор получил твои вопросы и подготовится к созвону именно под них.</div>}
                   <div style={{ marginTop: 10 }}>
-                    <Btn kind="ghost" onClick={downloadFullBook} style={{ fontSize: 13, padding: "9px 18px" }}>📄 Открыть полный Strategy Book (~30 стр.)</Btn>
+                    <Btn kind="ghost" onClick={downloadFullBook} style={{ fontSize: 13, padding: "9px 18px" }}>📄 Открыть полную стратегию (книга ~30 стр.)</Btn>
                   </div>
-                  <div style={{ fontSize: 12.5, color: "#8a847a", marginTop: 8, lineHeight: 1.5 }}>👨‍👩‍👧 Покажи родителям их страницу в Strategy Book — там о том, как поддержать тебя на этом пути.</div>
-                  <div style={{ fontSize: 12.5, color: "#8a847a", marginTop: 10, lineHeight: 1.5 }}>🖨 Распечатай свой Strategy Book и держи на видном месте — это твой персональный план поступления. План на столе работает лучше плана в файле.</div>
+                  <div style={{ fontSize: 12.5, color: "#8a847a", marginTop: 8, lineHeight: 1.5 }}>👨‍👩‍👧 Покажи родителям их страницу в книге стратегии — там о том, как поддержать тебя на этом пути.</div>
+                  <div style={{ fontSize: 12.5, color: "#8a847a", marginTop: 10, lineHeight: 1.5 }}>🖨 Распечатай свою стратегию и держи на видном месте — это твой персональный план поступления. План на столе работает лучше плана в файле.</div>
                 </Card>
               </div>
             )}
@@ -2569,7 +2647,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
             {done.length === 0 ? "Добро пожаловать в экспедицию" : done.length === 4 ? "Экспедиция пройдена" : "С возвращением"}, <span style={{ background: "linear-gradient(transparent 62%, #FFCC00 62%)" }}>{name || "путешественник"}</span>!
           </div>
           <div style={{ fontSize: 14, color: C.muted, marginTop: 4 }}>
-            {done.length === 4 ? "Твоя стратегия готова — самое время обсудить её с экспертом StudyGlobal." : done.length === 0 ? "Впереди 4 чекпоинта. Начни с первого — узнаем, кто ты." : `Пройдено чекпоинтов: ${done.length} из 4. Продолжай — Вега рядом, если появятся вопросы.`}
+            {done.length === 4 ? "Твоя стратегия готова — самое время обсудить её с экспертом StudyGlobal." : done.length === 0 ? "Впереди 4 этапа. Начни с первого — узнаем, кто ты." : `Пройдено этапов: ${done.length} из 4. Продолжай — Вега рядом, если появятся вопросы.`}
           </div>
         </div>
         <Card style={{ padding: guideOpen ? "20px 24px" : "14px 24px", marginTop: 16, border: `1.5px solid ${C.yellow}`, background: "#FFFDF4" }}>
@@ -2581,14 +2659,14 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
           {guideOpen && (
             <div style={{ marginTop: 14 }}>
               <div style={{ fontSize: 13.5, lineHeight: 1.6, color: C.dark, marginBottom: 12 }}>
-                Это твоя экспедиция из 4 чекпоинтов — они идут по порядку, каждый открывает следующий. Весь маршрут займёт около пары часов, можно проходить частями. Главное правило: отвечай честно — здесь нет «правильных» ответов, план строится под настоящего тебя.
+                Это твоя экспедиция из 4 этапов — они идут по порядку, каждый открывает следующий. Весь маршрут займёт около пары часов, можно проходить частями. Главное правило: отвечай честно — здесь нет «правильных» ответов, план строится под настоящего тебя.
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "10px 18px", fontSize: 13, lineHeight: 1.55 }}>
-                <div>🃏 <b>Чекпоинт 1 · Кто я.</b> 20 лёгких вопросов — и у тебя карта талантов: сильные стороны, зоны роста и профессии, где ты раскроешься.</div>
-                <div>🌍 <b>Чекпоинт 2 · Куда.</b> Мини-тест английского, индекс готовности и страны под твой профиль. Внутри Европы — 10 стран: открой, изучи цены и сравни между собой. Выбери минимум две страны в свой шорт-лист.</div>
-                <div>💰 <b>Чекпоинт 3 · Сколько.</b> Честный калькулятор: во что обойдётся учёба в твоих странах — от гранта до полной цены.</div>
-                <div>🚀 <b>Чекпоинт 4 · Как.</b> Твоя стратегия: сценарии поступления, сильные и слабые места заявки, план по датам до подачи.</div>
-                <div>📄 <b>Финал · Strategy Book.</b> Всё соберётся в личную книгу (~30 страниц): скачай PDF, распечатай и покажи родителям — для них там отдельная страница.</div>
+                <div>🃏 <b>Этап 1 · Кто я.</b> 20 лёгких вопросов — и у тебя карта талантов: сильные стороны, зоны роста и профессии, где ты раскроешься.</div>
+                <div>🌍 <b>Этап 2 · Куда.</b> Мини-тест английского, индекс готовности и страны под твой профиль. Внутри Европы — 10 стран: открой, изучи цены и сравни между собой. Выбери минимум две страны в свой шорт-лист.</div>
+                <div>💰 <b>Этап 3 · Сколько.</b> Честный калькулятор: во что обойдётся учёба в твоих странах — от гранта до полной цены.</div>
+                <div>🚀 <b>Этап 4 · Как.</b> Твоя стратегия: сценарии поступления, сильные и слабые места заявки, план по датам до подачи.</div>
+                <div>📄 <b>Финал · Твоя стратегия поступления.</b> Всё соберётся в личную книгу (~30 страниц): скачай PDF, распечатай и покажи родителям — для них там отдельная страница.</div>
                 <div>✦ <b>Вега — всегда рядом.</b> Кнопка внизу справа: спрашивай о поступлении в любой момент простыми словами. А в финале сможешь записаться на разбор стратегии с экспертом StudyGlobal.</div>
               </div>
               <div style={{ textAlign: "right", marginTop: 12 }}>
@@ -2629,19 +2707,19 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
               <div style={{ fontSize: 12, fontWeight: 700, color: C.blue, letterSpacing: "0.08em", textTransform: "uppercase" }}>В багаже</div>
               <div style={{ display: "grid", gap: 9, marginTop: 12 }}>
                 {!typing && picked.length === 0 && !done.includes(3) && !book && (
-                  <div style={{ fontSize: 13, color: C.faint }}>Пока пусто — артефакты появятся после чекпоинтов: карта талантов, шорт-лист стран, финансовый план, Strategy Book.</div>
+                  <div style={{ fontSize: 13, color: C.faint }}>Пока пусто — артефакты появятся после этапов: карта талантов, шорт-лист стран, финансовый план, стратегия поступления.</div>
                 )}
                 {typing && <div style={{ display: "flex", gap: 10, alignItems: "baseline" }}><span style={{ color: C.blue, fontSize: 12 }}>✓</span><span style={{ fontSize: 13 }}>Тип: {typing.code} «{typing.card.name}»</span></div>}
                 {done.includes(2) && <div style={{ display: "flex", gap: 10, alignItems: "baseline" }}><span style={{ color: C.blue, fontSize: 12 }}>✓</span><span style={{ fontSize: 13 }}>Готовность заявки: {readinessIndex}/100 · английский {engLevel.name}</span></div>}
                 {picked.length > 0 && <div style={{ display: "flex", gap: 10, alignItems: "baseline" }}><span style={{ color: C.blue, fontSize: 12 }}>✓</span><span style={{ fontSize: 13 }}>Шорт-лист: {picked.map(k => COUNTRIES[k].name).join(", ")}</span></div>}
                 {done.includes(3) && <div style={{ display: "flex", gap: 10, alignItems: "baseline" }}><span style={{ color: C.blue, fontSize: 12 }}>✓</span><span style={{ fontSize: 13 }}>Финансовый сценарий: {COUNTRIES[calcCur].name}, {((COST[calcCur] || {}).scen || SCEN)[calcScen].name.toLowerCase()}</span></div>}
-                {book && <div style={{ display: "flex", gap: 10, alignItems: "baseline" }}><span style={{ color: C.blue, fontSize: 12 }}>✓</span><span style={{ fontSize: 13 }}>Personal Global Strategy Book готова</span></div>}
+                {book && <div style={{ display: "flex", gap: 10, alignItems: "baseline" }}><span style={{ color: C.blue, fontSize: 12 }}>✓</span><span style={{ fontSize: 13 }}>Стратегия поступления собрана</span></div>}
               </div>
             </Card>
             <Card style={{ padding: "18px 22px", background: "rgba(255,204,0,0.13)", boxShadow: "none", border: "1px solid rgba(255,204,0,0.5)" }}>
               <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
                 <div style={{ width: 34, height: 34, borderRadius: "50%", background: C.yellow, color: C.blue, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, flex: "none" }}>✦</div>
-                <div style={{ fontSize: 13.5, lineHeight: 1.6, color: C.dark }}><b>Вега:</b> {!typing ? "Начни с чекпоинта «Кто я?» — соберём твою карту талантов. Там нет неправильных ответов." : !done.includes(2) ? "Тип определён! Дальше — проверим готовность и посмотрим, куда ты можешь поступить." : !done.includes(3) ? "Отличный шорт-лист. Теперь честно посчитаем экономику — цифры снимают страхи лучше слов." : !book ? "Всё собрано. Жми на четвёртый чекпоинт — соберу твою Strategy Book." : "Стратегия у тебя в руках. Скачай её и приходи на консультацию с экспертом — превратим план в поступление."}</div>
+                <div style={{ fontSize: 13.5, lineHeight: 1.6, color: C.dark }}><b>Вега:</b> {!typing ? "Начни с этапа «Кто я?» — соберём твою карту талантов. Там нет неправильных ответов." : !done.includes(2) ? "Тип определён! Дальше — проверим готовность и посмотрим, куда ты можешь поступить." : !done.includes(3) ? "Отличный шорт-лист. Теперь честно посчитаем экономику — цифры снимают страхи лучше слов." : !book ? "Всё собрано. Жми на четвёртый этап — соберу твою стратегию поступления." : "Стратегия у тебя в руках. Скачай её и приходи на консультацию с экспертом — превратим план в поступление."}</div>
               </div>
             </Card>
           </div>
@@ -2749,7 +2827,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
         });
         const exportCsv = () => {
           const esc = (v) => '"' + String(v ?? "").replace(/"/g, '""') + '"';
-          const head = ["Имя", "Класс", "Email", "Тип", "Название типа", "Готовность", "Английский", "Страны", "Бюджет", "Специализация", "География", "Экспедиция", "Strategy Book", "Доступ до", "Был(а)", "Свои активности", "Вопросы к консультации", "Отзыв о продукте"];
+          const head = ["Имя", "Класс", "Email", "Тип", "Название типа", "Готовность", "Английский", "Страны", "Бюджет", "Специализация", "География", "Экспедиция", "Стратегия", "Доступ до", "Был(а)", "Свои активности", "Вопросы к консультации", "Отзыв о продукте"];
           const rows = students.map(s => [s.name, s.grade, s.email || "", s.type, s.typeName, s.ready != null ? s.ready : "", s.eng,
             (s.countries || []).map(k => COUNTRIES[k]?.name).join(", "), s.budget, FIELD_LABELS[s.field] || "", GEO_LABELS[s.geo] || "",
             s.stageDone + "/4", s.book ? "да" : "нет", s.paidTill, s.lastSeen, s.acts || "", s.consultQs || "", s.feedback || ""].map(esc).join(";"));
@@ -2824,7 +2902,7 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                       <div>📊 Индекс готовности: <b>{st.ready != null ? st.ready + "/100" : "ещё не пройден"}</b> · Английский: <b>{st.eng}</b></div>
                       <div>🌍 Страны: <b>{(st.countries || []).map(k => COUNTRIES[k]?.name).join(", ") || "не выбраны"}</b> · Бюджет: <b>{st.budget}</b></div>{st.acts ? <div>🏆 Свои активности: <b>{st.acts}</b></div> : null}
                       <div>🎯 Специализация: <b>{FIELD_LABELS[st.field] || "выбирает"}</b> · География: <b>{GEO_LABELS[st.geo] || "не указана"}</b></div>
-                      <div>🗺 Экспедиция: <b>{st.stageDone}/4</b>{st.book ? " · Strategy Book готова" : ""} · Доступ до: {st.paidTill}</div>
+                      <div>🗺 Экспедиция: <b>{st.stageDone}/4</b>{st.book ? " · стратегия собрана" : ""} · Доступ до: {st.paidTill}</div>
                       {st.email && (
                         <div>✉️ Email оплаты: <b>{st.email}</b>{" "}
                           <span onClick={() => { const ne = prompt("Новый email (опечатка при оплате):", st.email); if (ne) alert("Демо: доступ перевыслан на " + ne + ". В боевой версии: обновление в БД + новое письмо со ссылкой."); }}
@@ -2832,8 +2910,8 @@ ${H2("ФИНИШ", `Твой маршрут в StudyGlobal <span style="color:#F
                         </div>
                       )}
                     </div>
-                    {st.live && book && <div style={{ marginTop: 12 }}><Btn kind="ghost" onClick={downloadFullBook} style={{ fontSize: 12.5, padding: "8px 14px" }}>📕 Strategy Book ученика — открыть и распечатать к созвону</Btn></div>}
-                    {!st.live && st.book && <div style={{ fontSize: 12, color: C.faint, marginTop: 12 }}>📕 Strategy Book собрана. В боевой версии откроется отсюда (хранится в базе); в демо доступна книга живой сессии.</div>}
+                    {st.live && book && <div style={{ marginTop: 12 }}><Btn kind="ghost" onClick={downloadFullBook} style={{ fontSize: 12.5, padding: "8px 14px" }}>📕 Стратегия ученика — открыть и распечатать к созвону</Btn></div>}
+                    {!st.live && st.book && <div style={{ fontSize: 12, color: C.faint, marginTop: 12 }}>📕 Стратегия собрана. В боевой версии откроется отсюда (хранится в базе); в демо доступна книга живой сессии.</div>}
                   </Card>
                   <Card>
                     <div style={{ fontSize: 12, fontWeight: 700, color: C.blue, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>Открытые ответы (дословно)</div>
