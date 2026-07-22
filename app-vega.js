@@ -1150,6 +1150,7 @@ const DEMO_STUDENTS = [
 const AI_URL = "https://ai.studyglobal.tech/v1/messages";
 const EXTEND_URL = "https://studyglobal.academy/navigator_extend";
 const EXTEND_PRICE = "9 990 \u20BD";
+const BUY_URL = "https://studyglobal.ru/navigator";
 const RENEW_WARN_HOURS = 24;
 const PROGRESS_API = "https://ai.studyglobal.tech";
 const HISTORY_ON = PROGRESS_API.length > 0;
@@ -1423,7 +1424,7 @@ function Btn({ children, onClick, kind = "primary", disabled, style }) {
     {
       disabled,
       onClick,
-      style: { ...base, ...kinds[kind] },
+      style: { ...base, ...kinds[kind], ...style },
       onMouseEnter: (e) => {
         if (!disabled) {
           e.currentTarget.style.transform = "translateY(-1px)";
@@ -1787,9 +1788,11 @@ export default function App() {
         return;
       }
       if (!res) return;
+      let \u0440\u0430\u043D\u0435\u0435 = null;
       if (HISTORY_ON && res.token) {
         try {
-          applyProgressPatch(restoreFromProgress(await apiLoadProgress(res.token)));
+          \u0440\u0430\u043D\u0435\u0435 = restoreFromProgress(await apiLoadProgress(res.token));
+          applyProgressPatch(\u0440\u0430\u043D\u0435\u0435);
         } catch (e) {
           console.warn("\u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u0430:", e && e.message);
         }
@@ -1797,7 +1800,7 @@ export default function App() {
       setAccessToken(res.token || "");
       setAuthEmail(savedEmail);
       setAccess(res);
-      if (screen === "welcome") setScreen("cabinet");
+      if (screen === "welcome" && (\u0440\u0430\u043D\u0435\u0435 && \u0440\u0430\u043D\u0435\u0435.name || name.trim())) setScreen("cabinet");
     })();
   }, []);
   useEffect(() => {
@@ -2078,7 +2081,7 @@ ${opens}
       syncProgress().catch((e) => console.warn("\u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0440\u0438\u0438:", e && e.message));
     }, 2500);
     return () => clearTimeout(t);
-  }, [authEmail, typing, done.length, picked, book, fbSent, consultQs, feedback, anketa.actsText, anketa.grade, bookedAt]);
+  }, [authEmail, name, typing, done.length, picked, book, fbSent, consultQs, feedback, anketa.actsText, anketa.grade, bookedAt]);
   async function makeBook() {
     setBookBusy(true);
     setBookErr("");
@@ -2445,25 +2448,46 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
           /* @__PURE__ */ jsxs("div", { style: { fontSize: 13.5, color: "rgba(255,255,255,0.9)", lineHeight: 1.6 }, children: [
             "\u041F\u0440\u0438\u0432\u0435\u0442! \u042F ",
             /* @__PURE__ */ jsx("b", { children: "\u0412\u0435\u0433\u0430" }),
-            ". \u041F\u043E\u043C\u043E\u0433\u0443 \u0440\u0430\u0437\u043E\u0431\u0440\u0430\u0442\u044C\u0441\u044F \u0441 \u043F\u043E\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u0435\u043C \u0437\u0430 \u0433\u0440\u0430\u043D\u0438\u0446\u0443 \u2014 \u0441\u043F\u043E\u043A\u043E\u0439\u043D\u043E \u0438 \u0431\u0435\u0437 \u0443\u043C\u043D\u044B\u0445 \u0441\u043B\u043E\u0432. \u041F\u0440\u043E\u0439\u0434\u0451\u043C \u0447\u0435\u0442\u044B\u0440\u0435 \u0448\u0430\u0433\u0430, \u0438 \u0443 \u0442\u0435\u0431\u044F \u0431\u0443\u0434\u0435\u0442 \u0441\u0432\u043E\u0439 \u043F\u043B\u0430\u043D: \u043A\u0443\u0434\u0430, \u043A\u043E\u0433\u0434\u0430 \u0438 \u0447\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C. \u041D\u0430\u0447\u043D\u0451\u043C \u0441\u043E \u0437\u043D\u0430\u043A\u043E\u043C\u0441\u0442\u0432\u0430 \u2014 \u043A\u0430\u043A \u0442\u0435\u0431\u044F \u0437\u043E\u0432\u0443\u0442?"
+            ". \u041F\u043E\u043C\u043E\u0433\u0443 \u0440\u0430\u0437\u043E\u0431\u0440\u0430\u0442\u044C\u0441\u044F \u0441 \u043F\u043E\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u0435\u043C \u0437\u0430 \u0433\u0440\u0430\u043D\u0438\u0446\u0443 \u2014 \u0441\u043F\u043E\u043A\u043E\u0439\u043D\u043E \u0438 \u0431\u0435\u0437 \u0443\u043C\u043D\u044B\u0445 \u0441\u043B\u043E\u0432. \u041F\u0440\u043E\u0439\u0434\u0451\u043C \u0447\u0435\u0442\u044B\u0440\u0435 \u0448\u0430\u0433\u0430, \u0438 \u0443 \u0442\u0435\u0431\u044F \u0431\u0443\u0434\u0435\u0442 \u0441\u0432\u043E\u0439 \u043F\u043B\u0430\u043D: \u043A\u0443\u0434\u0430, \u043A\u043E\u0433\u0434\u0430 \u0438 \u0447\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C. ",
+            ACCESS_ON && !access ? "\u0417\u0430\u0445\u043E\u0434\u0438 \u043F\u043E \u043F\u043E\u0447\u0442\u0435, \u043A\u043E\u0442\u043E\u0440\u0443\u044E \u0443\u043A\u0430\u0437\u044B\u0432\u0430\u043B(\u0430) \u043F\u0440\u0438 \u043E\u043F\u043B\u0430\u0442\u0435, \u2014 \u0438 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u043C \u0441 \u0442\u043E\u0433\u043E \u043C\u0435\u0441\u0442\u0430, \u0433\u0434\u0435 \u0442\u044B \u043E\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u043B\u0441\u044F(\u0430\u0441\u044C)." : "\u041D\u0430\u0447\u043D\u0451\u043C \u0441\u043E \u0437\u043D\u0430\u043A\u043E\u043C\u0441\u0442\u0432\u0430 \u2014 \u043A\u0430\u043A \u0442\u0435\u0431\u044F \u0437\u043E\u0432\u0443\u0442?"
           ] })
         ] }),
-        /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 10, marginTop: 20, width: "100%", maxWidth: 540 }, children: [
-          /* @__PURE__ */ jsx(
-            "input",
-            {
-              value: name,
-              onChange: (e) => setName(e.target.value),
-              onKeyDown: (e) => e.key === "Enter" && name.trim() && setScreen("cabinet"),
-              maxLength: 30,
-              placeholder: "\u0422\u0432\u043E\u0451 \u0438\u043C\u044F",
-              style: { flex: 1, background: "#fff", border: "2px solid #FFCC00", borderRadius: 12, padding: "15px 18px", color: "#00337B", fontSize: 17, fontWeight: 600, outline: "none", minWidth: 0, fontFamily: font, boxShadow: "0 6px 22px rgba(0,20,52,0.35)" }
-            }
-          ),
-          /* @__PURE__ */ jsx(Btn, { onClick: () => setScreen("cabinet"), disabled: !name.trim(), style: { flex: "none" }, children: "\u041D\u0430\u0447\u0430\u0442\u044C \u043F\u0443\u0442\u044C \u2192" })
+        ACCESS_ON && !access ? /* @__PURE__ */ jsxs(Fragment, { children: [
+          /* @__PURE__ */ jsx("div", { style: { marginTop: 20, width: "100%", maxWidth: 540 }, children: /* @__PURE__ */ jsx(Btn, { onClick: () => {
+            setLoginState("form");
+            setScreen("login");
+          }, style: { width: "100%" }, children: "\u0412\u043E\u0439\u0442\u0438 \u0432 \u041D\u0430\u0432\u0438\u0433\u0430\u0442\u043E\u0440 \u2192" }) }),
+          /* @__PURE__ */ jsx("div", { style: { fontSize: 11.5, color: "rgba(255,255,255,0.6)", marginTop: 14, lineHeight: 1.6, maxWidth: 460 }, children: "\u0412\u0432\u0435\u0434\u0438 \u043F\u043E\u0447\u0442\u0443, \u043A\u043E\u0442\u043E\u0440\u0443\u044E \u0443\u043A\u0430\u0437\u044B\u0432\u0430\u043B(\u0430) \u043F\u0440\u0438 \u043E\u043F\u043B\u0430\u0442\u0435, \u2014 \u0438 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0448\u044C \u0441\u0432\u043E\u0439 \u043C\u0430\u0440\u0448\u0440\u0443\u0442." }),
+          BUY_URL && /* @__PURE__ */ jsxs("div", { style: { marginTop: 18, paddingTop: 18, borderTop: "1px solid rgba(255,255,255,0.15)", width: "100%", maxWidth: 540, textAlign: "center" }, children: [
+            /* @__PURE__ */ jsx("div", { style: { fontSize: 12.5, color: "rgba(255,255,255,0.7)", marginBottom: 10 }, children: "\u0414\u043E\u0441\u0442\u0443\u043F \u0435\u0449\u0451 \u043D\u0435 \u043E\u043F\u043B\u0430\u0447\u0435\u043D?" }),
+            /* @__PURE__ */ jsx(
+              Btn,
+              {
+                kind: "ghost",
+                onClick: () => window.open(BUY_URL, "_blank"),
+                style: { background: "rgba(255,204,0,0.12)", color: "#FFCC00", border: "1.5px solid #FFCC00", fontSize: 14, padding: "11px 22px" },
+                children: "\u0423\u0437\u043D\u0430\u0442\u044C \u043E \u041D\u0430\u0432\u0438\u0433\u0430\u0442\u043E\u0440\u0435 \u0438 \u043E\u0444\u043E\u0440\u043C\u0438\u0442\u044C \u0434\u043E\u0441\u0442\u0443\u043F \u2192"
+              }
+            )
+          ] })
+        ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
+          /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 10, marginTop: 20, width: "100%", maxWidth: 540 }, children: [
+            /* @__PURE__ */ jsx(
+              "input",
+              {
+                value: name,
+                onChange: (e) => setName(e.target.value),
+                onKeyDown: (e) => e.key === "Enter" && name.trim() && setScreen("cabinet"),
+                maxLength: 30,
+                placeholder: "\u0422\u0432\u043E\u0451 \u0438\u043C\u044F",
+                style: { flex: 1, background: "#fff", border: "2px solid #FFCC00", borderRadius: 12, padding: "15px 18px", color: "#00337B", fontSize: 17, fontWeight: 600, outline: "none", minWidth: 0, fontFamily: font, boxShadow: "0 6px 22px rgba(0,20,52,0.35)" }
+              }
+            ),
+            /* @__PURE__ */ jsx(Btn, { onClick: () => setScreen("cabinet"), disabled: !name.trim(), style: { flex: "none" }, children: ACCESS_ON ? "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u2192" : "\u041D\u0430\u0447\u0430\u0442\u044C \u043F\u0443\u0442\u044C \u2192" })
+          ] }),
+          /* @__PURE__ */ jsx("div", { style: { fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 14 }, children: ACCESS_ON ? "\u041A\u0430\u043A \u0442\u0435\u0431\u044F \u0437\u043E\u0432\u0443\u0442? \u0422\u0430\u043A \u0412\u0435\u0433\u0430 \u0431\u0443\u0434\u0435\u0442 \u043E\u0431\u0440\u0430\u0449\u0430\u0442\u044C\u0441\u044F \u043A \u0442\u0435\u0431\u0435, \u0438 \u044D\u0442\u043E \u0438\u043C\u044F \u043F\u043E\u043F\u0430\u0434\u0451\u0442 \u0432 \u0442\u0432\u043E\u044E \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044E" : "\u224815 \u043C\u0438\u043D\u0443\u0442 \u0434\u043E \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u044D\u0442\u0430\u043F\u0430 \xB7 \u0432\u0435\u0441\u044C \u043C\u0430\u0440\u0448\u0440\u0443\u0442 \u2014 \u0437\u0430 \u043F\u0430\u0440\u0443 \u0447\u0430\u0441\u043E\u0432 \xB7 \u0442\u0435\u0431\u044F \u0441\u043E\u043F\u0440\u043E\u0432\u043E\u0436\u0434\u0430\u0435\u0442 \u0412\u0435\u0433\u0430" })
         ] }),
-        /* @__PURE__ */ jsx("div", { style: { fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 14 }, children: "\u224815 \u043C\u0438\u043D\u0443\u0442 \u0434\u043E \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u044D\u0442\u0430\u043F\u0430 \xB7 \u0432\u0435\u0441\u044C \u043C\u0430\u0440\u0448\u0440\u0443\u0442 \u2014 \u0437\u0430 \u043F\u0430\u0440\u0443 \u0447\u0430\u0441\u043E\u0432 \xB7 \u0442\u0435\u0431\u044F \u0441\u043E\u043F\u0440\u043E\u0432\u043E\u0436\u0434\u0430\u0435\u0442 \u0412\u0435\u0433\u0430" }),
-        /* @__PURE__ */ jsx("div", { onClick: () => {
+        !ACCESS_ON && /* @__PURE__ */ jsx("div", { onClick: () => {
           setLoginState("form");
           setScreen("login");
         }, style: { position: "absolute", bottom: -46, fontSize: 10.5, color: "rgba(255,255,255,0.55)", cursor: "pointer", textDecoration: "underline" }, children: "\u0423\u0436\u0435 \u043E\u043F\u043B\u0430\u0442\u0438\u043B(\u0430)? \u0412\u043E\u0439\u0442\u0438 \u043F\u043E \u043F\u043E\u0447\u0442\u0435 \u2192" })
@@ -3493,9 +3517,11 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
             setLoginState("notfound");
             return;
           }
+          let \u0440\u0430\u043D\u0435\u0435 = null;
           if (HISTORY_ON && res.token) {
             try {
-              applyProgressPatch(restoreFromProgress(await apiLoadProgress(res.token)));
+              \u0440\u0430\u043D\u0435\u0435 = restoreFromProgress(await apiLoadProgress(res.token));
+              applyProgressPatch(\u0440\u0430\u043D\u0435\u0435);
             } catch (err) {
               console.warn("\u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u0430:", err && err.message);
             }
@@ -3505,7 +3531,7 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
           saveAccessEmail(e);
           setAuthEmail(e);
           setAccess(res);
-          setScreen("cabinet");
+          setScreen(\u0440\u0430\u043D\u0435\u0435 && \u0440\u0430\u043D\u0435\u0435.name || name.trim() ? "cabinet" : "welcome");
         }, style: { width: "100%" }, children: loginBusy ? "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u044E\u2026" : "\u0412\u043E\u0439\u0442\u0438 \u0432 \u041D\u0430\u0432\u0438\u0433\u0430\u0442\u043E\u0440" }) }),
         HISTORY_ON && /* @__PURE__ */ jsx("div", { onClick: () => {
           setStaffErr("");
@@ -3596,9 +3622,10 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
         /* @__PURE__ */ jsxs("div", { style: { fontSize: 13.5, color: C.muted, margin: "8px 0 4px", lineHeight: 1.6 }, children: [
           "\u041F\u043E \u0430\u0434\u0440\u0435\u0441\u0443 ",
           /* @__PURE__ */ jsx("b", { children: loginEmail }),
-          " \u043E\u043F\u043B\u0430\u0442\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430 \u0438\u043B\u0438 \u0441\u0440\u043E\u043A \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438\u0441\u0442\u0451\u043A. \u041F\u0440\u043E\u0432\u0435\u0440\u044C: \u043C\u043E\u0436\u0435\u0442, \u043F\u0440\u0438 \u043E\u043F\u043B\u0430\u0442\u0435 \u0431\u044B\u043B\u0430 \u0443\u043A\u0430\u0437\u0430\u043D\u0430 \u0434\u0440\u0443\u0433\u0430\u044F \u043F\u043E\u0447\u0442\u0430? \u0415\u0441\u043B\u0438 \u0432\u0441\u0451 \u0432\u0435\u0440\u043D\u043E \u2014 \u043D\u0430\u043F\u0438\u0448\u0438 \u043D\u0430\u043C, \u043A\u0443\u0440\u0430\u0442\u043E\u0440\u044B \u0431\u044B\u0441\u0442\u0440\u043E \u0440\u0430\u0437\u0431\u0435\u0440\u0443\u0442\u0441\u044F \u0438 \u0432\u044B\u0448\u043B\u044E\u0442 \u0434\u043E\u0441\u0442\u0443\u043F."
+          " \u043E\u043F\u043B\u0430\u0442\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430. \u041F\u0440\u043E\u0432\u0435\u0440\u044C: \u043C\u043E\u0436\u0435\u0442, \u043F\u0440\u0438 \u043E\u043F\u043B\u0430\u0442\u0435 \u0431\u044B\u043B\u0430 \u0443\u043A\u0430\u0437\u0430\u043D\u0430 \u0434\u0440\u0443\u0433\u0430\u044F \u043F\u043E\u0447\u0442\u0430? \u0415\u0441\u043B\u0438 \u0432\u0441\u0451 \u0432\u0435\u0440\u043D\u043E \u2014 \u043D\u0430\u043F\u0438\u0448\u0438 \u043D\u0430\u043C, \u043A\u0443\u0440\u0430\u0442\u043E\u0440\u044B \u0431\u044B\u0441\u0442\u0440\u043E \u0440\u0430\u0437\u0431\u0435\u0440\u0443\u0442\u0441\u044F \u0438 \u043E\u0442\u043A\u0440\u043E\u044E\u0442 \u0434\u043E\u0441\u0442\u0443\u043F."
         ] }),
-        /* @__PURE__ */ jsx("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsx(Btn, { kind: "ghost", onClick: () => setLoginState("form"), style: { width: "100%" }, children: "\u041F\u043E\u043F\u0440\u043E\u0431\u043E\u0432\u0430\u0442\u044C \u0434\u0440\u0443\u0433\u0443\u044E \u043F\u043E\u0447\u0442\u0443" }) }),
+        /* @__PURE__ */ jsx("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsx(Btn, { kind: "primary", onClick: () => setLoginState("form"), style: { width: "100%" }, children: "\u041F\u043E\u043F\u0440\u043E\u0431\u043E\u0432\u0430\u0442\u044C \u0434\u0440\u0443\u0433\u0443\u044E \u043F\u043E\u0447\u0442\u0443" }) }),
+        BUY_URL && /* @__PURE__ */ jsx("div", { style: { marginTop: 10 }, children: /* @__PURE__ */ jsx(Btn, { kind: "ghost", onClick: () => window.open(BUY_URL, "_blank"), style: { width: "100%" }, children: "\u041E\u0444\u043E\u0440\u043C\u0438\u0442\u044C \u0434\u043E\u0441\u0442\u0443\u043F \u043A \u041D\u0430\u0432\u0438\u0433\u0430\u0442\u043E\u0440\u0443 \u2192" }) }),
         HISTORY_ON && /* @__PURE__ */ jsx("div", { onClick: () => {
           setStaffErr("");
           setLoginState("curator");
