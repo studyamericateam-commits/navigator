@@ -1219,7 +1219,9 @@ function buildProgressRow(st) {
     type_code: st.typing ? st.typing.code : null,
     type_name: st.typing ? st.typing.card.name : null,
     confidence: st.typing ? st.typing.confidence : null,
-    ready: st.done.includes(2) ? st.readinessIndex : null,
+    // Индекс шлём только когда ответы анкеты реально есть: иначе после перезагрузки
+    // он пересчитывался из пустоты и затирал правильное значение в базе.
+    ready: st.done.includes(2) && Object.keys(st.readAns || {}).length ? st.readinessIndex : null,
     eng: st.done.includes(2) ? st.engLevel.name : null,
     countries: st.picked || [],
     budget: st.anketa.budget ?? null,
@@ -1231,9 +1233,13 @@ function buildProgressRow(st) {
     acts_text: clip(st.anketa.actsText, 500) || null,
     consult_qs: clip(st.consultQs, 800) || null,
     feedback: clip(st.feedback, 800) || null,
-    chat_user_msgs: st.helpMsgs.filter((m) => m.role === "user").slice(-30).map((m) => clip(m.content, 200)),
+    // То же и с вопросами Веге: пустой список не должен стирать сохранённую переписку
+    chat_user_msgs: (() => {
+      const m = st.helpMsgs.filter((x) => x.role === "user").slice(-30).map((x) => clip(x.content, 200));
+      return m.length ? m : null;
+    })(),
     booked_at: st.bookedAt || null,
-    snapshot: { v: 2, anketa: st.anketa, picked: st.picked, scores: st.scores, typing: st.typing ? { code: st.typing.code, confidence: st.typing.confidence, margin: st.typing.margin, runner: st.typing.runner } : null, book: st.book, done: st.done, ansE: st.ansE, engAns: st.engAns, aiCard: st.aiCard, liveActs: st.liveActs, fbSent: !!st.fbSent, euCompare: st.euCompare || [] }
+    snapshot: { v: 2, anketa: st.anketa, picked: st.picked, scores: st.scores, readAns: st.readAns, typing: st.typing ? { code: st.typing.code, confidence: st.typing.confidence, margin: st.typing.margin, runner: st.typing.runner } : null, book: st.book, done: st.done, ansE: st.ansE, engAns: st.engAns, aiCard: st.aiCard, liveActs: st.liveActs, fbSent: !!st.fbSent, euCompare: st.euCompare || [] }
   };
 }
 function restoreFromProgress(row) {
@@ -1244,6 +1250,7 @@ function restoreFromProgress(row) {
   if (sn.anketa && typeof sn.anketa === "object") patch.anketa = sn.anketa;
   if (sn.ansE && typeof sn.ansE === "object") patch.ansE = sn.ansE;
   if (Array.isArray(sn.engAns)) patch.engAns = sn.engAns;
+  if (sn.readAns && typeof sn.readAns === "object") patch.readAns = sn.readAns;
   if (sn.typing && sn.typing.code && T[sn.typing.code]) patch.typing = { code: sn.typing.code, card: T[sn.typing.code], confidence: sn.typing.confidence, margin: sn.typing.margin, runner: sn.typing.runner };
   if (Array.isArray(sn.picked)) patch.picked = sn.picked.filter((k) => COUNTRIES[k]);
   if (sn.book && typeof sn.book === "object") patch.book = sn.book;
@@ -1307,6 +1314,7 @@ function mergeAdminRows(users, progress) {
       booked: p && p.booked_at ? fmtD(p.booked_at) : "",
       snapshot: p && p.snapshot || null,
       request: p && p.request_at ? fmtD(p.request_at) : "",
+      isStaff: !!(p && p.is_staff),
       // Сервер отдаёт строку и на оплатившего, кто ещё не начал: смотрим на дату, а не на факт строки
       paidTill: fmtD(u.paid_until),
       lastSeen: p && p.updated_at ? fmtT(p.updated_at) : "\u0435\u0449\u0451 \u043D\u0435 \u043D\u0430\u0447\u0438\u043D\u0430\u043B(\u0430)",
@@ -1649,6 +1657,7 @@ export default function App() {
       const M = 10, PW = 210, PB = 285, CW = PW - 2 * M, GAP = 2.5;
       let y = M;
       const bookmarks = [];
+      const tocPlacements = [];
       let currentPage = 1;
       for (const el of blocks) {
         const h2 = el.classList.contains("h2") ? el : el.querySelector(".h2");
@@ -1657,7 +1666,7 @@ export default function App() {
           const numTxt = num ? num.textContent.trim() : "";
           const titleTxt = h2.textContent.replace(numTxt, "").replace(/^\s*·?\s*/, "").trim();
           const willFitOnCurrent = true;
-          bookmarks.push({ title: (numTxt ? numTxt + " \xB7 " : "") + titleTxt, page: 0, el });
+          bookmarks.push({ title: (numTxt ? numTxt + " \xB7 " : "") + titleTxt, page: 0, el, id: h2.id || "" });
         }
         const canvas = await window.html2canvas(el, { scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false, windowWidth: 794 });
         if (!canvas.width || !canvas.height) continue;
@@ -1671,6 +1680,15 @@ export default function App() {
           pdf.addImage(canvas.toDataURL("image/jpeg", 0.92), "JPEG", M, y, CW, hmm);
           const bm = bookmarks.find((b) => b.el === el);
           if (bm) bm.page = currentPage;
+          const tocEl = el.classList.contains("toc") ? el : el.querySelector(".toc");
+          if (tocEl) {
+            const blockTop = el.getBoundingClientRect().top;
+            const rows = Array.from(tocEl.querySelectorAll("a.tocRow")).map((a) => {
+              const r = a.getBoundingClientRect();
+              return { id: (a.getAttribute("href") || "").replace("#", ""), top: r.top - blockTop, h: r.height };
+            }).filter((r) => r.id);
+            if (rows.length) tocPlacements.push({ page: currentPage, yStart: y, hmm, blockH: el.getBoundingClientRect().height, rows });
+          }
           y += hmm + GAP;
         } else {
           const pagePx = Math.floor((PB - M) * canvas.width / CW);
@@ -1701,6 +1719,23 @@ export default function App() {
       }
       if (pdf.outline && pdf.outline.add) {
         for (const b of bookmarks) if (b.page > 0) pdf.outline.add(null, b.title, { pageNumber: b.page });
+      }
+      if (pdf.link && tocPlacements.length) {
+        const pageOf = {};
+        for (const b of bookmarks) if (b.id && b.page > 0) pageOf[b.id] = b.page;
+        const lastPage = pdf.getNumberOfPages ? pdf.getNumberOfPages() : currentPage;
+        for (const t of tocPlacements) {
+          if (!t.blockH) continue;
+          pdf.setPage(t.page);
+          for (const r of t.rows) {
+            const target = pageOf[r.id];
+            if (!target) continue;
+            const yMm = t.yStart + r.top / t.blockH * t.hmm;
+            const hMm = r.h / t.blockH * t.hmm;
+            if (hMm > 0.5) pdf.link(M, yMm, CW, hMm, { pageNumber: target });
+          }
+        }
+        pdf.setPage(lastPage);
       }
       pdf.save(docView.fname.replace(/\.(html?|pdf)$/i, "") + ".pdf");
     } catch (e) {
@@ -1760,6 +1795,7 @@ export default function App() {
     if (patch.anketa) setAnketa((a) => ({ ...a, ...patch.anketa }));
     if (patch.ansE) setAnsE(patch.ansE);
     if (patch.engAns) setEngAns(patch.engAns);
+    if (patch.readAns) setReadAns(patch.readAns);
     if (patch.typing) setTyping(patch.typing);
     if (patch.picked) setPicked(patch.picked);
     if (patch.book) setBook(patch.book);
@@ -1845,8 +1881,10 @@ export default function App() {
     const win = rows[0], second = rows[1];
     const margin = win.total - second.total;
     const confidence = margin >= 2.5 ? "\u0432\u044B\u0441\u043E\u043A\u0430\u044F" : margin >= 1 ? "\u0441\u0440\u0435\u0434\u043D\u044F\u044F" : "\u043D\u0438\u0437\u043A\u0430\u044F";
-    setTyping({ code: win.code, card: T[win.code], confidence, margin, runner: second.code });
-    setS1("extra");
+    const tp = { code: win.code, card: T[win.code], confidence, margin, runner: second.code };
+    setTyping(tp);
+    setS1("result");
+    makeAiPortrait(tp, anketa);
   };
   function devFill() {
     if (!name) setName("\u0422\u0435\u0441\u0442");
@@ -1858,10 +1896,12 @@ export default function App() {
     const win = rows[0], second = rows[1];
     const margin = win.total - second.total;
     const confidence = margin >= 2.5 ? "\u0432\u044B\u0441\u043E\u043A\u0430\u044F" : margin >= 1 ? "\u0441\u0440\u0435\u0434\u043D\u044F\u044F" : "\u043D\u0438\u0437\u043A\u0430\u044F";
-    setTyping({ code: win.code, card: T[win.code], confidence, margin, runner: second.code });
+    const tp = { code: win.code, card: T[win.code], confidence, margin, runner: second.code };
+    setTyping(tp);
     setQi(QUESTIONS.length - 1);
     setAi(0);
-    setS1("extra");
+    setS1("result");
+    makeAiPortrait(tp, anketa);
   }
   async function makeAiPortrait(tp, ank) {
     setAiBusy(true);
@@ -1874,7 +1914,7 @@ export default function App() {
     const prompt = `\u0422\u044B \u2014 \u0442\u0438\u043F\u043E\u043B\u043E\u0433 \u043F\u043E \u043C\u0435\u0442\u043E\u0434\u0438\u043A\u0435 \u042D\u043D\u0438\u043E\u0441\u0442\u0438\u043B\u044C (StudyGlobal). \u0422\u0438\u043F \u0443\u0447\u0435\u043D\u0438\u043A\u0430 \u0423\u0416\u0415 \u041E\u041F\u0420\u0415\u0414\u0415\u041B\u0401\u041D \u0434\u0435\u0442\u0435\u0440\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u043C \u0430\u043B\u0433\u043E\u0440\u0438\u0442\u043C\u043E\u043C \u043F\u043E \u0435\u0433\u043E \u043E\u0442\u0432\u0435\u0442\u0430\u043C \u2014 \u041D\u0415 \u041C\u0415\u041D\u042F\u0419 \u0435\u0433\u043E.
 \u0422\u0438\u043F: ${tp.code} \xAB${tp.card.name}\xBB \u2014 ${tp.card.tagline}
 \u0411\u043B\u0438\u0436\u0430\u0439\u0448\u0438\u0439 \u0430\u043B\u044C\u0442\u0435\u0440\u043D\u0430\u0442\u0438\u0432\u043D\u044B\u0439 (\u043D\u0435 \u0432\u044B\u0431\u0440\u0430\u043D): ${tp.runner} \xAB${T[tp.runner].name}\xBB \u2014 \u043E\u0442\u0441\u0442\u0430\u043B \u043D\u0430 ${tp.margin.toFixed(1)} \u0431\u0430\u043B\u043B\u0430.
-\u041A\u043B\u0430\u0441\u0441: ${ank.grade || "?"}. \u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439: ${["\u043F\u043E\u0447\u0442\u0438 \u0441 \u043D\u0443\u043B\u044F", "A2", "B1", "B2+"][ank.eng ?? 1]}.
+${ank.grade ? "\u041A\u043B\u0430\u0441\u0441: " + ank.grade + ". " : ""}${ank.eng != null ? "\u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439: " + ["\u043F\u043E\u0447\u0442\u0438 \u0441 \u043D\u0443\u043B\u044F", "A2", "B1", "B2+"][ank.eng] + "." : "\u041A\u043B\u0430\u0441\u0441 \u0438 \u0443\u0440\u043E\u0432\u0435\u043D\u044C \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u043E\u0433\u043E \u043F\u043E\u043A\u0430 \u043D\u0435 \u0438\u0437\u0432\u0435\u0441\u0442\u043D\u044B \u2014 \u043D\u0435 \u0443\u043F\u043E\u043C\u0438\u043D\u0430\u0439 \u0438\u0445."}
 \u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0435 \u043E\u0442\u0432\u0435\u0442\u044B \u0443\u0447\u0435\u043D\u0438\u043A\u0430:
 ${opens}
 \u0412\u0435\u0440\u043D\u0438 \u0422\u041E\u041B\u042C\u041A\u041E \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 JSON \u0431\u0435\u0437 markdown:
@@ -1904,10 +1944,7 @@ ${opens}
     const a = { ...anketa, [ANKETA[ai].id]: v };
     setAnketa(a);
     if (ai + 1 < ANKETA.length) setAi(ai + 1);
-    else {
-      setS1("result");
-      makeAiPortrait(typing, a);
-    }
+    else setS2("ready");
   };
   const bandOf = (band, ans) => {
     const idxs = ENG_TEST.map((q, i) => q.lvl === band ? i : -1).filter((i) => i >= 0);
@@ -1931,7 +1968,7 @@ ${opens}
     if (engIdx + 1 < ENG_TEST.length) setEngIdx(engIdx + 1);
     else {
       setAnketa((a) => ({ ...a, eng: calcEngLevel(next).code }));
-      setS2("ready");
+      setS2("engres");
     }
   };
   const answerReady = (o) => {
@@ -2072,7 +2109,7 @@ ${opens}
   };
   const syncProgress = async () => {
     if (!HISTORY_ON || !authEmail || !access || !accessToken) return;
-    const row = buildProgressRow({ email: authEmail, name, anketa, typing, done, readinessIndex, engLevel, picked, book, ansE, engAns, aiCard, liveActs, fbSent, euCompare, consultQs, feedback, helpMsgs, scores, bookedAt });
+    const row = buildProgressRow({ email: authEmail, name, anketa, typing, done, readinessIndex, engLevel, picked, book, ansE, engAns, readAns, aiCard, liveActs, fbSent, euCompare, consultQs, feedback, helpMsgs, scores, bookedAt });
     await apiSaveProgress(accessToken, row);
   };
   useEffect(() => {
@@ -2401,7 +2438,24 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
 <div style="break-inside:avoid;margin:6px 0 20px"><div style="display:flex;align-items:center"><div style="flex:0 0 36%;height:3px;background:#00337B;border-radius:2px"></div><div style="width:18px;height:18px;border-radius:50%;background:#FFCC00;display:flex;align-items:center;justify-content:center;flex:none;margin:0 3px"><div style="width:10px;height:10px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center"><div style="width:4px;height:4px;border-radius:50%;background:#FFCC00"></div></div></div><div style="flex:1;border-top:3px dotted #C9C4BA;margin:0 10px"></div><span style="color:#FF3300;font-size:22px;line-height:1;flex:none">\u2726</span></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:10px;font-weight:800;letter-spacing:0.11em;color:#00337B">\u042D\u041A\u0421\u041F\u0415\u0414\u0418\u0426\u0418\u042F \u041F\u0420\u041E\u0419\u0414\u0415\u041D\u0410 \u2014 \u0422\u042B \u0417\u0414\u0415\u0421\u042C</span><span style="font-size:10px;font-weight:800;letter-spacing:0.11em;color:#6E675E">\u041F\u041E\u0421\u0422\u0423\u041F\u041B\u0415\u041D\u0418\u0415</span></div></div>
 <div class="vega"><span class="vtag">\u0412\u0415\u0413\u0410</span><br>${book && book.next ? book.next : "\u0421\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044F \u0433\u043E\u0442\u043E\u0432\u0430. \u041F\u0440\u0438\u0445\u043E\u0434\u0438 \u043D\u0430 \u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044E \u0441 \u044D\u043A\u0441\u043F\u0435\u0440\u0442\u043E\u043C \u2014 \u043F\u0440\u0435\u0432\u0440\u0430\u0442\u0438\u043C \u043F\u043B\u0430\u043D \u0432 \u043F\u043E\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u0435."}</div>
 <p class="foot">\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442 \u0441\u0444\u043E\u0440\u043C\u0438\u0440\u043E\u0432\u0430\u043D \u043F\u043B\u0430\u0442\u0444\u043E\u0440\u043C\u043E\u0439 \xAB\u041D\u0430\u0432\u0438\u0433\u0430\u0442\u043E\u0440 StudyGlobal\xBB ${dt} \xB7 \u0423\u0441\u043B\u043E\u0432\u0438\u044F \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u043C, \u0432\u0443\u0437\u043E\u0432, \u0432\u0438\u0437\u044B, \u0441\u0442\u0438\u043F\u0435\u043D\u0434\u0438\u0438 \u0438 \u0434\u0435\u0434\u043B\u0430\u0439\u043D\u044B \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u043E \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u0442 \u044D\u043A\u0441\u043F\u0435\u0440\u0442 \u043D\u0430 \u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u0438 \xB7 studyglobal.ru</p>
-</div></body></html>`;
+</div>
+<script>
+/* \u041E\u0433\u043B\u0430\u0432\u043B\u0435\u043D\u0438\u0435: \u043F\u0440\u043E\u043A\u0440\u0443\u0447\u0438\u0432\u0430\u0435\u043C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442 \u0441\u0430\u043C\u0438. \u0412\u043D\u0443\u0442\u0440\u0438 \u0440\u0430\u043C\u043A\u0438 \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430 \u0430\u0434\u0440\u0435\u0441 \xAB#\u0440\u0430\u0437\u0434\u0435\u043B\xBB
+   \u0440\u0430\u0441\u043A\u0440\u044B\u0432\u0430\u043B\u0441\u044F \u0432 \u0430\u0434\u0440\u0435\u0441 \u0441\u0430\u0439\u0442\u0430 \u0438 \u0443\u0432\u043E\u0434\u0438\u043B \u0441\u043E \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B \u043A\u043D\u0438\u0433\u0438 \u2014 \u044D\u0442\u043E \u0438 \u043B\u043E\u043C\u0430\u043B\u043E \u043F\u0435\u0440\u0435\u0445\u043E\u0434\u044B. */
+document.addEventListener("click", function (e) {
+  var a = e.target && e.target.closest ? e.target.closest("a.tocRow") : null;
+  if (!a) return;
+  e.preventDefault();
+  var id = (a.getAttribute("href") || "").replace("#", "");
+  var el = id && document.getElementById(id);
+  if (!el) return;
+  var y = el.getBoundingClientRect().top + (window.pageYOffset || 0) - 8;
+  try { window.scrollTo({ top: y, behavior: "smooth" }); } catch (err) { window.scrollTo(0, y); }
+  /* \u041F\u043E\u0434\u0441\u0442\u0440\u0430\u0445\u043E\u0432\u043A\u0430: \u0435\u0441\u043B\u0438 \u043F\u043B\u0430\u0432\u043D\u0430\u044F \u043F\u0440\u043E\u043A\u0440\u0443\u0442\u043A\u0430 \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435 \u043D\u0435 \u0441\u0440\u0430\u0431\u043E\u0442\u0430\u043B\u0430 \u2014 \u0441\u0442\u0430\u0432\u0438\u043C \u0436\u0451\u0441\u0442\u043A\u043E */
+  setTimeout(function () { if (Math.abs((window.pageYOffset || 0) - y) > 40) window.scrollTo(0, y); }, 350);
+});
+<\/script>
+</body></html>`;
     setDocView({ title: "\u041F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u0430\u044F \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044F \u043F\u043E\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u044F", hint: "\u0420\u0430\u0441\u043F\u0435\u0447\u0430\u0442\u0430\u0439 \u044D\u0442\u043E\u0442 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442 \u2014 \u044D\u0442\u043E \u0442\u0432\u043E\u0439 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u043F\u043B\u0430\u043D \u043F\u043E\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u044F", fname: `\u0421\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044F_\u043F\u043E\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u044F_${(name || "\u0443\u0447\u0435\u043D\u0438\u043A").replace(/\s+/g, "_")}`, html });
   }
   if (screen === "welcome") {
@@ -2545,7 +2599,7 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
       stage === 1 && /* @__PURE__ */ jsxs("div", { children: [
         /* @__PURE__ */ jsx(Eyebrow, { children: "\u042D\u0442\u0430\u043F 1 \xB7 \u041A\u0442\u043E \u044F? \xB7 \u224815 \u043C\u0438\u043D" }),
         /* @__PURE__ */ jsx("h2", { style: { fontFamily: fontHead, fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px" }, children: "\u041A\u0442\u043E \u044F? \u041A\u0430\u0440\u0442\u0430 \u0442\u0430\u043B\u0430\u043D\u0442\u043E\u0432" }),
-        s1 !== "result" && /* @__PURE__ */ jsx("p", { style: { color: "#6d675e", margin: "0 0 20px" }, children: "\u041D\u0430\u0447\u043D\u0451\u043C \u0441 \u0433\u043B\u0430\u0432\u043D\u043E\u0433\u043E \u2014 \u0441 \u0442\u0435\u0431\u044F. 20 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432, \u0432 \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u043D\u0435\u0442 \u043F\u0440\u0430\u0432\u0438\u043B\u044C\u043D\u044B\u0445 \u0438 \u043D\u0435\u043F\u0440\u0430\u0432\u0438\u043B\u044C\u043D\u044B\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432, \u0438 \u043A\u043E\u0440\u043E\u0442\u043A\u0438\u0439 \u0431\u043B\u043E\u043A \u0443\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u0439. \u0412 \u0438\u0442\u043E\u0433\u0435 \u0441\u043E\u0431\u0435\u0440\u0451\u043C \u0442\u0432\u043E\u044E \u043A\u0430\u0440\u0442\u0443 \u0442\u0430\u043B\u0430\u043D\u0442\u043E\u0432 \u043F\u043E \u043C\u0435\u0442\u043E\u0434\u0438\u043A\u0435 \u042D\u043D\u0438\u043E\u0441\u0442\u0438\u043B\u044C: \u0441\u0438\u043B\u044C\u043D\u044B\u0435 \u0441\u0442\u043E\u0440\u043E\u043D\u044B, \u0437\u043E\u043D\u044B \u0440\u043E\u0441\u0442\u0430 \u0438 \u043F\u0440\u043E\u0444\u0435\u0441\u0441\u0438\u0438, \u0433\u0434\u0435 \u0442\u044B \u0440\u0430\u0441\u043A\u0440\u043E\u0435\u0448\u044C\u0441\u044F." }),
+        s1 !== "result" && /* @__PURE__ */ jsx("p", { style: { color: "#6d675e", margin: "0 0 20px" }, children: "\u041D\u0430\u0447\u043D\u0451\u043C \u0441 \u0433\u043B\u0430\u0432\u043D\u043E\u0433\u043E \u2014 \u0441 \u0442\u0435\u0431\u044F. 20 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432, \u0432 \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u043D\u0435\u0442 \u043F\u0440\u0430\u0432\u0438\u043B\u044C\u043D\u044B\u0445 \u0438 \u043D\u0435\u043F\u0440\u0430\u0432\u0438\u043B\u044C\u043D\u044B\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432, \u0438 \u043A\u043E\u0440\u043E\u0442\u043A\u0438\u0439 \u0431\u043B\u043E\u043A \u0440\u0430\u0437\u043B\u0438\u0447\u0435\u043D\u0438\u044F. \u0412 \u0438\u0442\u043E\u0433\u0435 \u0441\u043E\u0431\u0435\u0440\u0451\u043C \u0442\u0432\u043E\u044E \u043A\u0430\u0440\u0442\u0443 \u0442\u0430\u043B\u0430\u043D\u0442\u043E\u0432 \u043F\u043E \u043C\u0435\u0442\u043E\u0434\u0438\u043A\u0435 \u042D\u043D\u0438\u043E\u0441\u0442\u0438\u043B\u044C: \u0441\u0438\u043B\u044C\u043D\u044B\u0435 \u0441\u0442\u043E\u0440\u043E\u043D\u044B, \u0437\u043E\u043D\u044B \u0440\u043E\u0441\u0442\u0430 \u0438 \u043F\u0440\u043E\u0444\u0435\u0441\u0441\u0438\u0438, \u0433\u0434\u0435 \u0442\u044B \u0440\u0430\u0441\u043A\u0440\u043E\u0435\u0448\u044C\u0441\u044F." }),
         s1 === "quiz" && /* @__PURE__ */ jsxs(Card, { children: [
           /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }, children: [
             /* @__PURE__ */ jsxs("div", { style: { fontSize: 13, color: "#8a847a" }, children: [
@@ -2612,26 +2666,6 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
             /* @__PURE__ */ jsx(Rate, { value: disc[code + "_" + i], onChange: (v) => setDisc((d) => ({ ...d, [code + "_" + i]: v })) })
           ] }, i)) }, code)),
           /* @__PURE__ */ jsx("div", { style: { marginTop: 18, textAlign: "right" }, children: /* @__PURE__ */ jsx(Btn, { onClick: finishTyping, disabled: !discFilled, children: "\u041E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C \u043C\u043E\u0439 \u0442\u0438\u043F \u2192" }) })
-        ] }),
-        s1 === "extra" && typing && /* @__PURE__ */ jsxs("div", { style: { display: "grid", gap: 16 }, children: [
-          /* @__PURE__ */ jsxs(Card, { style: { background: C.blue, color: "#fff", textAlign: "center" }, children: [
-            /* @__PURE__ */ jsx("div", { style: { fontSize: 12, letterSpacing: ".14em", textTransform: "uppercase", color: "#9db6dc" }, children: "\u0422\u0432\u043E\u0439 \u0442\u0438\u043F \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D" }),
-            /* @__PURE__ */ jsxs("div", { style: { fontSize: 30, fontWeight: 800, margin: "6px 0 2px" }, children: [
-              typing.code,
-              " \xB7 ",
-              typing.card.name
-            ] }),
-            /* @__PURE__ */ jsx("div", { style: { fontSize: 14.5, color: "#dfe6f2" }, children: typing.card.tagline })
-          ] }),
-          /* @__PURE__ */ jsxs(Card, { children: [
-            /* @__PURE__ */ jsxs("div", { style: { fontSize: 13, color: "#8a847a", marginBottom: 10 }, children: [
-              "\u0415\u0449\u0451 ",
-              ANKETA.length - ai,
-              " \u043A\u043E\u0440\u043E\u0442\u043A\u0438\u0445 \u0432\u043E\u043F\u0440\u043E\u0441(\u0430) \u2014 \u043E\u043D\u0438 \u043D\u0443\u0436\u043D\u044B \u0434\u043B\u044F \u043F\u043E\u0434\u0431\u043E\u0440\u0430 \u0441\u0442\u0440\u0430\u043D \u0438 \u0431\u044E\u0434\u0436\u0435\u0442\u0430"
-            ] }),
-            /* @__PURE__ */ jsx("div", { style: { fontSize: 19, fontWeight: 700, marginBottom: 18 }, children: ANKETA[ai].q }),
-            /* @__PURE__ */ jsx("div", { style: { display: "grid", gap: 10 }, children: ANKETA[ai].opts.map((o, i) => /* @__PURE__ */ jsx(OptBtn, { onClick: () => answerAnketa(o.v), children: o.t }, i)) })
-          ] })
         ] }),
         s1 === "result" && typing && /* @__PURE__ */ jsxs("div", { style: { display: "grid", gap: 16 }, children: [
           /* @__PURE__ */ jsxs(Card, { style: { background: C.blue, color: "#fff" }, children: [
@@ -2742,7 +2776,7 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
         /* @__PURE__ */ jsx(Eyebrow, { children: "\u042D\u0442\u0430\u043F 2 \xB7 \u041A\u0443\u0434\u0430 \u044F \u043C\u043E\u0433\u0443 \u043F\u043E\u0441\u0442\u0443\u043F\u0438\u0442\u044C? \xB7 \u224820 \u043C\u0438\u043D" }),
         /* @__PURE__ */ jsx("h2", { style: { fontFamily: fontHead, fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px" }, children: "\u041A\u0443\u0434\u0430 \u044F \u043C\u043E\u0433\u0443 \u043F\u043E\u0441\u0442\u0443\u043F\u0438\u0442\u044C?" }),
         s2 === "eng" && /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("p", { style: { color: "#6d675e", margin: "0 0 20px" }, children: "\u0428\u0430\u0433 1 \u0438\u0437 2 (\u22487 \u043C\u0438\u043D): \u0432\u0445\u043E\u0434\u043D\u043E\u0439 \u0442\u0435\u0441\u0442 \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u043E\u0433\u043E \u2014 24 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 \u043F\u043E \u043C\u043E\u0434\u0435\u043B\u0438 \u043C\u0435\u0436\u0434\u0443\u043D\u0430\u0440\u043E\u0434\u043D\u044B\u0445 \u0442\u0435\u0441\u0442\u043E\u0432 \u0443\u0440\u043E\u0432\u043D\u044F: \u043E\u0442 A1 \u043A C1, \u043F\u043E \u0441\u0442\u0443\u043F\u0435\u043D\u044F\u043C. \u0422\u0432\u043E\u0439 \u0443\u0440\u043E\u0432\u0435\u043D\u044C \u2014 \u0442\u0430 \u0441\u0442\u0443\u043F\u0435\u043D\u044C, \u0433\u0434\u0435 \u0442\u044B \u043E\u0442\u0432\u0435\u0447\u0430\u0435\u0448\u044C \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E, \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u0443\u0433\u0430\u0434\u044B\u0432\u0430\u043D\u0438\u0435 \u0441\u043B\u043E\u0436\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u043D\u0435 \u043F\u043E\u043C\u043E\u0436\u0435\u0442, \u0430 \u0447\u0435\u0441\u0442\u043D\u044B\u0435 \u043E\u0442\u0432\u0435\u0442\u044B \u0434\u0430\u0434\u0443\u0442 \u0442\u043E\u0447\u043D\u044B\u0439 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442. \u041E\u0448\u0438\u0431\u0430\u0442\u044C\u0441\u044F \u2014 \u043D\u043E\u0440\u043C\u0430\u043B\u044C\u043D\u043E." }),
+          /* @__PURE__ */ jsx("p", { style: { color: "#6d675e", margin: "0 0 20px" }, children: "\u0428\u0430\u0433 1 \u0438\u0437 3 (\u22487 \u043C\u0438\u043D): \u0432\u0445\u043E\u0434\u043D\u043E\u0439 \u0442\u0435\u0441\u0442 \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u043E\u0433\u043E \u2014 24 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 \u043F\u043E \u043C\u043E\u0434\u0435\u043B\u0438 \u043C\u0435\u0436\u0434\u0443\u043D\u0430\u0440\u043E\u0434\u043D\u044B\u0445 \u0442\u0435\u0441\u0442\u043E\u0432 \u0443\u0440\u043E\u0432\u043D\u044F: \u043E\u0442 A1 \u043A C1, \u043F\u043E \u0441\u0442\u0443\u043F\u0435\u043D\u044F\u043C. \u0422\u0432\u043E\u0439 \u0443\u0440\u043E\u0432\u0435\u043D\u044C \u2014 \u0442\u0430 \u0441\u0442\u0443\u043F\u0435\u043D\u044C, \u0433\u0434\u0435 \u0442\u044B \u043E\u0442\u0432\u0435\u0447\u0430\u0435\u0448\u044C \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E, \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u0443\u0433\u0430\u0434\u044B\u0432\u0430\u043D\u0438\u0435 \u0441\u043B\u043E\u0436\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u043D\u0435 \u043F\u043E\u043C\u043E\u0436\u0435\u0442, \u0430 \u0447\u0435\u0441\u0442\u043D\u044B\u0435 \u043E\u0442\u0432\u0435\u0442\u044B \u0434\u0430\u0434\u0443\u0442 \u0442\u043E\u0447\u043D\u044B\u0439 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442. \u041E\u0448\u0438\u0431\u0430\u0442\u044C\u0441\u044F \u2014 \u043D\u043E\u0440\u043C\u0430\u043B\u044C\u043D\u043E." }),
           /* @__PURE__ */ jsxs(Card, { children: [
             /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }, children: [
               /* @__PURE__ */ jsxs("div", { style: { fontSize: 13, color: "#8a847a" }, children: [
@@ -2767,8 +2801,66 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
             engIdx > 0 && /* @__PURE__ */ jsx("button", { onClick: () => setEngIdx(engIdx - 1), style: { fontFamily: font, background: "none", border: "none", color: "#8a847a", cursor: "pointer", fontSize: 13, marginTop: 14, padding: 0 }, children: "\u2190 \u043D\u0430\u0437\u0430\u0434 \u2014 \u0438\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043E\u0442\u0432\u0435\u0442" })
           ] })
         ] }),
+        s2 === "engres" && /* @__PURE__ */ jsxs("div", { style: { display: "grid", gap: 16 }, children: [
+          /* @__PURE__ */ jsx("p", { style: { color: "#6d675e", margin: 0 }, children: "\u0428\u0430\u0433 1 \u0438\u0437 3 \u2014 \u0433\u043E\u0442\u043E\u0432\u043E" }),
+          /* @__PURE__ */ jsxs(Card, { style: { background: C.blue, color: "#fff" }, children: [
+            /* @__PURE__ */ jsx("div", { style: { fontSize: 12, letterSpacing: ".14em", textTransform: "uppercase", color: "#9db6dc" }, children: "\u0422\u0432\u043E\u0439 \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439 \u043F\u043E \u0442\u0435\u0441\u0442\u0443" }),
+            /* @__PURE__ */ jsx("div", { style: { fontSize: 34, fontWeight: 800, margin: "8px 0 4px" }, children: engLevel.name }),
+            /* @__PURE__ */ jsxs("div", { style: { fontSize: 14.5, color: "#dfe6f2" }, children: [
+              "\u041F\u0440\u0430\u0432\u0438\u043B\u044C\u043D\u044B\u0445 \u043E\u0442\u0432\u0435\u0442\u043E\u0432: ",
+              engCorrect,
+              " \u0438\u0437 ",
+              ENG_TEST.length
+            ] }),
+            /* @__PURE__ */ jsx("div", { style: { display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }, children: bandStats.map((b) => /* @__PURE__ */ jsxs("span", { style: { fontSize: 11.5, fontWeight: 700, padding: "4px 9px", borderRadius: 14, background: b.correct >= b.need ? "rgba(255,255,255,.22)" : "rgba(255,255,255,.08)", color: b.correct >= b.need ? "#fff" : "#9db6dc" }, children: [
+              b.code,
+              " \xB7 ",
+              b.correct,
+              "/",
+              b.total
+            ] }, b.code)) }),
+            /* @__PURE__ */ jsx("div", { style: { fontSize: 13, color: "#c9d6ec", marginTop: 14, lineHeight: 1.6 }, children: engLevel.note || "\u0423\u0440\u043E\u0432\u0435\u043D\u044C \u0440\u0430\u0432\u0435\u043D \u0441\u0430\u043C\u043E\u0439 \u0432\u044B\u0441\u043E\u043A\u043E\u0439 \u0441\u0442\u0443\u043F\u0435\u043D\u0438, \u0433\u0434\u0435 \u043E\u0442\u0432\u0435\u0442\u044B \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u044B. \u042D\u0442\u043E \u043E\u0440\u0438\u0435\u043D\u0442\u0438\u0440, \u0430 \u043D\u0435 \u043E\u0444\u0438\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0439 \u044D\u043A\u0437\u0430\u043C\u0435\u043D." })
+          ] }),
+          /* @__PURE__ */ jsxs(Card, { children: [
+            /* @__PURE__ */ jsxs("div", { style: { fontSize: 14.5, lineHeight: 1.6 }, children: [
+              /* @__PURE__ */ jsx("b", { children: "\u0427\u0442\u043E \u0434\u0430\u043B\u044C\u0448\u0435." }),
+              " \u0423\u0440\u043E\u0432\u0435\u043D\u044C \u044F\u0437\u044B\u043A\u0430 \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u043E\u0434\u043D\u0430 \u0447\u0430\u0441\u0442\u044C \u043A\u0430\u0440\u0442\u0438\u043D\u044B. \u0422\u0435\u043F\u0435\u0440\u044C \u043F\u0430\u0440\u0430 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u043E \u0442\u0432\u043E\u0435\u0439 \u0441\u0438\u0442\u0443\u0430\u0446\u0438\u0438 \u0438 \u0434\u043E\u0441\u0442\u0438\u0436\u0435\u043D\u0438\u044F\u0445: \u0438\u0437 \u043D\u0438\u0445 \u0441\u043E\u0431\u0435\u0440\u0451\u0442\u0441\u044F \u0438\u043D\u0434\u0435\u043A\u0441 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438 \u0437\u0430\u044F\u0432\u043A\u0438 \u0438 \u043F\u043E\u0434\u0431\u043E\u0440 \u0441\u0442\u0440\u0430\u043D."
+            ] }),
+            /* @__PURE__ */ jsxs("div", { style: { marginTop: 16 }, children: [
+              /* @__PURE__ */ jsx(Btn, { onClick: () => setS2("anketa"), children: "\u0414\u0430\u043B\u044C\u0448\u0435 \u2192" }),
+              /* @__PURE__ */ jsx(
+                "button",
+                {
+                  onClick: () => {
+                    if (window.confirm("\u041F\u0435\u0440\u0435\u0441\u0434\u0430\u0442\u044C \u0442\u0435\u0441\u0442 \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u043E\u0433\u043E? \u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442 \u0441\u043E\u0442\u0440\u0451\u0442\u0441\u044F.")) {
+                      setEngIdx(0);
+                      setEngAns([]);
+                      setS2("eng");
+                    }
+                  },
+                  style: { fontFamily: font, background: "none", border: "none", color: "#8a847a", cursor: "pointer", fontSize: 12.5, marginLeft: 14, textDecoration: "underline" },
+                  children: "\u043F\u0435\u0440\u0435\u0441\u0434\u0430\u0442\u044C \u0442\u0435\u0441\u0442"
+                }
+              )
+            ] })
+          ] })
+        ] }),
+        s2 === "anketa" && /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("p", { style: { color: "#6d675e", margin: "0 0 20px" }, children: "\u0428\u0430\u0433 2 \u0438\u0437 3 (\u22481 \u043C\u0438\u043D): \u043A\u043E\u0440\u043E\u0442\u043A\u043E \u043E \u0442\u0432\u043E\u0435\u0439 \u0441\u0438\u0442\u0443\u0430\u0446\u0438\u0438 \u2014 \u044D\u0442\u043E \u043D\u0443\u0436\u043D\u043E \u0434\u043B\u044F \u043F\u043E\u0434\u0431\u043E\u0440\u0430 \u0441\u0442\u0440\u0430\u043D \u0438 \u0440\u0430\u0441\u0447\u0451\u0442\u0430 \u0431\u044E\u0434\u0436\u0435\u0442\u0430." }),
+          /* @__PURE__ */ jsxs(Card, { children: [
+            /* @__PURE__ */ jsxs("div", { style: { fontSize: 13, color: "#8a847a", marginBottom: 10 }, children: [
+              "\u0412\u043E\u043F\u0440\u043E\u0441 ",
+              ai + 1,
+              " \u0438\u0437 ",
+              ANKETA.length
+            ] }),
+            /* @__PURE__ */ jsx("div", { style: { fontSize: 19, fontWeight: 700, marginBottom: 18 }, children: ANKETA[ai].q }),
+            /* @__PURE__ */ jsx("div", { style: { display: "grid", gap: 10 }, children: ANKETA[ai].opts.map((o, i) => /* @__PURE__ */ jsx(OptBtn, { onClick: () => answerAnketa(o.v), children: o.t }, i)) }),
+            ai > 0 && /* @__PURE__ */ jsx("button", { onClick: () => setAi(ai - 1), style: { fontFamily: font, background: "none", border: "none", color: "#8a847a", cursor: "pointer", fontSize: 12.5, marginTop: 14, textDecoration: "underline" }, children: "\u2190 \u043D\u0430\u0437\u0430\u0434" })
+          ] })
+        ] }),
         s2 === "ready" && /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("p", { style: { color: "#6d675e", margin: "0 0 20px" }, children: "\u0428\u0430\u0433 2 \u0438\u0437 2 (\u22484 \u043C\u0438\u043D): \u0430\u043D\u043A\u0435\u0442\u0430 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438 \u0437\u0430\u044F\u0432\u043A\u0438 \u2014 \u0434\u043E\u0441\u0442\u0438\u0436\u0435\u043D\u0438\u044F, \u043B\u0438\u0447\u043D\u044B\u0439 \u0431\u0440\u0435\u043D\u0434 \u0438 \u043F\u043E\u043D\u0438\u043C\u0430\u043D\u0438\u0435 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u0430. \u042D\u0442\u043E \u0442\u043E, \u043D\u0430 \u0447\u0442\u043E \u043F\u0440\u0438\u0451\u043C\u043D\u044B\u0435 \u043A\u043E\u043C\u0438\u0441\u0441\u0438\u0438 \u0441\u043C\u043E\u0442\u0440\u044F\u0442 \u043A\u0440\u043E\u043C\u0435 \u043E\u0446\u0435\u043D\u043E\u043A. \u0412 \u043A\u043E\u043D\u0446\u0435 \u2014 \u043F\u0430\u0440\u0430 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u043E \u0442\u0432\u043E\u0438\u0445 \u043F\u0440\u0435\u0434\u043F\u043E\u0447\u0442\u0435\u043D\u0438\u044F\u0445: \u0443\u0447\u0442\u0451\u043C \u0438\u0445 \u0432 \u043F\u043E\u0434\u0431\u043E\u0440\u0435 \u0432\u0443\u0437\u043E\u0432, \u043F\u0440\u043E\u0444\u0435\u0441\u0441\u0438\u0439 \u0438 \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u0438." }),
+          /* @__PURE__ */ jsx("p", { style: { color: "#6d675e", margin: "0 0 20px" }, children: "\u0428\u0430\u0433 3 \u0438\u0437 3 (\u22484 \u043C\u0438\u043D): \u0430\u043D\u043A\u0435\u0442\u0430 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438 \u0437\u0430\u044F\u0432\u043A\u0438 \u2014 \u0434\u043E\u0441\u0442\u0438\u0436\u0435\u043D\u0438\u044F, \u043B\u0438\u0447\u043D\u044B\u0439 \u0431\u0440\u0435\u043D\u0434 \u0438 \u043F\u043E\u043D\u0438\u043C\u0430\u043D\u0438\u0435 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u0430. \u042D\u0442\u043E \u0442\u043E, \u043D\u0430 \u0447\u0442\u043E \u043F\u0440\u0438\u0451\u043C\u043D\u044B\u0435 \u043A\u043E\u043C\u0438\u0441\u0441\u0438\u0438 \u0441\u043C\u043E\u0442\u0440\u044F\u0442 \u043A\u0440\u043E\u043C\u0435 \u043E\u0446\u0435\u043D\u043E\u043A. \u0412 \u043A\u043E\u043D\u0446\u0435 \u2014 \u043F\u0430\u0440\u0430 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u043E \u0442\u0432\u043E\u0438\u0445 \u043F\u0440\u0435\u0434\u043F\u043E\u0447\u0442\u0435\u043D\u0438\u044F\u0445: \u0443\u0447\u0442\u0451\u043C \u0438\u0445 \u0432 \u043F\u043E\u0434\u0431\u043E\u0440\u0435 \u0432\u0443\u0437\u043E\u0432, \u043F\u0440\u043E\u0444\u0435\u0441\u0441\u0438\u0439 \u0438 \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u0438." }),
           /* @__PURE__ */ jsxs(Card, { children: [
             /* @__PURE__ */ jsxs("div", { style: { fontSize: 13, color: "#8a847a", marginBottom: 10 }, children: [
               "\u0412\u043E\u043F\u0440\u043E\u0441 ",
@@ -3365,7 +3457,7 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
             /* @__PURE__ */ jsxs("div", { children: [
               "\u{1F30D} ",
               /* @__PURE__ */ jsx("b", { children: "\u042D\u0442\u0430\u043F 2 \xB7 \u041A\u0443\u0434\u0430." }),
-              " \u041C\u0438\u043D\u0438-\u0442\u0435\u0441\u0442 \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u043E\u0433\u043E, \u0438\u043D\u0434\u0435\u043A\u0441 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438 \u0438 \u0441\u0442\u0440\u0430\u043D\u044B \u043F\u043E\u0434 \u0442\u0432\u043E\u0439 \u043F\u0440\u043E\u0444\u0438\u043B\u044C. \u0412\u043D\u0443\u0442\u0440\u0438 \u0415\u0432\u0440\u043E\u043F\u044B \u2014 10 \u0441\u0442\u0440\u0430\u043D: \u043E\u0442\u043A\u0440\u043E\u0439, \u0438\u0437\u0443\u0447\u0438 \u0446\u0435\u043D\u044B \u0438 \u0441\u0440\u0430\u0432\u043D\u0438 \u043C\u0435\u0436\u0434\u0443 \u0441\u043E\u0431\u043E\u0439. \u0412\u044B\u0431\u0435\u0440\u0438 \u043C\u0438\u043D\u0438\u043C\u0443\u043C \u0434\u0432\u0435 \u0441\u0442\u0440\u0430\u043D\u044B \u0432 \u0441\u0432\u043E\u0439 \u0448\u043E\u0440\u0442-\u043B\u0438\u0441\u0442."
+              " \u0422\u0435\u0441\u0442 \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u043E\u0433\u043E \u0441 \u0440\u0430\u0437\u0431\u043E\u0440\u043E\u043C \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u0430, \u043A\u043E\u0440\u043E\u0442\u043A\u0430\u044F \u0430\u043D\u043A\u0435\u0442\u0430 \u043E \u0442\u0432\u043E\u0435\u0439 \u0441\u0438\u0442\u0443\u0430\u0446\u0438\u0438, \u0438\u043D\u0434\u0435\u043A\u0441 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438 \u0438 \u0441\u0442\u0440\u0430\u043D\u044B \u043F\u043E\u0434 \u0442\u0432\u043E\u0439 \u043F\u0440\u043E\u0444\u0438\u043B\u044C. \u0412\u043D\u0443\u0442\u0440\u0438 \u0415\u0432\u0440\u043E\u043F\u044B \u2014 10 \u0441\u0442\u0440\u0430\u043D: \u043E\u0442\u043A\u0440\u043E\u0439, \u0438\u0437\u0443\u0447\u0438 \u0446\u0435\u043D\u044B \u0438 \u0441\u0440\u0430\u0432\u043D\u0438 \u043C\u0435\u0436\u0434\u0443 \u0441\u043E\u0431\u043E\u0439. \u0412\u044B\u0431\u0435\u0440\u0438 \u043C\u0438\u043D\u0438\u043C\u0443\u043C \u0434\u0432\u0435 \u0441\u0442\u0440\u0430\u043D\u044B \u0432 \u0441\u0432\u043E\u0439 \u0448\u043E\u0440\u0442-\u043B\u0438\u0441\u0442."
             ] }),
             /* @__PURE__ */ jsxs("div", { children: [
               "\u{1F4B0} ",
@@ -3897,7 +3989,9 @@ ${H2("\u0424\u0418\u041D\u0418\u0428", `\u0422\u0432\u043E\u0439 \u043C\u0430\u0
                 st.name,
                 " \xB7 ",
                 st.grade,
-                " \u043A\u043B\u0430\u0441\u0441 ",
+                " \u043A\u043B\u0430\u0441\u0441",
+                st.isStaff && /* @__PURE__ */ jsx("span", { style: { fontSize: 11, fontWeight: 600, color: C.muted, background: "#f2efe9", borderRadius: 6, padding: "3px 7px", marginLeft: 8, verticalAlign: "middle" }, children: "\u043A\u0443\u0440\u0430\u0442\u043E\u0440 \u043F\u0440\u043E\u0445\u043E\u0434\u0438\u043B(\u0430) \u0441\u0430\u043C(\u0430)" }),
+                " ",
                 st.live && /* @__PURE__ */ jsx("span", { style: { fontSize: 11, color: C.blue }, children: "\u25CF \u0436\u0438\u0432\u0430\u044F \u0441\u0435\u0441\u0441\u0438\u044F" })
               ] }),
               /* @__PURE__ */ jsxs("div", { style: { display: "grid", gap: 7, marginTop: 12, fontSize: 13.5 }, children: [
