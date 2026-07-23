@@ -1660,6 +1660,7 @@ export default function App() {
       let y = M;
       const bookmarks = [];
       const tocPlacements = [];
+      const extPlacements = [];
       let currentPage = 1;
       for (const el of blocks) {
         const h2 = el.classList.contains("h2") ? el : el.querySelector(".h2");
@@ -1691,6 +1692,13 @@ export default function App() {
             }).filter((r) => r.id);
             if (rows.length) tocPlacements.push({ page: currentPage, yStart: y, hmm, blockH: el.getBoundingClientRect().height, rows });
           }
+          const blockRect = el.getBoundingClientRect();
+          const links = Array.from(el.querySelectorAll("a.booklink")).map((a) => {
+            const box = a.closest(".card") || a;
+            const r = box.getBoundingClientRect();
+            return { url: a.getAttribute("href") || "", left: r.left - blockRect.left, top: r.top - blockRect.top, w: r.width, h: r.height };
+          }).filter((l) => /^https?:\/\//.test(l.url));
+          if (links.length) extPlacements.push({ page: currentPage, yStart: y, hmm, blockW: blockRect.width, blockH: blockRect.height, links });
           y += hmm + GAP;
         } else {
           const pagePx = Math.floor((PB - M) * canvas.width / CW);
@@ -1735,6 +1743,21 @@ export default function App() {
             const yMm = t.yStart + r.top / t.blockH * t.hmm;
             const hMm = r.h / t.blockH * t.hmm;
             if (hMm > 0.5) pdf.link(M, yMm, CW, hMm, { pageNumber: target });
+          }
+        }
+        pdf.setPage(lastPage);
+      }
+      if (pdf.link && extPlacements.length) {
+        const lastPage = pdf.getNumberOfPages ? pdf.getNumberOfPages() : currentPage;
+        for (const t of extPlacements) {
+          if (!t.blockH || !t.blockW) continue;
+          pdf.setPage(t.page);
+          for (const l of t.links) {
+            const xMm = M + l.left / t.blockW * CW;
+            const wMm = l.w / t.blockW * CW;
+            const yMm = t.yStart + l.top / t.blockH * t.hmm;
+            const hMm = l.h / t.blockH * t.hmm;
+            if (hMm > 0.5 && wMm > 0.5) pdf.link(xMm, yMm, wMm, hMm, { url: l.url });
           }
         }
         pdf.setPage(lastPage);
@@ -2292,14 +2315,14 @@ ${topKeys.includes("europe") ? EU_BRIEF + "\n\u041F\u043E \u0415\u0432\u0440\u04
     }).join("");
     const dlBlock = cs.filter((c) => DEADLINES[c]).map((c) => `${H3i(COUNTRIES[c].flag, COUNTRIES[c].name)}<table class="tbl"><thead><tr><th style="width:140px">\u041A\u041E\u0413\u0414\u0410</th><th>\u0427\u0422\u041E</th></tr></thead><tbody>${DEADLINES[c].map((r) => `<tr><td class="dt">${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</tbody></table>`).join("");
     const acts = buildActivityIdeas().map((a) => `<div class="chk"><div class="box"></div><div><b>${a[0]}</b><br><span class="mut">\u0417\u0430\u0447\u0435\u043C: ${a[1]}</span></div></div>`).join("");
-    const catAct = [...ACTIVITIES_CATALOG[shortField] || [], ...ACTIVITIES_CATALOG.any].slice(0, 5).map(([n, w]) => `<div class="card" style="padding:11px 14px;margin:0"><b>${n}</b><div class="mut" style="font-size:11.5px;margin-top:3px">${w}</div></div>`).join("");
-    const liveActsBlock = liveActs && liveActs.length ? `${H3("\u{1F50E} \u0410\u043A\u0442\u0443\u0430\u043B\u044C\u043D\u044B\u0435 \u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0438 \u2014 \u043D\u0430\u0439\u0434\u0435\u043D\u044B \u043F\u0440\u0438 \u043F\u0440\u043E\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0438")}<p class="mut" style="margin-top:0">\u0414\u0430\u0442\u044B \u0438 \u0443\u0441\u043B\u043E\u0432\u0438\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u044C \u043D\u0430 \u043E\u0444\u0438\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0445 \u0441\u0430\u0439\u0442\u0430\u0445 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432 \u2014 \u043E\u043D\u0438 \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u044E\u0442\u0441\u044F \u043A\u0430\u0436\u0434\u044B\u0439 \u0441\u0435\u0437\u043E\u043D.</p><div class="grid2">${liveActs.slice(0, 6).map((a) => `<div class="card" style="padding:11px 14px;margin:0">${a.url ? `<a href="${a.url}" style="font-weight:700;text-decoration:none">${a.name}</a>` : `<b>${a.name}</b>`}<div class="mut" style="font-size:11.5px;margin-top:3px">${a.what || ""}${a.when ? " \xB7 " + a.when : ""}${a.url ? " \xB7 " + a.url.replace("https://", "").split("/")[0] : ""}</div></div>`).join("")}</div>` : "";
+    const catAct = [...ACTIVITIES_CATALOG[shortField] || [], ...ACTIVITIES_CATALOG.any].slice(0, 5).map(([n, w, u]) => `<div class="card" style="padding:11px 14px;margin:0">${u ? `<a href="${u}" class="booklink" style="font-weight:700;text-decoration:none">${n} <span style="font-size:11px;color:#00337B">\u{1F517}</span></a>` : `<b>${n}</b>`}<div class="mut" style="font-size:11.5px;margin-top:3px">${w}</div></div>`).join("");
+    const liveActsBlock = liveActs && liveActs.length ? `${H3("\u{1F50E} \u0410\u043A\u0442\u0443\u0430\u043B\u044C\u043D\u044B\u0435 \u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0438 \u2014 \u043D\u0430\u0439\u0434\u0435\u043D\u044B \u043F\u0440\u0438 \u043F\u0440\u043E\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0438")}<p class="mut" style="margin-top:0">\u0414\u0430\u0442\u044B \u0438 \u0443\u0441\u043B\u043E\u0432\u0438\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u044C \u043D\u0430 \u043E\u0444\u0438\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0445 \u0441\u0430\u0439\u0442\u0430\u0445 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0442\u043E\u0440\u043E\u0432 \u2014 \u043E\u043D\u0438 \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u044E\u0442\u0441\u044F \u043A\u0430\u0436\u0434\u044B\u0439 \u0441\u0435\u0437\u043E\u043D.</p><div class="grid2">${liveActs.slice(0, 6).map((a) => `<div class="card" style="padding:11px 14px;margin:0">${a.url ? `<a href="${a.url}" class="booklink" style="font-weight:700;text-decoration:none">${a.name} <span style="font-size:11px;color:#00337B">\u{1F517}</span></a>` : `<b>${a.name}</b>`}<div class="mut" style="font-size:11.5px;margin-top:3px">${a.what || ""}${a.when ? " \xB7 " + a.when : ""}</div></div>`).join("")}</div>` : "";
     const scenCards = book ? (book.scenarios || []).map((s, i) => `<div class="card" style="display:flex;gap:14px;padding:14px 16px;margin:0 0 10px"><div style="flex:none;width:28px;height:28px;background:#00337B;color:#FFCC00;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">${i + 1}</div><div><b>${s.title}</b><br>${s.why}<br><span style="color:#FF3300;font-weight:700">\u2192 \u041F\u0435\u0440\u0432\u044B\u0439 \u0448\u0430\u0433: ${s.step}</span></div></div>`).join("") : "";
     const swotBox = (label, color, bg, items) => `<div style="background:${bg};border-radius:10px;padding:13px 16px;break-inside:avoid"><div style="font-size:10.5px;font-weight:800;letter-spacing:0.09em;color:${color};margin-bottom:6px">${label}</div><ul style="margin:0;padding-left:16px;font-size:12.5px">${li(items)}</ul></div>`;
     const uniCard = (u) => {
       const pr = progFor(u, shortField);
       const money = [typeof u.cost === "number" ? `\u043E\u0431\u0443\u0447\u0435\u043D\u0438\u0435 \u2248 $${u.cost} \u0442\u044B\u0441/\u0433\u043E\u0434` : "", u.aid || ""].filter(Boolean).join(" \xB7 ");
-      return `<div class="card" style="padding:12px 14px;margin:0">${u.url ? `<a href="${u.url}" style="font-weight:700;text-decoration:none">${u.name} <span style="font-size:11px;color:#00337B">\u{1F517}</span></a>` : `<b>${u.name}</b>`}<div class="mut" style="font-size:11.5px;margin-top:3px">${COUNTRIES[u.country].flag} ${u.city} \xB7 ${u.tag}</div>${money ? `<div style="font-size:11.5px;margin-top:4px">\u{1F4B6} ${money}</div>` : ""}${pr ? `<div style="color:#00337B;font-size:12px;margin-top:5px">\u{1F393} \u0423\u0447\u0438\u0442\u044C\u0441\u044F: ${pr}</div>` : ""}</div>`;
+      return `<div class="card" style="padding:12px 14px;margin:0">${u.url ? `<a href="${u.url}" class="booklink" style="font-weight:700;text-decoration:none">${u.name} <span style="font-size:11px;color:#00337B">\u{1F517}</span></a>` : `<b>${u.name}</b>`}<div class="mut" style="font-size:11.5px;margin-top:3px">${COUNTRIES[u.country].flag} ${u.city} \xB7 ${u.tag}</div>${money ? `<div style="font-size:11.5px;margin-top:4px">\u{1F4B6} ${money}</div>` : ""}${pr ? `<div style="color:#00337B;font-size:12px;margin-top:5px">\u{1F393} \u0423\u0447\u0438\u0442\u044C\u0441\u044F: ${pr}</div>` : ""}</div>`;
     };
     const uniCat = (ico, t, color, arr, hint) => `<div style="display:flex;align-items:baseline;gap:9px;margin:18px 0 10px;break-after:avoid"><span style="font-size:15px">${ico}</span><span style="font-size:15px;font-weight:800;color:${color}">${t}</span></div>` + (arr.length ? `<div class="grid2">${arr.map(uniCard).join("")}</div>` : `<p class="mut">${hint}</p>`);
     const products = cs.filter((k) => NEXT_PRODUCTS[k]).map((k) => `<div class="card" style="border:1.5px solid rgba(0,51,123,0.25);background:rgba(0,51,123,0.04);padding:15px 18px;margin:0"><div style="font-size:15px;font-weight:800;color:#00337B;margin-bottom:5px">${NEXT_PRODUCTS[k].t}</div><div style="font-size:12.5px;color:#454B54">${NEXT_PRODUCTS[k].d}</div></div>`).join("") || `<div class="card" style="border:1.5px solid rgba(0,51,123,0.25);background:rgba(0,51,123,0.04);padding:15px 18px;margin:0"><div style="font-size:15px;font-weight:800;color:#00337B;margin-bottom:5px">StudyGlobal \xB7 \u041A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F \u0441 \u044D\u043A\u0441\u043F\u0435\u0440\u0442\u043E\u043C</div><div style="font-size:12.5px;color:#454B54">\u0420\u0430\u0437\u0431\u0435\u0440\u0451\u043C \u0442\u0432\u043E\u044E \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044E, \u0447\u0435\u0441\u0442\u043D\u043E \u0441\u0440\u0430\u0432\u043D\u0438\u043C \u0440\u043E\u0441\u0441\u0438\u0439\u0441\u043A\u0438\u0439 \u0438 \u0437\u0430\u0440\u0443\u0431\u0435\u0436\u043D\u044B\u0435 \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u044B \u0438 \u0441\u043E\u0431\u0435\u0440\u0451\u043C \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u043E\u0435 \u0440\u0435\u0448\u0435\u043D\u0438\u0435.</div></div>`;
