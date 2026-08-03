@@ -29,6 +29,25 @@
   </head>
   <body style="margin:0">
     <div id="root"></div>
-    <script type="module" src="/main.js"></script>
+    <!--
+      Запуск приложения. Раньше здесь подключался отдельный main.js — его убрали:
+      это был лишний файл в цепочке кэша (index.html → main.js → app-vega.js).
+
+      ВАЖНО про ?v= : Timeweb отдаёт файлы без заголовка Cache-Control, поэтому
+      браузер кэширует их «на глазок» — иногда на много часов. 02.08.2026 из-за
+      этого владелец выложила новую сборку, а получила старый PDF. Номер версии
+      в адресе решает проблему: он меняется при каждой сборке (это отпечаток
+      содержимого файла), браузер видит новый адрес и обязан скачать свежий код.
+      Номер подставляет build.mjs — руками его править не нужно.
+    -->
+    <script type="module">
+      import React from "react";
+      import { createRoot } from "react-dom/client";
+      import App from "./app-vega.js?v=e3505d036d";
+
+      createRoot(document.getElementById("root")).render(
+        React.createElement(React.StrictMode, null, React.createElement(App))
+      );
+    </script>
   </body>
 </html>
