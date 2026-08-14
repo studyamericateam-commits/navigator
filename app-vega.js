@@ -1315,6 +1315,7 @@ const AI_URL = "https://ai.studyglobal.tech/v1/messages";
 const EXTEND_URL = "https://studyglobal.academy/navigator_extend";
 const EXTEND_PRICE = "9 990 \u20BD";
 const BUY_URL = "https://studyglobal.ru/navigator";
+const GETCOURSE_URL = "";
 const RENEW_WARN_HOURS = 24;
 const PROGRESS_API = "https://ai.studyglobal.tech";
 const HISTORY_ON = PROGRESS_API.length > 0;
@@ -1482,7 +1483,11 @@ function mergeAdminRows(users, progress) {
       // Сервер отдаёт строку и на оплатившего, кто ещё не начал: смотрим на дату, а не на факт строки
       paidTill: fmtD(u.paid_until),
       lastSeen: p && p.updated_at ? fmtT(p.updated_at) : "\u0435\u0449\u0451 \u043D\u0435 \u043D\u0430\u0447\u0438\u043D\u0430\u043B(\u0430)",
-      _upd: p ? p.updated_at : ""
+      _upd: p ? p.updated_at : "",
+      _paidUntil: u.paid_until || "",
+      // сырая дата — нужна дашборду, чтобы считать «доступ заканчивается»
+      _firstSeen: u.first_seen || (p ? p.updated_at : "") || ""
+      // когда ученик появился — по нему считается период аналитики
     };
   });
   rows.sort((a, b) => (b._upd || "").localeCompare(a._upd || ""));
@@ -1753,6 +1758,11 @@ export default function App() {
   const [bookErr, setBookErr] = useState("");
   const [adminSel, setAdminSel] = useState(null);
   const [adminQ, setAdminQ] = useState("");
+  const [adminFocus, setAdminFocus] = useState(null);
+  const [adminTab, setAdminTab] = useState("students");
+  const [adminPeriod, setAdminPeriod] = useState(0);
+  const [adminRange, setAdminRange] = useState(null);
+  const [adminDel, setAdminDel] = useState(null);
   const [colF, setColF] = useState({});
   const [consultQs, setConsultQs] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -1975,7 +1985,7 @@ export default function App() {
         setScreen("login");
         return;
       }
-      const users = students.map((p) => ({ email: p.email, name: p.name, role: "user", paid_until: p.paid_until }));
+      const users = students.map((p) => ({ email: p.email, name: p.name, role: "user", paid_until: p.paid_until, first_seen: p.first_seen }));
       setAdminDb({ rows: mergeAdminRows(users, students), busy: false, err: "" });
     })().catch((e) => {
       console.warn("\u0430\u0434\u043C\u0438\u043D\u043A\u0430:", e && e.message);
@@ -4070,8 +4080,132 @@ document.addEventListener("click", function (e) {
         paid: s.paidTill || "\u2014",
         seen: s.lastSeen || "\u2014"
       });
+      const \u0432\u0441\u0435\u0421\u0442\u0440\u043E\u043A\u0438 = HISTORY_ON ? adminDb.rows || [] : DEMO_STUDENTS;
+      const \u0441\u0432\u043E\u0439\u041F\u0435\u0440\u0438\u043E\u0434 = adminRange && adminRange.\u043E\u0442 && adminRange.\u0434\u043E;
+      const \u0432\u041F\u0435\u0440\u0438\u043E\u0434\u0435 = (iso) => {
+        if (!\u0441\u0432\u043E\u0439\u041F\u0435\u0440\u0438\u043E\u0434 && !adminPeriod) return true;
+        if (!iso) return true;
+        const d = new Date(iso);
+        if (isNaN(d)) return true;
+        if (\u0441\u0432\u043E\u0439\u041F\u0435\u0440\u0438\u043E\u0434) return d >= /* @__PURE__ */ new Date(adminRange.\u043E\u0442 + "T00:00:00") && d <= /* @__PURE__ */ new Date(adminRange.\u0434\u043E + "T23:59:59");
+        return (Date.now() - d) / 864e5 <= adminPeriod;
+      };
+      const dbRows = \u0432\u0441\u0435\u0421\u0442\u0440\u043E\u043A\u0438.filter((s) => \u0432\u041F\u0435\u0440\u0438\u043E\u0434\u0435(s._firstSeen));
+      const \u0434\u043D\u0435\u0439 = (iso) => {
+        if (!iso) return null;
+        const d = new Date(iso);
+        return isNaN(d) ? null : Math.round((d - Date.now()) / 864e5);
+      };
+      const \u043C\u043E\u043B\u0447\u0438\u0442 = (s) => {
+        if (!s._upd) return null;
+        const d = new Date(s._upd);
+        return isNaN(d) ? null : Math.floor((Date.now() - d) / 864e5);
+      };
+      const \u0441\u0440\u0435\u0437 = {
+        notStarted: (s) => (s.stageDone || 0) === 0,
+        stuck: (s) => (s.stageDone || 0) > 0 && (s.stageDone || 0) < 4 && (\u043C\u043E\u043B\u0447\u0438\u0442(s) ?? 0) >= 7,
+        ending: (s) => {
+          const d = \u0434\u043D\u0435\u0439(s._paidUntil);
+          return d != null && d >= 0 && d <= 7;
+        },
+        request: (s) => !!s.request
+      };
+      const \u041C = {
+        \u0432\u0441\u0435\u0433\u043E: dbRows.length,
+        \u043D\u0430\u0447\u0430\u043B\u0438: dbRows.filter((s) => (s.stageDone || 0) > 0).length,
+        \u044D\u0442\u0430\u043F: [1, 2, 3, 4].map((n) => dbRows.filter((s) => (s.stageDone || 0) >= n).length),
+        \u043A\u043D\u0438\u0433\u0430: dbRows.filter((s) => s.book).length,
+        \u0437\u0430\u044F\u0432\u043A\u0430: dbRows.filter(\u0441\u0440\u0435\u0437.request).length,
+        \u043D\u0435\u041D\u0430\u0447\u0430\u043B\u0438: dbRows.filter(\u0441\u0440\u0435\u0437.notStarted).length,
+        \u0437\u0430\u0441\u0442\u0440\u044F\u043B\u0438: dbRows.filter(\u0441\u0440\u0435\u0437.stuck).length,
+        \u0437\u0430\u043A\u0430\u043D\u0447\u0438\u0432\u0430\u0435\u0442\u0441\u044F: dbRows.filter(\u0441\u0440\u0435\u0437.ending).length
+      };
+      const \u0441\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C\u044E = dbRows.filter((s) => s.ready != null);
+      \u041C.\u0441\u0440\u0435\u0434\u043D\u044F\u044F\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C = \u0441\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C\u044E.length ? Math.round(\u0441\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C\u044E.reduce((a, s) => a + s.ready, 0) / \u0441\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C\u044E.length) : null;
+      \u041C.\u0441\u043B\u0430\u0431\u044B\u0439\u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439 = dbRows.filter((s) => /^(A1|A2|Starter)/i.test(s.eng || "")).length;
+      const \u0441\u0447\u0451\u0442 = (\u0441\u043F\u0438\u0441\u043E\u043A) => Object.entries(\u0441\u043F\u0438\u0441\u043E\u043A.reduce((m, k) => (m[k] = (m[k] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1]);
+      const \u0434\u043E\u043B\u044F = (n) => \u041C.\u0432\u0441\u0435\u0433\u043E ? Math.round(n / \u041C.\u0432\u0441\u0435\u0433\u043E * 100) : 0;
+      const \u0441\u042F\u0437\u044B\u043A\u043E\u043C = dbRows.filter((s) => s.eng && s.eng !== "\u2014");
+      const \u0441\u0411\u044E\u0434\u0436\u0435\u0442\u043E\u043C = dbRows.filter((s) => s.budget && s.budget !== "\u2014");
+      const \u0441\u0422\u0438\u043F\u043E\u043C = dbRows.filter((s) => s.type);
+      const \u0441\u0421\u0442\u0440\u0430\u043D\u0430\u043C\u0438 = dbRows.filter((s) => (s.countries || []).length);
+      \u041C.\u043F\u043E\u0422\u0438\u043F\u0430\u043C = \u0441\u0447\u0451\u0442(\u0441\u0422\u0438\u043F\u043E\u043C.map((s) => s.type)).map(([\u043A\u043E\u0434, n]) => {
+        const c = \u0441\u0422\u0438\u043F\u043E\u043C.find((s) => s.type === \u043A\u043E\u0434) || {};
+        return [\u043A\u043E\u0434 + " \xAB" + (c.typeName || "") + "\xBB", n, \u043A\u043E\u0434];
+      });
+      \u041C.\u043F\u043E\u0421\u0442\u0440\u0430\u043D\u0430\u043C = Object.keys(COUNTRIES).map((k) => [COUNTRIES[k].flag + " " + COUNTRIES[k].name, \u0441\u0421\u0442\u0440\u0430\u043D\u0430\u043C\u0438.filter((s) => (s.countries || []).includes(k)).length, k]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
+      \u041C.\u043F\u043E\u0415\u0432\u0440\u043E\u043F\u0435 = \u0441\u0447\u0451\u0442(dbRows.flatMap((s) => s.snapshot && s.snapshot.euCompare || [])).map(([id, n]) => {
+        const e = EU_COUNTRIES.find((x) => x.id === id);
+        return e ? [e.flag + " " + e.name, n, id] : null;
+      }).filter(Boolean);
+      const \u041F\u041E\u0420\u042F\u0414\u041E\u041A_\u042F\u0417 = ["Starter", "A1", "A2", "B1", "B2", "C1"];
+      \u041C.\u043F\u043E\u042F\u0437\u044B\u043A\u0443 = \u0441\u0447\u0451\u0442(\u0441\u042F\u0437\u044B\u043A\u043E\u043C.map((s) => (String(s.eng).match(/^(Starter|A1|A2|B1|B2|C1)/) || ["\u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D"])[0])).sort((a, b) => \u041F\u041E\u0420\u042F\u0414\u041E\u041A_\u042F\u0417.indexOf(a[0]) - \u041F\u041E\u0420\u042F\u0414\u041E\u041A_\u042F\u0417.indexOf(b[0])).map(([\u043B, n]) => [\u043B, n, \u043B]);
+      const \u041F\u041E\u0420\u042F\u0414\u041E\u041A_\u0411\u042E\u0414 = ["\u0434\u043E 500 \u0442\u044B\u0441 \u20BD/\u0433\u043E\u0434", "0,5\u20131,5 \u043C\u043B\u043D \u20BD/\u0433\u043E\u0434", "1,5\u20133 \u043C\u043B\u043D \u20BD/\u0433\u043E\u0434", "3+ \u043C\u043B\u043D \u20BD/\u0433\u043E\u0434"];
+      \u041C.\u043F\u043E\u0424\u0438\u043D\u0430\u043D\u0441\u0430\u043C = \u0441\u0447\u0451\u0442(\u0441\u0411\u044E\u0434\u0436\u0435\u0442\u043E\u043C.map((s) => s.budget)).sort((a, b) => \u041F\u041E\u0420\u042F\u0414\u041E\u041A_\u0411\u042E\u0414.indexOf(a[0]) - \u041F\u041E\u0420\u042F\u0414\u041E\u041A_\u0411\u042E\u0414.indexOf(b[0])).map(([\u043B, n]) => [\u043B, n, \u043B]);
+      \u041C.\u0431\u0430\u0437\u0430\u042F\u0437\u044B\u043A = \u0441\u042F\u0437\u044B\u043A\u043E\u043C.length;
+      \u041C.\u0431\u0430\u0437\u0430\u0411\u044E\u0434\u0436\u0435\u0442 = \u0441\u0411\u044E\u0434\u0436\u0435\u0442\u043E\u043C.length;
+      \u041C.\u0431\u0430\u0437\u0430\u0422\u0438\u043F = \u0441\u0422\u0438\u043F\u043E\u043C.length;
+      \u041C.\u0431\u0430\u0437\u0430\u0421\u0442\u0440\u0430\u043D\u044B = \u0441\u0421\u0442\u0440\u0430\u043D\u0430\u043C\u0438.length;
+      const \u0440\u0430\u0441\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u0435 = (\u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A, \u0442\u0440\u043E\u0439\u043A\u0438, \u0431\u0430\u0437\u0430, \u043F\u043E\u0434\u043F\u0438\u0441\u044C, \u0432\u0438\u0434) => /* @__PURE__ */ jsxs("div", { style: { flex: "1 1 320px", padding: "13px 15px", background: "#faf8f4", borderRadius: 12 }, children: [
+        /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }, children: [
+          /* @__PURE__ */ jsx("div", { style: { fontSize: 12.5, fontWeight: 700, color: C.dark }, children: \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A }),
+          /* @__PURE__ */ jsx("div", { style: { fontSize: 11, color: C.faint }, children: \u0431\u0430\u0437\u0430 ? "\u0438\u0437 " + \u0431\u0430\u0437\u0430 : "" })
+        ] }),
+        \u043F\u043E\u0434\u043F\u0438\u0441\u044C && /* @__PURE__ */ jsx("div", { style: { fontSize: 11, color: C.faint, marginTop: 2 }, children: \u043F\u043E\u0434\u043F\u0438\u0441\u044C }),
+        /* @__PURE__ */ jsx("div", { style: { marginTop: 8 }, children: \u0442\u0440\u043E\u0439\u043A\u0438.length ? \u0442\u0440\u043E\u0439\u043A\u0438.map(([\u043B, n, \u0437\u043D\u0430\u0447]) => {
+          const \u043F = \u0431\u0430\u0437\u0430 ? Math.round(n / \u0431\u0430\u0437\u0430 * 100) : 0;
+          const \u0432\u044B\u0431\u0440\u0430\u043D\u043E = adminFocus && adminFocus.\u0432\u0438\u0434 === \u0432\u0438\u0434 && adminFocus.\u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 === \u0437\u043D\u0430\u0447;
+          return /* @__PURE__ */ jsxs(
+            "div",
+            {
+              onClick: () => {
+                setAdminFocus(\u0432\u044B\u0431\u0440\u0430\u043D\u043E ? null : { \u0432\u0438\u0434, \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435: \u0437\u043D\u0430\u0447, \u043F\u043E\u0434\u043F\u0438\u0441\u044C: \u043B });
+                if (!\u0432\u044B\u0431\u0440\u0430\u043D\u043E) setAdminTab("students");
+              },
+              title: `\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u044D\u0442\u0438\u0445 \u0443\u0447\u0435\u043D\u0438\u043A\u043E\u0432 \u0441\u043F\u0438\u0441\u043A\u043E\u043C (${n}) \u0438 \u0432\u044B\u0433\u0440\u0443\u0437\u0438\u0442\u044C`,
+              style: {
+                display: "grid",
+                gridTemplateColumns: "1fr 62px 62px",
+                gap: 8,
+                alignItems: "center",
+                margin: "0 0 2px",
+                cursor: "pointer",
+                borderRadius: 7,
+                padding: "2px 5px",
+                background: \u0432\u044B\u0431\u0440\u0430\u043D\u043E ? "rgba(255,51,0,0.08)" : "transparent"
+              },
+              children: [
+                /* @__PURE__ */ jsx("span", { style: { fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontWeight: \u0432\u044B\u0431\u0440\u0430\u043D\u043E ? 700 : 400 }, title: \u043B, children: \u043B }),
+                /* @__PURE__ */ jsx("div", { style: { height: 7, background: "#e8e2d8", borderRadius: 4 }, children: /* @__PURE__ */ jsx("div", { style: { height: 7, width: \u043F + "%", background: \u0432\u044B\u0431\u0440\u0430\u043D\u043E ? C.red : C.blue, borderRadius: 4 } }) }),
+                /* @__PURE__ */ jsxs("span", { style: { fontSize: 12, textAlign: "right" }, children: [
+                  /* @__PURE__ */ jsx("b", { children: n }),
+                  " ",
+                  /* @__PURE__ */ jsxs("span", { style: { color: C.faint }, children: [
+                    \u043F,
+                    "%"
+                  ] })
+                ] })
+              ]
+            },
+            \u043B
+          );
+        }) : /* @__PURE__ */ jsx("div", { style: { fontSize: 12, color: C.faint }, children: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445" }) })
+      ] });
+      const \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442\u0412\u044B\u0431\u043E\u0440\u043A\u0435 = (s) => {
+        if (!adminFocus) return true;
+        const { \u0432\u0438\u0434, \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 } = adminFocus;
+        if (\u0441\u0440\u0435\u0437[\u0432\u0438\u0434]) return \u0441\u0440\u0435\u0437[\u0432\u0438\u0434](s);
+        if (\u0432\u0438\u0434 === "\u0441\u0442\u0440\u0430\u043D\u0430") return (s.countries || []).includes(\u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435);
+        if (\u0432\u0438\u0434 === "\u0435\u0432\u0440\u043E\u043F\u0430") return (s.snapshot && s.snapshot.euCompare || []).includes(\u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435);
+        if (\u0432\u0438\u0434 === "\u0431\u044E\u0434\u0436\u0435\u0442") return s.budget === \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435;
+        if (\u0432\u0438\u0434 === "\u044F\u0437\u044B\u043A") return String(s.eng || "").startsWith(\u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435);
+        if (\u0432\u0438\u0434 === "\u0442\u0438\u043F") return s.type === \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435;
+        return true;
+      };
       const q = adminQ.trim().toLowerCase();
       const students = all.filter((s) => {
+        if (!s.live && !\u0432\u041F\u0435\u0440\u0438\u043E\u0434\u0435(s._firstSeen)) return false;
+        if (!\u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442\u0412\u044B\u0431\u043E\u0440\u043A\u0435(s)) return false;
         if (q && ![
           s.name,
           s.email,
@@ -4119,7 +4253,8 @@ document.addEventListener("click", function (e) {
         const blob = new Blob(["\uFEFF" + [head.map(esc).join(";"), ...rows].join("\r\n")], { type: "text/csv;charset=utf-8" });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = "\u0443\u0447\u0435\u043D\u0438\u043A\u0438_\u043D\u0430\u0432\u0438\u0433\u0430\u0442\u043E\u0440_" + (/* @__PURE__ */ new Date()).toISOString().slice(0, 10) + ".csv";
+        const \u043A\u0443\u0441\u043E\u043A = adminFocus ? "_" + String(adminFocus.\u043F\u043E\u0434\u043F\u0438\u0441\u044C).replace(/[^\wа-яёА-ЯЁ]+/gi, "-").replace(/^-|-$/g, "") : "";
+        a.download = "\u0443\u0447\u0435\u043D\u0438\u043A\u0438_\u043D\u0430\u0432\u0438\u0433\u0430\u0442\u043E\u0440" + \u043A\u0443\u0441\u043E\u043A + "_" + (/* @__PURE__ */ new Date()).toISOString().slice(0, 10) + ".csv";
         a.click();
         URL.revokeObjectURL(a.href);
       };
@@ -4214,66 +4349,277 @@ document.addEventListener("click", function (e) {
           grantMsg && /* @__PURE__ */ jsx("div", { style: { fontSize: 12.5, color: C.dark, marginTop: 8 }, children: grantMsg })
         ] }),
         !st && /* @__PURE__ */ jsxs(Fragment, { children: [
-          /* @__PURE__ */ jsx(
-            "input",
+          /* @__PURE__ */ jsx("div", { style: { display: "flex", gap: 8, marginTop: 16, borderBottom: "1.5px solid #ece5db" }, children: [["students", "\u{1F465} \u0423\u0447\u0435\u043D\u0438\u043A\u0438", \u041C.\u0432\u0441\u0435\u0433\u043E], ["stats", "\u{1F4CA} \u0410\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430", null]].map(([k, \u043B, n]) => /* @__PURE__ */ jsxs(
+            "div",
             {
-              value: adminQ,
-              onChange: (e) => setAdminQ(e.target.value),
-              placeholder: "\u041F\u043E\u0438\u0441\u043A: \u0438\u043C\u044F, \u043F\u043E\u0447\u0442\u0430, \u0442\u0438\u043F, \u0441\u0442\u0440\u0430\u043D\u0430, \u043A\u043B\u0430\u0441\u0441, \u0431\u044E\u0434\u0436\u0435\u0442\u2026",
-              style: { width: "100%", boxSizing: "border-box", marginTop: 16, padding: "11px 14px", borderRadius: 12, border: "1.5px solid #e0d9cf", fontSize: 14, fontFamily: "inherit", outline: "none", background: "#fff" }
-            }
-          ),
-          /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, flexWrap: "wrap", gap: 8 }, children: [
-            /* @__PURE__ */ jsxs("div", { style: { fontSize: 12.5, color: C.faint }, children: [
-              "\u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E: ",
-              students.length,
-              " \xB7 \u0444\u0438\u043B\u044C\u0442\u0440\u044B \u0432 \u0448\u0430\u043F\u043A\u0435 \u0442\u0430\u0431\u043B\u0438\u0446\u044B \u0440\u0430\u0431\u043E\u0442\u0430\u044E\u0442 \u0432\u043C\u0435\u0441\u0442\u0435 \u0441 \u043F\u043E\u0438\u0441\u043A\u043E\u043C"
-            ] }),
-            /* @__PURE__ */ jsx(Btn, { kind: "ghost", onClick: exportCsv, style: { fontSize: 12.5, padding: "8px 14px" }, tip: "\u0412\u044B\u0433\u0440\u0443\u0437\u0438\u0442 \u0442\u0430\u0431\u043B\u0438\u0446\u0443 \u043F\u043E \u0432\u0441\u0435\u043C \u0443\u0447\u0435\u043D\u0438\u043A\u0430\u043C: \u044D\u0442\u0430\u043F\u044B, \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C, \u0441\u0442\u0440\u0430\u043D\u044B, \u0441\u0440\u043E\u043A \u0434\u043E\u0441\u0442\u0443\u043F\u0430. \u0423\u0434\u043E\u0431\u043D\u043E \u0434\u043B\u044F \u043E\u0442\u0447\u0451\u0442\u0430 \u0438 \u043F\u043B\u0430\u043D\u0451\u0440\u043A\u0438", children: "\u2B07 \u041E\u0442\u0447\u0451\u0442 CSV \u2014 \u043E\u0442\u043A\u0440\u043E\u0435\u0442\u0441\u044F \u0432 Excel" })
-          ] }),
-          students.length === 0 && /* @__PURE__ */ jsx("div", { style: { fontSize: 13, color: C.faint, marginTop: 12 }, children: "\u041D\u0438\u043A\u043E\u0433\u043E \u043D\u0435 \u043D\u0430\u0448\u043B\u043E\u0441\u044C. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0441\u043C\u044F\u0433\u0447\u0438\u0442\u044C \u043F\u043E\u0438\u0441\u043A \u0438\u043B\u0438 \u043E\u0447\u0438\u0441\u0442\u0438\u0442\u044C \u0444\u0438\u043B\u044C\u0442\u0440\u044B \u0441\u0442\u043E\u043B\u0431\u0446\u043E\u0432." }),
-          /* @__PURE__ */ jsx(Card, { style: { marginTop: 12, padding: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsxs("table", { style: { width: "100%", borderCollapse: "collapse" }, children: [
-            /* @__PURE__ */ jsxs("thead", { children: [
-              /* @__PURE__ */ jsx("tr", { children: ["\u0423\u0447\u0435\u043D\u0438\u043A", "\u0422\u0438\u043F", "\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C", "\u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439", "\u0421\u0442\u0440\u0430\u043D\u044B", "\u042D\u043A\u0441\u043F\u0435\u0434\u0438\u0446\u0438\u044F", "\u0414\u043E\u0441\u0442\u0443\u043F \u0434\u043E", "\u0411\u044B\u043B(\u0430)"].map((h) => /* @__PURE__ */ jsx("th", { style: { ...cell, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", color: C.faint, textAlign: "left", background: "#faf8f4" }, children: h }, h)) }),
-              /* @__PURE__ */ jsx("tr", { children: [["student", "\u0438\u043C\u044F, \u043F\u043E\u0447\u0442\u0430\u2026"], ["type", "\u043A\u043E\u0434, \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"], ["ready", "\u0447\u0438\u0441\u043B\u043E"], ["eng", "B2\u2026"], ["countries", "\u0441\u0442\u0440\u0430\u043D\u0430"], ["exp", "4/4, \u043A\u043D\u0438\u0433\u0430"], ["paid", "\u0434\u0430\u0442\u0430"], ["seen", "\u043A\u043E\u0433\u0434\u0430"]].map(([k, ph]) => /* @__PURE__ */ jsx("th", { style: { padding: "4px 8px 8px", background: "#faf8f4", borderBottom: "1px solid #f0ebe3" }, children: /* @__PURE__ */ jsx(
-                "input",
-                {
-                  value: colF[k] || "",
-                  onChange: (e) => {
-                    const v = e.target.value;
-                    setColF((f) => ({ ...f, [k]: v }));
-                  },
-                  placeholder: ph,
-                  style: { width: "100%", boxSizing: "border-box", fontFamily: font, fontSize: 11.5, padding: "5px 7px", borderRadius: 7, border: "1px solid #e0d9cf", outline: "none", background: "#fff", fontWeight: 400 }
-                }
-              ) }, k)) })
-            ] }),
-            /* @__PURE__ */ jsx("tbody", { children: students.map((s) => /* @__PURE__ */ jsxs("tr", { onClick: () => setAdminSel(s.id), style: { cursor: "pointer", background: s.live ? "rgba(255,204,0,0.08)" : "#fff" }, children: [
-              /* @__PURE__ */ jsxs("td", { style: cell, children: [
-                /* @__PURE__ */ jsx("b", { children: s.name }),
-                s.live && /* @__PURE__ */ jsx("span", { style: { fontSize: 10, fontWeight: 700, color: C.blue, marginLeft: 6 }, children: "\u25CF LIVE" }),
-                /* @__PURE__ */ jsxs("div", { style: { fontSize: 11.5, color: C.faint }, children: [
-                  s.grade,
-                  " \u043A\u043B\u0430\u0441\u0441",
-                  s.email ? " \xB7 " + s.email : ""
+              onClick: () => setAdminTab(k),
+              style: {
+                padding: "9px 16px",
+                cursor: "pointer",
+                fontSize: 13.5,
+                fontWeight: 700,
+                borderRadius: "10px 10px 0 0",
+                color: adminTab === k ? C.blue : C.muted,
+                background: adminTab === k ? "#fff" : "transparent",
+                borderBottom: "2.5px solid " + (adminTab === k ? C.red : "transparent")
+              },
+              children: [
+                \u043B,
+                n != null ? /* @__PURE__ */ jsxs("span", { style: { color: C.faint, fontWeight: 400 }, children: [
+                  " \xB7 ",
+                  n
+                ] }) : null
+              ]
+            },
+            k
+          )) }),
+          adminTab === "stats" && /* @__PURE__ */ jsxs(Fragment, { children: [
+            /* @__PURE__ */ jsxs(Card, { style: { marginTop: 16, padding: "18px 20px" }, children: [
+              /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }, children: [
+                /* @__PURE__ */ jsxs("div", { children: [
+                  /* @__PURE__ */ jsx("div", { style: { fontFamily: fontHead, fontWeight: 700, fontSize: 17 }, children: "\u0421\u0432\u043E\u0434\u043A\u0430 \u043F\u043E \u043F\u043E\u0442\u043E\u043A\u0443" }),
+                  /* @__PURE__ */ jsxs("div", { style: { fontSize: 11.5, color: C.faint, marginTop: 2 }, children: [
+                    \u0441\u0432\u043E\u0439\u041F\u0435\u0440\u0438\u043E\u0434 ? `\u0423\u0447\u0435\u043D\u0438\u043A\u0438, \u043F\u0440\u0438\u0448\u0435\u0434\u0448\u0438\u0435 \u0441 ${adminRange.\u043E\u0442.split("-").reverse().join(".")} \u043F\u043E ${adminRange.\u0434\u043E.split("-").reverse().join(".")}` : adminPeriod ? `\u0423\u0447\u0435\u043D\u0438\u043A\u0438, \u043F\u0440\u0438\u0448\u0435\u0434\u0448\u0438\u0435 \u0437\u0430 \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0435 ${adminPeriod} \u0434\u043D.` : "\u0412\u0441\u0435 \u0443\u0447\u0435\u043D\u0438\u043A\u0438 \u0437\u0430 \u0432\u0441\u0451 \u0432\u0440\u0435\u043C\u044F",
+                    " \xB7 \u0432 \u0432\u044B\u0431\u043E\u0440\u043A\u0435 ",
+                    /* @__PURE__ */ jsx("b", { style: { color: C.dark }, children: \u041C.\u0432\u0441\u0435\u0433\u043E }),
+                    " \u0438\u0437 ",
+                    \u0432\u0441\u0435\u0421\u0442\u0440\u043E\u043A\u0438.length
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 4, background: "#faf8f4", padding: 4, borderRadius: 10, flexWrap: "wrap" }, children: [
+                  [[7, "7 \u0434\u043D\u0435\u0439"], [30, "30 \u0434\u043D\u0435\u0439"], [90, "3 \u043C\u0435\u0441\u044F\u0446\u0430"], [0, "\u0412\u0441\u0451 \u0432\u0440\u0435\u043C\u044F"]].map(([\u0434, \u043B]) => {
+                    const \u0430\u043A\u0442\u0438\u0432\u043D\u0430 = !adminRange && adminPeriod === \u0434;
+                    return /* @__PURE__ */ jsx(
+                      "div",
+                      {
+                        onClick: () => {
+                          setAdminPeriod(\u0434);
+                          setAdminRange(null);
+                        },
+                        style: {
+                          padding: "6px 12px",
+                          borderRadius: 8,
+                          cursor: "pointer",
+                          fontSize: 12.5,
+                          fontWeight: \u0430\u043A\u0442\u0438\u0432\u043D\u0430 ? 700 : 400,
+                          background: \u0430\u043A\u0442\u0438\u0432\u043D\u0430 ? "#fff" : "transparent",
+                          color: \u0430\u043A\u0442\u0438\u0432\u043D\u0430 ? C.blue : C.muted,
+                          boxShadow: \u0430\u043A\u0442\u0438\u0432\u043D\u0430 ? "0 1px 3px rgba(0,0,0,0.08)" : "none"
+                        },
+                        children: \u043B
+                      },
+                      \u043B
+                    );
+                  }),
+                  /* @__PURE__ */ jsx(
+                    "div",
+                    {
+                      onClick: () => setAdminRange(adminRange ? null : { \u043E\u0442: "", \u0434\u043E: "" }),
+                      title: "\u0417\u0430\u0434\u0430\u0442\u044C \u0441\u0432\u043E\u0438 \u0434\u0430\u0442\u044B",
+                      style: {
+                        padding: "6px 12px",
+                        borderRadius: 8,
+                        cursor: "pointer",
+                        fontSize: 12.5,
+                        fontWeight: adminRange ? 700 : 400,
+                        background: adminRange ? "#fff" : "transparent",
+                        color: adminRange ? C.blue : C.muted,
+                        boxShadow: adminRange ? "0 1px 3px rgba(0,0,0,0.08)" : "none"
+                      },
+                      children: "\u{1F4C5} \u0421\u0432\u043E\u0439 \u043F\u0435\u0440\u0438\u043E\u0434"
+                    }
+                  )
                 ] })
               ] }),
-              /* @__PURE__ */ jsxs("td", { style: cell, children: [
-                s.type,
-                /* @__PURE__ */ jsx("div", { style: { fontSize: 11.5, color: C.faint }, children: s.typeName })
+              adminRange && /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", marginTop: 10, padding: "10px 12px", background: "#faf8f4", borderRadius: 10 }, children: [
+                /* @__PURE__ */ jsx("span", { style: { fontSize: 12.5, color: C.muted }, children: "\u0441" }),
+                /* @__PURE__ */ jsx(
+                  "input",
+                  {
+                    type: "date",
+                    value: adminRange.\u043E\u0442,
+                    max: adminRange.\u0434\u043E || void 0,
+                    onChange: (e) => setAdminRange((r) => ({ ...r, \u043E\u0442: e.target.value })),
+                    style: { fontFamily: font, fontSize: 13, padding: "7px 10px", borderRadius: 9, border: "1.5px solid #e0d9cf", outline: "none" }
+                  }
+                ),
+                /* @__PURE__ */ jsx("span", { style: { fontSize: 12.5, color: C.muted }, children: "\u043F\u043E" }),
+                /* @__PURE__ */ jsx(
+                  "input",
+                  {
+                    type: "date",
+                    value: adminRange.\u0434\u043E,
+                    min: adminRange.\u043E\u0442 || void 0,
+                    onChange: (e) => setAdminRange((r) => ({ ...r, \u0434\u043E: e.target.value })),
+                    style: { fontFamily: font, fontSize: 13, padding: "7px 10px", borderRadius: 9, border: "1.5px solid #e0d9cf", outline: "none" }
+                  }
+                ),
+                !\u0441\u0432\u043E\u0439\u041F\u0435\u0440\u0438\u043E\u0434 && /* @__PURE__ */ jsx("span", { style: { fontSize: 12, color: "#a33333" }, children: "\u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u043E\u0431\u0435 \u0434\u0430\u0442\u044B \u2014 \u043F\u043E\u043A\u0430 \u0441\u0447\u0438\u0442\u0430\u0435\u043C \u0437\u0430 \u0432\u0441\u0451 \u0432\u0440\u0435\u043C\u044F" }),
+                \u0441\u0432\u043E\u0439\u041F\u0435\u0440\u0438\u043E\u0434 && /* @__PURE__ */ jsx("span", { onClick: () => setAdminRange(null), style: { fontSize: 12.5, color: C.muted, textDecoration: "underline", cursor: "pointer" }, children: "\u0441\u0431\u0440\u043E\u0441\u0438\u0442\u044C" })
               ] }),
-              /* @__PURE__ */ jsx("td", { style: cell, children: s.ready != null ? s.ready + "/100" : "\u2014" }),
-              /* @__PURE__ */ jsx("td", { style: cell, children: s.eng }),
-              /* @__PURE__ */ jsx("td", { style: cell, children: (s.countries || []).map((k) => COUNTRIES[k]?.flag).join(" ") || "\u2014" }),
-              /* @__PURE__ */ jsxs("td", { style: cell, children: [
-                s.stageDone,
-                "/4",
-                s.book ? " \xB7 \u{1F4D5}" : ""
+              /* @__PURE__ */ jsx("div", { style: { fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: C.red, margin: "16px 0 8px" }, children: "\u0412\u043E\u0440\u043E\u043D\u043A\u0430" }),
+              [
+                ["\u041E\u043F\u043B\u0430\u0442\u0438\u043B\u0438 \u0434\u043E\u0441\u0442\u0443\u043F", \u041C.\u0432\u0441\u0435\u0433\u043E],
+                ["\u041D\u0430\u0447\u0430\u043B\u0438 \u043C\u0430\u0440\u0448\u0440\u0443\u0442", \u041C.\u043D\u0430\u0447\u0430\u043B\u0438],
+                ["\u041F\u0440\u043E\u0448\u043B\u0438 \xAB\u041A\u0442\u043E \u044F\xBB", \u041C.\u044D\u0442\u0430\u043F[0]],
+                ["\u041F\u0440\u043E\u0448\u043B\u0438 \xAB\u041A\u0443\u0434\u0430\xBB", \u041C.\u044D\u0442\u0430\u043F[1]],
+                ["\u041F\u0440\u043E\u0448\u043B\u0438 \xAB\u0421\u043A\u043E\u043B\u044C\u043A\u043E\xBB", \u041C.\u044D\u0442\u0430\u043F[2]],
+                ["\u0414\u043E\u0448\u043B\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0430", \u041C.\u044D\u0442\u0430\u043F[3]],
+                ["\u0421\u043E\u0431\u0440\u0430\u043B\u0438 \u043A\u043D\u0438\u0433\u0443", \u041C.\u043A\u043D\u0438\u0433\u0430],
+                ["\u041E\u0441\u0442\u0430\u0432\u0438\u043B\u0438 \u0437\u0430\u044F\u0432\u043A\u0443", \u041C.\u0437\u0430\u044F\u0432\u043A\u0430]
+              ].map(([\u043B, n]) => /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "150px 1fr 78px", gap: 10, alignItems: "center", margin: "0 0 5px" }, children: [
+                /* @__PURE__ */ jsx("span", { style: { fontSize: 12.5 }, children: \u043B }),
+                /* @__PURE__ */ jsx("div", { style: { height: 8, background: C.track, borderRadius: 4 }, children: /* @__PURE__ */ jsx("div", { style: { height: 8, width: \u0434\u043E\u043B\u044F(n) + "%", background: \u043B === "\u041E\u0441\u0442\u0430\u0432\u0438\u043B\u0438 \u0437\u0430\u044F\u0432\u043A\u0443" ? C.red : C.blue, borderRadius: 4 } }) }),
+                /* @__PURE__ */ jsxs("span", { style: { fontSize: 12.5, textAlign: "right" }, children: [
+                  /* @__PURE__ */ jsx("b", { children: n }),
+                  " ",
+                  /* @__PURE__ */ jsxs("span", { style: { color: C.faint }, children: [
+                    \u0434\u043E\u043B\u044F(n),
+                    "%"
+                  ] })
+                ] })
+              ] }, \u043B)),
+              /* @__PURE__ */ jsx("div", { style: { fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: C.red, margin: "18px 0 8px" }, children: "\u0422\u0440\u0435\u0431\u0443\u044E\u0442 \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u044F \u2014 \u043D\u0430\u0436\u043C\u0438\u0442\u0435, \u0447\u0442\u043E\u0431\u044B \u043E\u0442\u0444\u0438\u043B\u044C\u0442\u0440\u043E\u0432\u0430\u0442\u044C" }),
+              /* @__PURE__ */ jsx("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" }, children: [
+                ["notStarted", "\u041D\u0435 \u043D\u0430\u0447\u0438\u043D\u0430\u043B\u0438", \u041C.\u043D\u0435\u041D\u0430\u0447\u0430\u043B\u0438, "\u043E\u043F\u043B\u0430\u0442\u0438\u043B\u0438, \u043D\u043E \u043D\u0438 \u0440\u0430\u0437\u0443 \u043D\u0435 \u0437\u0430\u0448\u043B\u0438"],
+                ["stuck", "\u0417\u0430\u0441\u0442\u0440\u044F\u043B\u0438", \u041C.\u0437\u0430\u0441\u0442\u0440\u044F\u043B\u0438, "\u043C\u043E\u043B\u0447\u0430\u0442 7+ \u0434\u043D\u0435\u0439, \u043C\u0430\u0440\u0448\u0440\u0443\u0442 \u043D\u0435 \u043F\u0440\u043E\u0439\u0434\u0435\u043D"],
+                ["ending", "\u0414\u043E\u0441\u0442\u0443\u043F \u043A\u043E\u043D\u0447\u0430\u0435\u0442\u0441\u044F", \u041C.\u0437\u0430\u043A\u0430\u043D\u0447\u0438\u0432\u0430\u0435\u0442\u0441\u044F, "\u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C 7 \u0434\u043D\u0435\u0439 \u0438\u043B\u0438 \u043C\u0435\u043D\u044C\u0448\u0435"],
+                ["request", "\u041E\u0441\u0442\u0430\u0432\u0438\u043B\u0438 \u0437\u0430\u044F\u0432\u043A\u0443", \u041C.\u0437\u0430\u044F\u0432\u043A\u0430, "\u0436\u0434\u0443\u0442 \u0437\u0432\u043E\u043D\u043A\u0430 \u2014 \u0441\u0430\u043C\u044B\u0435 \u0433\u043E\u0440\u044F\u0447\u0438\u0435"]
+              ].map(([k, \u043B, n, \u043F]) => /* @__PURE__ */ jsxs(
+                "div",
+                {
+                  onClick: () => {
+                    const \u0431\u044B\u043B\u043E = adminFocus && adminFocus.\u0432\u0438\u0434 === k;
+                    setAdminFocus(\u0431\u044B\u043B\u043E ? null : { \u0432\u0438\u0434: k, \u043F\u043E\u0434\u043F\u0438\u0441\u044C: \u043B });
+                    if (!\u0431\u044B\u043B\u043E) setAdminTab("students");
+                  },
+                  title: \u043F + " \xB7 \u043D\u0430\u0436\u043C\u0438\u0442\u0435, \u0447\u0442\u043E\u0431\u044B \u043E\u0442\u043A\u0440\u044B\u0442\u044C \u0441\u043F\u0438\u0441\u043A\u043E\u043C \u0438 \u0432\u044B\u0433\u0440\u0443\u0437\u0438\u0442\u044C",
+                  style: {
+                    flex: "1 1 190px",
+                    cursor: "pointer",
+                    padding: "12px 14px",
+                    borderRadius: 12,
+                    textAlign: "left",
+                    background: adminFocus && adminFocus.\u0432\u0438\u0434 === k ? "rgba(255,51,0,0.07)" : "#faf8f4",
+                    border: "1.5px solid " + (adminFocus && adminFocus.\u0432\u0438\u0434 === k ? C.red : "#ece5db")
+                  },
+                  children: [
+                    /* @__PURE__ */ jsx("div", { style: { fontFamily: fontHead, fontSize: 22, fontWeight: 800, color: n > 0 ? C.blue : C.faint }, children: n }),
+                    /* @__PURE__ */ jsx("div", { style: { fontSize: 12, fontWeight: 700, marginTop: 2 }, children: \u043B }),
+                    /* @__PURE__ */ jsx("div", { style: { fontSize: 11, color: C.faint, marginTop: 2, lineHeight: 1.35 }, children: \u043F })
+                  ]
+                },
+                k
+              )) }),
+              /* @__PURE__ */ jsx("div", { style: { fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: C.red, margin: "18px 0 8px" }, children: "\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430 \u043F\u043E\u0442\u043E\u043A\u0430" }),
+              /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 10, flexWrap: "wrap", fontSize: 12.5, marginBottom: 10 }, children: [
+                /* @__PURE__ */ jsxs("div", { style: { flex: "1 1 150px", padding: "11px 14px", background: "#faf8f4", borderRadius: 12 }, children: [
+                  /* @__PURE__ */ jsx("div", { style: { color: C.faint, fontSize: 11 }, children: "\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C" }),
+                  /* @__PURE__ */ jsx("div", { style: { fontFamily: fontHead, fontSize: 20, fontWeight: 800, color: C.blue }, children: \u041C.\u0441\u0440\u0435\u0434\u043D\u044F\u044F\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C != null ? \u041C.\u0441\u0440\u0435\u0434\u043D\u044F\u044F\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C + " / 100" : "\u2014" })
+                ] }),
+                /* @__PURE__ */ jsxs("div", { style: { flex: "1 1 150px", padding: "11px 14px", background: "#faf8f4", borderRadius: 12 }, children: [
+                  /* @__PURE__ */ jsx("div", { style: { color: C.faint, fontSize: 11 }, children: "\u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439 \u043D\u0438\u0436\u0435 B1" }),
+                  /* @__PURE__ */ jsx("div", { style: { fontFamily: fontHead, fontSize: 20, fontWeight: 800, color: C.blue }, children: \u041C.\u0441\u043B\u0430\u0431\u044B\u0439\u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439 }),
+                  /* @__PURE__ */ jsx("div", { style: { fontSize: 11, color: C.faint, marginTop: 2 }, children: "\u043A\u0430\u043D\u0434\u0438\u0434\u0430\u0442\u044B \u0432 StudyLanguages" })
+                ] }),
+                /* @__PURE__ */ jsxs("div", { style: { flex: "1 1 150px", padding: "11px 14px", background: "#faf8f4", borderRadius: 12 }, children: [
+                  /* @__PURE__ */ jsx("div", { style: { color: C.faint, fontSize: 11 }, children: "\u0414\u043E\u0448\u043B\u0438 \u0434\u043E \u0432\u044B\u0431\u043E\u0440\u0430 \u0441\u0442\u0440\u0430\u043D" }),
+                  /* @__PURE__ */ jsx("div", { style: { fontFamily: fontHead, fontSize: 20, fontWeight: 800, color: C.blue }, children: \u041C.\u0431\u0430\u0437\u0430\u0421\u0442\u0440\u0430\u043D\u044B }),
+                  /* @__PURE__ */ jsxs("div", { style: { fontSize: 11, color: C.faint, marginTop: 2 }, children: [
+                    "\u0438\u0437 ",
+                    \u041C.\u0432\u0441\u0435\u0433\u043E,
+                    " \u043E\u043F\u043B\u0430\u0442\u0438\u0432\u0448\u0438\u0445"
+                  ] })
+                ] })
               ] }),
-              /* @__PURE__ */ jsx("td", { style: cell, children: s.paidTill }),
-              /* @__PURE__ */ jsx("td", { style: cell, children: s.lastSeen })
-            ] }, s.id)) })
-          ] }) })
+              /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" }, children: [
+                \u0440\u0430\u0441\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u0435("\u{1F30D} \u0421\u0442\u0440\u0430\u043D\u044B", \u041C.\u043F\u043E\u0421\u0442\u0440\u0430\u043D\u0430\u043C, \u041C.\u0431\u0430\u0437\u0430\u0421\u0442\u0440\u0430\u043D\u044B, "\u043C\u043E\u0436\u043D\u043E \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u2014 \u043F\u0440\u043E\u0446\u0435\u043D\u0442\u044B \u043D\u0435 \u0441\u043A\u043B\u0430\u0434\u044B\u0432\u0430\u044E\u0442\u0441\u044F \u0432 100", "\u0441\u0442\u0440\u0430\u043D\u0430"),
+                \u0440\u0430\u0441\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u0435("\u{1F4B0} \u0411\u044E\u0434\u0436\u0435\u0442 \u0441\u0435\u043C\u044C\u0438", \u041C.\u043F\u043E\u0424\u0438\u043D\u0430\u043D\u0441\u0430\u043C, \u041C.\u0431\u0430\u0437\u0430\u0411\u044E\u0434\u0436\u0435\u0442, "\u0447\u0442\u043E \u0443\u043A\u0430\u0437\u0430\u043B\u0438 \u0432 \u0430\u043D\u043A\u0435\u0442\u0435 \u043D\u0430 \u044D\u0442\u0430\u043F\u0435 \xAB\u0421\u043A\u043E\u043B\u044C\u043A\u043E\xBB", "\u0431\u044E\u0434\u0436\u0435\u0442"),
+                \u0440\u0430\u0441\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u0435("\u{1F5E3} \u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439 \u043F\u043E \u0442\u0435\u0441\u0442\u0443", \u041C.\u043F\u043E\u042F\u0437\u044B\u043A\u0443, \u041C.\u0431\u0430\u0437\u0430\u042F\u0437\u044B\u043A, "\u043D\u0438\u0436\u0435 B1 \u2014 \u043F\u0440\u044F\u043C\u044B\u0435 \u043A\u0430\u043D\u0434\u0438\u0434\u0430\u0442\u044B \u0432 StudyLanguages", "\u044F\u0437\u044B\u043A"),
+                \u0440\u0430\u0441\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u0435("\u{1F9EC} \u041F\u0441\u0438\u0445\u043E\u0442\u0438\u043F\u044B", \u041C.\u043F\u043E\u0422\u0438\u043F\u0430\u043C, \u041C.\u0431\u0430\u0437\u0430\u0422\u0438\u043F, "\u043F\u043E \u043A\u043E\u043C\u0443 \u043F\u043E\u0434\u0431\u0438\u0440\u0430\u0442\u044C \u043C\u0435\u043D\u0442\u043E\u0440\u043E\u0432", "\u0442\u0438\u043F"),
+                \u041C.\u043F\u043E\u0415\u0432\u0440\u043E\u043F\u0435.length > 0 && \u0440\u0430\u0441\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u0435("\u{1F1EA}\u{1F1FA} \u0415\u0432\u0440\u043E\u043F\u0430 \u0438\u0437\u043D\u0443\u0442\u0440\u0438", \u041C.\u043F\u043E\u0415\u0432\u0440\u043E\u043F\u0435, \u041C.\u043F\u043E\u0415\u0432\u0440\u043E\u043F\u0435.reduce((a, x) => a + x[1], 0), "\u043A\u0430\u043A\u0438\u0435 \u0441\u0442\u0440\u0430\u043D\u044B \u0441\u0440\u0430\u0432\u043D\u0438\u0432\u0430\u043B\u0438 \u0432 \u0431\u043B\u043E\u043A\u0435 \xAB10 \u0441\u0442\u0440\u0430\u043D\xBB", "\u0435\u0432\u0440\u043E\u043F\u0430")
+              ] })
+            ] }),
+            /* @__PURE__ */ jsx("div", { style: { fontSize: 12, color: C.faint, marginTop: 10 }, children: "\u041B\u044E\u0431\u0443\u044E \u0441\u0442\u0440\u043E\u043A\u0443 \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0438 \u043C\u043E\u0436\u043D\u043E \u043D\u0430\u0436\u0430\u0442\u044C \u2014 \u044D\u0442\u0438 \u0443\u0447\u0435\u043D\u0438\u043A\u0438 \u043E\u0442\u043A\u0440\u043E\u044E\u0442\u0441\u044F \u0432\u043E \u0432\u043A\u043B\u0430\u0434\u043A\u0435 \xAB\u0423\u0447\u0435\u043D\u0438\u043A\u0438\xBB, \u043E\u0442\u0442\u0443\u0434\u0430 \u0438\u0445 \u0432\u044B\u0433\u0440\u0443\u0436\u0430\u044E\u0442 \u043A\u043D\u043E\u043F\u043A\u043E\u0439 \xAB\u041E\u0442\u0447\u0451\u0442 CSV\xBB." })
+          ] }),
+          adminTab === "students" && /* @__PURE__ */ jsxs(Fragment, { children: [
+            adminFocus && /* @__PURE__ */ jsxs("div", { style: { marginTop: 12, padding: "10px 14px", background: "rgba(255,51,0,0.06)", border: "1.5px solid #f0c9bd", borderRadius: 12, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }, children: [
+              /* @__PURE__ */ jsxs("div", { style: { fontSize: 13, color: C.blue, fontWeight: 700 }, children: [
+                "\u0412\u044B\u0431\u043E\u0440\u043A\u0430: ",
+                adminFocus.\u043F\u043E\u0434\u043F\u0438\u0441\u044C,
+                " ",
+                /* @__PURE__ */ jsxs("span", { style: { color: C.muted, fontWeight: 400 }, children: [
+                  "\xB7 ",
+                  students.length,
+                  " \u0447\u0435\u043B."
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 12, alignItems: "center" }, children: [
+                /* @__PURE__ */ jsx("span", { onClick: () => setAdminTab("stats"), style: { fontSize: 12.5, textDecoration: "underline", cursor: "pointer", color: C.muted }, children: "\u2190 \u043A \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0435" }),
+                /* @__PURE__ */ jsx("span", { onClick: () => setAdminFocus(null), style: { fontSize: 12.5, textDecoration: "underline", cursor: "pointer", color: C.muted }, children: "\u043F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432\u0441\u0435\u0445" })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsx(
+              "input",
+              {
+                value: adminQ,
+                onChange: (e) => setAdminQ(e.target.value),
+                placeholder: "\u041F\u043E\u0438\u0441\u043A: \u0438\u043C\u044F, \u043F\u043E\u0447\u0442\u0430, \u0442\u0438\u043F, \u0441\u0442\u0440\u0430\u043D\u0430, \u043A\u043B\u0430\u0441\u0441, \u0431\u044E\u0434\u0436\u0435\u0442\u2026",
+                style: { width: "100%", boxSizing: "border-box", marginTop: 16, padding: "11px 14px", borderRadius: 12, border: "1.5px solid #e0d9cf", fontSize: 14, fontFamily: "inherit", outline: "none", background: "#fff" }
+              }
+            ),
+            /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, flexWrap: "wrap", gap: 8 }, children: [
+              /* @__PURE__ */ jsxs("div", { style: { fontSize: 12.5, color: C.faint }, children: [
+                "\u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E: ",
+                students.length,
+                " \xB7 \u0444\u0438\u043B\u044C\u0442\u0440\u044B \u0432 \u0448\u0430\u043F\u043A\u0435 \u0442\u0430\u0431\u043B\u0438\u0446\u044B \u0440\u0430\u0431\u043E\u0442\u0430\u044E\u0442 \u0432\u043C\u0435\u0441\u0442\u0435 \u0441 \u043F\u043E\u0438\u0441\u043A\u043E\u043C"
+              ] }),
+              /* @__PURE__ */ jsx(Btn, { kind: "ghost", onClick: exportCsv, style: { fontSize: 12.5, padding: "8px 14px" }, tip: "\u0412\u044B\u0433\u0440\u0443\u0437\u0438\u0442 \u0442\u0430\u0431\u043B\u0438\u0446\u0443 \u043F\u043E \u0432\u0441\u0435\u043C \u0443\u0447\u0435\u043D\u0438\u043A\u0430\u043C: \u044D\u0442\u0430\u043F\u044B, \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C, \u0441\u0442\u0440\u0430\u043D\u044B, \u0441\u0440\u043E\u043A \u0434\u043E\u0441\u0442\u0443\u043F\u0430. \u0423\u0434\u043E\u0431\u043D\u043E \u0434\u043B\u044F \u043E\u0442\u0447\u0451\u0442\u0430 \u0438 \u043F\u043B\u0430\u043D\u0451\u0440\u043A\u0438", children: "\u2B07 \u041E\u0442\u0447\u0451\u0442 CSV \u2014 \u043E\u0442\u043A\u0440\u043E\u0435\u0442\u0441\u044F \u0432 Excel" })
+            ] }),
+            students.length === 0 && /* @__PURE__ */ jsx("div", { style: { fontSize: 13, color: C.faint, marginTop: 12 }, children: "\u041D\u0438\u043A\u043E\u0433\u043E \u043D\u0435 \u043D\u0430\u0448\u043B\u043E\u0441\u044C. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0441\u043C\u044F\u0433\u0447\u0438\u0442\u044C \u043F\u043E\u0438\u0441\u043A \u0438\u043B\u0438 \u043E\u0447\u0438\u0441\u0442\u0438\u0442\u044C \u0444\u0438\u043B\u044C\u0442\u0440\u044B \u0441\u0442\u043E\u043B\u0431\u0446\u043E\u0432." }),
+            /* @__PURE__ */ jsx(Card, { style: { marginTop: 12, padding: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsxs("table", { style: { width: "100%", borderCollapse: "collapse" }, children: [
+              /* @__PURE__ */ jsxs("thead", { children: [
+                /* @__PURE__ */ jsx("tr", { children: ["\u0423\u0447\u0435\u043D\u0438\u043A", "\u0422\u0438\u043F", "\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C", "\u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439", "\u0421\u0442\u0440\u0430\u043D\u044B", "\u042D\u043A\u0441\u043F\u0435\u0434\u0438\u0446\u0438\u044F", "\u0414\u043E\u0441\u0442\u0443\u043F \u0434\u043E", "\u0411\u044B\u043B(\u0430)"].map((h) => /* @__PURE__ */ jsx("th", { style: { ...cell, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", color: C.faint, textAlign: "left", background: "#faf8f4" }, children: h }, h)) }),
+                /* @__PURE__ */ jsx("tr", { children: [["student", "\u0438\u043C\u044F, \u043F\u043E\u0447\u0442\u0430\u2026"], ["type", "\u043A\u043E\u0434, \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435"], ["ready", "\u0447\u0438\u0441\u043B\u043E"], ["eng", "B2\u2026"], ["countries", "\u0441\u0442\u0440\u0430\u043D\u0430"], ["exp", "4/4, \u043A\u043D\u0438\u0433\u0430"], ["paid", "\u0434\u0430\u0442\u0430"], ["seen", "\u043A\u043E\u0433\u0434\u0430"]].map(([k, ph]) => /* @__PURE__ */ jsx("th", { style: { padding: "4px 8px 8px", background: "#faf8f4", borderBottom: "1px solid #f0ebe3" }, children: /* @__PURE__ */ jsx(
+                  "input",
+                  {
+                    value: colF[k] || "",
+                    onChange: (e) => {
+                      const v = e.target.value;
+                      setColF((f) => ({ ...f, [k]: v }));
+                    },
+                    placeholder: ph,
+                    style: { width: "100%", boxSizing: "border-box", fontFamily: font, fontSize: 11.5, padding: "5px 7px", borderRadius: 7, border: "1px solid #e0d9cf", outline: "none", background: "#fff", fontWeight: 400 }
+                  }
+                ) }, k)) })
+              ] }),
+              /* @__PURE__ */ jsx("tbody", { children: students.map((s) => /* @__PURE__ */ jsxs("tr", { onClick: () => setAdminSel(s.id), style: { cursor: "pointer", background: s.live ? "rgba(255,204,0,0.08)" : "#fff" }, children: [
+                /* @__PURE__ */ jsxs("td", { style: cell, children: [
+                  /* @__PURE__ */ jsx("b", { children: s.name }),
+                  s.live && /* @__PURE__ */ jsx("span", { style: { fontSize: 10, fontWeight: 700, color: C.blue, marginLeft: 6 }, children: "\u25CF LIVE" }),
+                  /* @__PURE__ */ jsxs("div", { style: { fontSize: 11.5, color: C.faint }, children: [
+                    s.grade,
+                    " \u043A\u043B\u0430\u0441\u0441",
+                    s.email ? " \xB7 " + s.email : ""
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxs("td", { style: cell, children: [
+                  s.type,
+                  /* @__PURE__ */ jsx("div", { style: { fontSize: 11.5, color: C.faint }, children: s.typeName })
+                ] }),
+                /* @__PURE__ */ jsx("td", { style: cell, children: s.ready != null ? s.ready + "/100" : "\u2014" }),
+                /* @__PURE__ */ jsx("td", { style: cell, children: s.eng }),
+                /* @__PURE__ */ jsx("td", { style: cell, children: (s.countries || []).map((k) => COUNTRIES[k]?.flag).join(" ") || "\u2014" }),
+                /* @__PURE__ */ jsxs("td", { style: cell, children: [
+                  s.stageDone,
+                  "/4",
+                  s.book ? " \xB7 \u{1F4D5}" : ""
+                ] }),
+                /* @__PURE__ */ jsx("td", { style: cell, children: s.paidTill }),
+                /* @__PURE__ */ jsx("td", { style: cell, children: s.lastSeen })
+              ] }, s.id)) })
+            ] }) })
+          ] })
         ] }),
         st && /* @__PURE__ */ jsxs("div", { style: { marginTop: 16 }, children: [
           /* @__PURE__ */ jsx("div", { onClick: () => setAdminSel(null), style: { fontSize: 12, fontWeight: 600, color: C.blue, cursor: "pointer", marginBottom: 12 }, children: "\u2190 \u041A\u043E \u0432\u0441\u0435\u043C \u0443\u0447\u0435\u043D\u0438\u043A\u0430\u043C" }),
@@ -4342,7 +4688,18 @@ document.addEventListener("click", function (e) {
                 ] }),
                 st.email && /* @__PURE__ */ jsxs("div", { children: [
                   "\u2709\uFE0F Email \u043E\u043F\u043B\u0430\u0442\u044B: ",
-                  /* @__PURE__ */ jsx("b", { children: st.email })
+                  /* @__PURE__ */ jsx("b", { children: st.email }),
+                  GETCOURSE_URL && st.email && /* @__PURE__ */ jsx(
+                    "a",
+                    {
+                      href: `${GETCOURSE_URL.replace(/\/+$/, "")}/pl/user/search/index?q=${encodeURIComponent(st.email)}`,
+                      target: "_blank",
+                      rel: "noreferrer",
+                      title: "\u041E\u0442\u043A\u0440\u043E\u0435\u0442\u0441\u044F \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430 \u044D\u0442\u043E\u0433\u043E \u0443\u0447\u0435\u043D\u0438\u043A\u0430 \u0432 GetCourse \u2014 \u043E\u043F\u043B\u0430\u0442\u044B, \u043F\u0438\u0441\u044C\u043C\u0430, \u0437\u0430\u044F\u0432\u043A\u0438",
+                      style: { marginLeft: 10, fontSize: 12.5, fontWeight: 700, color: C.blue },
+                      children: "\u2197 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430 \u0432 GetCourse"
+                    }
+                  )
                 ] })
               ] }),
               st.live && book && /* @__PURE__ */ jsx("div", { style: { marginTop: 12 }, children: /* @__PURE__ */ jsx(Btn, { kind: "ghost", onClick: downloadFullBook, style: { fontSize: 12.5, padding: "8px 14px" }, tip: "\u0422\u0430 \u0436\u0435 \u043A\u043D\u0438\u0433\u0430, \u0447\u0442\u043E \u0432\u0438\u0434\u0438\u0442 \u0443\u0447\u0435\u043D\u0438\u043A. \u041E\u0442\u043A\u0440\u043E\u0439 \u0435\u0451 \u043F\u0435\u0440\u0435\u0434 \u0441\u043E\u0437\u0432\u043E\u043D\u043E\u043C \u2014 \u0442\u0430\u043A \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440 \u043F\u043E\u0439\u0434\u0451\u0442 \u043F\u043E \u0435\u0433\u043E \u0440\u0435\u0430\u043B\u044C\u043D\u044B\u043C \u043E\u0442\u0432\u0435\u0442\u0430\u043C", children: "\u{1F4D5} \u0421\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044F \u0443\u0447\u0435\u043D\u0438\u043A\u0430 \u2014 \u043E\u0442\u043A\u0440\u044B\u0442\u044C \u0438 \u0440\u0430\u0441\u043F\u0435\u0447\u0430\u0442\u0430\u0442\u044C \u043A \u0441\u043E\u0437\u0432\u043E\u043D\u0443" }) }),
@@ -4434,6 +4791,69 @@ document.addEventListener("click", function (e) {
                 ] }, i));
               })() })
             ] })
+          ] }),
+          HISTORY_ON && !st.live && st.email && !st.isStaff && /* @__PURE__ */ jsxs("div", { style: { marginTop: 18, padding: "14px 16px", borderRadius: 14, border: "1.5px solid #f0c9bd", background: "rgba(255,51,0,0.03)" }, children: [
+            /* @__PURE__ */ jsx("div", { style: { fontSize: 13.5, fontWeight: 700, color: "#a33333" }, children: "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0443\u0447\u0435\u043D\u0438\u043A\u0430 \u0438\u0437 \u0431\u0430\u0437\u044B" }),
+            /* @__PURE__ */ jsxs("div", { style: { fontSize: 12.5, color: C.muted, marginTop: 4, lineHeight: 1.5 }, children: [
+              "\u0421\u043E\u0442\u0440\u0451\u0442 \u0432\u0441\u0451: \u043C\u0430\u0440\u0448\u0440\u0443\u0442, \u043E\u0442\u0432\u0435\u0442\u044B, \u043A\u043D\u0438\u0433\u0443, \u0434\u043E\u0441\u0442\u0443\u043F \u0438 \u0437\u0430\u044F\u0432\u043A\u0438. \u041E\u0442\u043C\u0435\u043D\u0438\u0442\u044C \u043D\u0435\u043B\u044C\u0437\u044F \u0438 \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043D\u0435 \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u0441\u044F. \u0415\u0441\u043B\u0438 \u043D\u0443\u0436\u043D\u043E \u043F\u0440\u043E\u0441\u0442\u043E \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u0434\u043E\u0441\u0442\u0443\u043F \u2014 \u043D\u0435 \u0443\u0434\u0430\u043B\u044F\u0439\u0442\u0435, \u0434\u043E\u0441\u0442\u0443\u043F \u0437\u0430\u043A\u043E\u043D\u0447\u0438\u0442\u0441\u044F \u0441\u0430\u043C \u0432 \u0434\u0430\u0442\u0443 \xAB",
+              st.paidTill,
+              "\xBB."
+            ] }),
+            adminDel && adminDel.email === st.email ? /* @__PURE__ */ jsxs("div", { style: { marginTop: 12 }, children: [
+              /* @__PURE__ */ jsxs("div", { style: { fontSize: 12.5, marginBottom: 8 }, children: [
+                "\u0414\u043B\u044F \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F \u0432\u043F\u0438\u0448\u0438\u0442\u0435 \u043F\u043E\u0447\u0442\u0443 \u0443\u0447\u0435\u043D\u0438\u043A\u0430: ",
+                /* @__PURE__ */ jsx("b", { children: st.email })
+              ] }),
+              /* @__PURE__ */ jsx(
+                "input",
+                {
+                  value: adminDel.typed || "",
+                  onChange: (e) => setAdminDel((d) => ({ ...d, typed: e.target.value })),
+                  placeholder: "\u043F\u043E\u0447\u0442\u0430 \u0443\u0447\u0435\u043D\u0438\u043A\u0430",
+                  autoFocus: true,
+                  style: { width: "100%", maxWidth: 340, boxSizing: "border-box", padding: "9px 12px", borderRadius: 10, border: "1.5px solid #e0d9cf", fontSize: 13.5, fontFamily: "inherit", outline: "none" }
+                }
+              ),
+              adminDel.err && /* @__PURE__ */ jsx("div", { style: { fontSize: 12.5, color: "#a33333", marginTop: 6 }, children: adminDel.err }),
+              /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 10, marginTop: 10, flexWrap: "wrap" }, children: [
+                /* @__PURE__ */ jsx(Btn, { kind: "ghost", onClick: () => setAdminDel(null), style: { fontSize: 12.5, padding: "8px 14px" }, children: "\u041E\u0442\u043C\u0435\u043D\u0430" }),
+                /* @__PURE__ */ jsx(
+                  Btn,
+                  {
+                    kind: "primary",
+                    disabled: adminDel.busy || (adminDel.typed || "").trim().toLowerCase() !== st.email.toLowerCase(),
+                    style: { fontSize: 12.5, padding: "8px 14px" },
+                    onClick: async () => {
+                      setAdminDel((d) => ({ ...d, busy: true, err: "" }));
+                      try {
+                        const r = await fetch(`${PROGRESS_API}/student/delete`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json", Authorization: "Bearer " + staffToken },
+                          body: JSON.stringify({ email: st.email })
+                        });
+                        const j = await r.json().catch(() => ({}));
+                        if (!r.ok) throw new Error(j.error === "is_staff" ? "\u042D\u0442\u043E \u0441\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A \u2014 \u0441\u043D\u0430\u0447\u0430\u043B\u0430 \u0443\u0431\u0435\u0440\u0438\u0442\u0435 \u0435\u0433\u043E \u0438\u0437 \u0441\u043F\u0438\u0441\u043A\u0430 \u043A\u0443\u0440\u0430\u0442\u043E\u0440\u043E\u0432." : j.error === "not_curator" ? "\u041D\u0435\u0442 \u043F\u0440\u0430\u0432 \u043A\u0443\u0440\u0430\u0442\u043E\u0440\u0430." : "\u0421\u0435\u0440\u0432\u0435\u0440 \u043E\u0442\u0432\u0435\u0442\u0438\u043B \u043E\u0448\u0438\u0431\u043A\u043E\u0439. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437.");
+                        setAdminDel(null);
+                        setAdminSel(null);
+                        setAdminRefresh((x) => x + 1);
+                      } catch (e) {
+                        setAdminDel((d) => ({ ...d, busy: false, err: e.message || "\u041D\u0435 \u043F\u043E\u043B\u0443\u0447\u0438\u043B\u043E\u0441\u044C \u0443\u0434\u0430\u043B\u0438\u0442\u044C." }));
+                      }
+                    },
+                    children: adminDel.busy ? "\u0423\u0434\u0430\u043B\u044F\u044E\u2026" : "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430"
+                  }
+                )
+              ] })
+            ] }) : /* @__PURE__ */ jsx("div", { style: { marginTop: 10 }, children: /* @__PURE__ */ jsx(
+              Btn,
+              {
+                kind: "ghost",
+                onClick: () => setAdminDel({ email: st.email, typed: "" }),
+                style: { fontSize: 12.5, padding: "8px 14px", color: "#a33333", borderColor: "#e0a99b" },
+                tip: "\u041F\u043E\u043B\u043D\u043E\u0435 \u0443\u0434\u0430\u043B\u0435\u043D\u0438\u0435 \u0438\u0437 \u0431\u0430\u0437\u044B \u2014 \u043F\u043E\u0442\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044F \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435",
+                children: "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0443\u0447\u0435\u043D\u0438\u043A\u0430\u2026"
+              }
+            ) })
           ] })
         ] })
       ] });
