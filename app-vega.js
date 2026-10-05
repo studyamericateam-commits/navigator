@@ -5290,7 +5290,7 @@ document.addEventListener("click", function (e) {
                   GETCOURSE_URL && st.email && /* @__PURE__ */ jsx(
                     "a",
                     {
-                      href: `${GETCOURSE_URL.replace(/\/+$/, "")}/pl/user/search/index?q=${encodeURIComponent(st.email)}`,
+                      href: `${GETCOURSE_URL.replace(/\/+$/, "")}/pl/user/user/index?uc%5Bemail%5D=${encodeURIComponent(st.email)}`,
                       target: "_blank",
                       rel: "noreferrer",
                       title: "\u041E\u0442\u043A\u0440\u043E\u0435\u0442\u0441\u044F \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430 \u044D\u0442\u043E\u0433\u043E \u0443\u0447\u0435\u043D\u0438\u043A\u0430 \u0432 GetCourse \u2014 \u043E\u043F\u043B\u0430\u0442\u044B, \u043F\u0438\u0441\u044C\u043C\u0430, \u0437\u0430\u044F\u0432\u043A\u0438",
