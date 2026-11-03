@@ -4135,7 +4135,20 @@ document.addEventListener("click", function (e) {
                 setBookStale(false);
                 setBook(null);
               }, style: { textDecoration: "underline", cursor: "pointer", fontWeight: 600 }, children: "\u041F\u0435\u0440\u0435\u0441\u043E\u0431\u0440\u0430\u0442\u044C" })
-            ] })
+            ] }),
+            /* @__PURE__ */ jsx("div", { style: { marginTop: 12, paddingTop: 10, borderTop: "1px solid rgba(255,255,255,0.18)" }, children: /* @__PURE__ */ jsx(
+              "span",
+              {
+                onClick: () => {
+                  if (window.confirm("\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044E \u0437\u0430\u043D\u043E\u0432\u043E? \u041D\u044B\u043D\u0435\u0448\u043D\u044F\u044F \u0432\u0435\u0440\u0441\u0438\u044F \u0437\u0430\u043C\u0435\u043D\u0438\u0442\u0441\u044F \u043D\u043E\u0432\u043E\u0439 \u2014 \u043E\u0442\u0432\u0435\u0442\u044B \u0438 \u0442\u0438\u043F \u043E\u0441\u0442\u0430\u043D\u0443\u0442\u0441\u044F \u043F\u0440\u0435\u0436\u043D\u0438\u043C\u0438, \u043E\u0431\u043D\u043E\u0432\u0438\u0442\u0441\u044F \u0441\u0430\u043C \u0440\u0430\u0437\u0431\u043E\u0440.")) {
+                    setBookStale(false);
+                    setBook(null);
+                  }
+                },
+                style: { fontSize: 12.5, color: "#9db6dc", textDecoration: "underline", cursor: "pointer" },
+                children: "\u21BB \u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044E \u0437\u0430\u043D\u043E\u0432\u043E"
+              }
+            ) })
           ] }),
           /* @__PURE__ */ jsxs(Card, { children: [
             /* @__PURE__ */ jsx("div", { style: { fontWeight: 800, marginBottom: 12 }, children: "\u{1F30D} \u0421\u0446\u0435\u043D\u0430\u0440\u0438\u0438" }),
