@@ -2619,6 +2619,9 @@ export default function App() {
     if (patch.fbSent) setFbSent(true);
     if (patch.bookedAt) setBookedAt(patch.bookedAt);
     if (patch.euCompare) setEuCompare(patch.euCompare);
+    if (patch.typing) setS1("result");
+    if (patch.readAns && Object.keys(patch.readAns).length >= READINESS.length) setS2("summary");
+    else if (patch.engAns && patch.engAns.length >= ENG_TEST.length) setS2("ready");
   };
   useEffect(() => {
     if (!ACCESS_ON) return;
