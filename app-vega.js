@@ -873,7 +873,8 @@ function polarityBonus(code, answers) {
   return b;
 }
 function scoreFamily(family, answers, discAnswers) {
-  const rows = FAMILIES[family].map((code) => {
+  const \u043A\u043E\u0434\u044B = Array.isArray(family) ? family : FAMILIES[family];
+  const rows = \u043A\u043E\u0434\u044B.map((code) => {
     const st = (discAnswers[code + "_0"] || 0) + (discAnswers[code + "_1"] || 0);
     const bonus = polarityBonus(code, answers);
     return { code, statements: st, bonus, total: st + bonus };
@@ -2364,6 +2365,7 @@ export default function App() {
   const [done, setDone] = useState([]);
   const [name, setName] = useState("");
   const [s1, setS1] = useState("quiz");
+  const [families, setFamilies] = useState([]);
   const [qi, setQi] = useState(0);
   const [ansE, setAnsE] = useState({});
   const [disc, setDisc] = useState({});
@@ -2743,19 +2745,32 @@ export default function App() {
     if (qi + 1 < QUESTIONS.length) setQi(qi + 1);
     else {
       const s = scoreDirections(ansE);
-      setFamily(familyOf(s));
+      const \u0441\u0432\u043E\u044F = familyOf(s);
+      const \u0433\u0440 = \u0433\u0440\u0430\u043D\u0438\u0446\u0430\u0421\u0435\u043C\u044C\u0438(s);
+      setFamily(\u0441\u0432\u043E\u044F);
+      setFamilies(\u0433\u0440.\u0431\u043B\u0438\u0437\u043A\u043E && FAMILIES[\u0433\u0440.\u0441\u043E\u0441\u0435\u0434\u043D\u044F\u044F] ? [\u0441\u0432\u043E\u044F, \u0433\u0440.\u0441\u043E\u0441\u0435\u0434\u043D\u044F\u044F] : [\u0441\u0432\u043E\u044F]);
       setS1("disc");
     }
   };
-  const discFilled = family ? FAMILIES[family].every((c) => disc[c + "_0"] && disc[c + "_1"]) : false;
+  const \u043A\u043E\u0434\u044B\u0420\u0430\u0437\u043B\u0438\u0447\u0435\u043D\u0438\u044F = (families.length ? families : family ? [family] : []).flatMap((f) => FAMILIES[f] || []);
+  const discFilled = \u043A\u043E\u0434\u044B\u0420\u0430\u0437\u043B\u0438\u0447\u0435\u043D\u0438\u044F.length ? \u043A\u043E\u0434\u044B\u0420\u0430\u0437\u043B\u0438\u0447\u0435\u043D\u0438\u044F.every((c) => disc[c + "_0"] && disc[c + "_1"]) : false;
   const finishTyping = () => {
-    const rows = scoreFamily(family, ansE, disc);
+    const rows = scoreFamily(\u043A\u043E\u0434\u044B\u0420\u0430\u0437\u043B\u0438\u0447\u0435\u043D\u0438\u044F.length ? \u043A\u043E\u0434\u044B\u0420\u0430\u0437\u043B\u0438\u0447\u0435\u043D\u0438\u044F : family, ansE, disc);
     const win = rows[0], second = rows[1];
     const margin = win.total - second.total;
     const \u043E\u0441\u0438 = scoreDirections(ansE);
     const \u0433\u0440 = \u0433\u0440\u0430\u043D\u0438\u0446\u0430\u0421\u0435\u043C\u044C\u0438(\u043E\u0441\u0438);
-    const confidence = \u0443\u0432\u0435\u0440\u0435\u043D\u043D\u043E\u0441\u0442\u044C\u0422\u0438\u043F\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F(margin, \u0433\u0440.\u0437\u0430\u0437\u043E\u0440);
-    const tp = { code: win.code, card: T[win.code], confidence, margin, runner: second.code, \u043E\u0441\u0438, \u0433\u0440\u0430\u043D\u0438\u0446\u0430: \u0433\u0440 };
+    const \u0440\u0430\u0437\u043E\u0431\u0440\u0430\u043B\u0438 = families.length > 1;
+    const confidence = \u0440\u0430\u0437\u043E\u0431\u0440\u0430\u043B\u0438 ? margin >= 2.5 ? "\u0432\u044B\u0441\u043E\u043A\u0430\u044F" : margin >= 1 ? "\u0441\u0440\u0435\u0434\u043D\u044F\u044F" : "\u043D\u0438\u0437\u043A\u0430\u044F" : \u0443\u0432\u0435\u0440\u0435\u043D\u043D\u043E\u0441\u0442\u044C\u0422\u0438\u043F\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F(margin, \u0433\u0440.\u0437\u0430\u0437\u043E\u0440);
+    const tp = {
+      code: win.code,
+      card: T[win.code],
+      confidence,
+      margin,
+      runner: second.code,
+      \u043E\u0441\u0438,
+      \u0433\u0440\u0430\u043D\u0438\u0446\u0430: { ...\u0433\u0440, \u0440\u0430\u0437\u043E\u0431\u0440\u0430\u043D\u0430: \u0440\u0430\u0437\u043E\u0431\u0440\u0430\u043B\u0438 }
+    };
     setTyping(tp);
     setS1("result");
     makeAiPortrait(tp, anketa);
@@ -3606,8 +3621,11 @@ document.addEventListener("click", function (e) {
         ] }),
         s1 === "disc" && family && /* @__PURE__ */ jsxs(Card, { children: [
           /* @__PURE__ */ jsx("div", { style: { fontWeight: 800, fontSize: 17, marginBottom: 4 }, children: "\u0411\u043B\u043E\u043A \u0440\u0430\u0437\u043B\u0438\u0447\u0435\u043D\u0438\u044F" }),
-          /* @__PURE__ */ jsx("p", { style: { fontSize: 14, color: "#6d675e", margin: "0 0 18px" }, children: "\u0422\u0432\u043E\u044F \u0441\u0435\u043C\u044C\u044F \u0442\u0438\u043F\u043E\u0432 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0430. \u041E\u0446\u0435\u043D\u0438 \u043E\u0442 1 (\xAB\u0441\u043E\u0432\u0441\u0435\u043C \u043D\u0435 \u043F\u0440\u043E \u043C\u0435\u043D\u044F\xBB) \u0434\u043E 5 (\xAB\u0442\u043E\u0447\u043D\u043E \u043F\u0440\u043E \u043C\u0435\u043D\u044F\xBB), \u043D\u0430\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043A\u0430\u0436\u0434\u043E\u0435 \u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u0442\u0435\u0431\u0435 \u0431\u043B\u0438\u0437\u043A\u043E." }),
-          FAMILIES[family].map((code) => /* @__PURE__ */ jsx("div", { style: { marginBottom: 6 }, children: DISC[code].map((st, i) => /* @__PURE__ */ jsxs("div", { style: { display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: "1px solid #f0ebe3" }, children: [
+          /* @__PURE__ */ jsxs("p", { style: { fontSize: 14, color: "#6d675e", margin: "0 0 18px" }, children: [
+            families.length > 1 ? "\u0414\u0432\u0430 \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u044F \u0443 \u0442\u0435\u0431\u044F \u043F\u043E\u0447\u0442\u0438 \u0441\u0440\u0430\u0432\u043D\u044F\u043B\u0438\u0441\u044C, \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0439 \u0437\u0434\u0435\u0441\u044C \u0431\u043E\u043B\u044C\u0448\u0435 \u043E\u0431\u044B\u0447\u043D\u043E\u0433\u043E \u2014 \u0442\u0430\u043A \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442 \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u0441\u044F \u0442\u043E\u0447\u043D\u0435\u0435. " : "",
+            "\u041E\u0446\u0435\u043D\u0438 \u043E\u0442 1 (\xAB\u0441\u043E\u0432\u0441\u0435\u043C \u043D\u0435 \u043F\u0440\u043E \u043C\u0435\u043D\u044F\xBB) \u0434\u043E 5 (\xAB\u0442\u043E\u0447\u043D\u043E \u043F\u0440\u043E \u043C\u0435\u043D\u044F\xBB), \u043D\u0430\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043A\u0430\u0436\u0434\u043E\u0435 \u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u0442\u0435\u0431\u0435 \u0431\u043B\u0438\u0437\u043A\u043E."
+          ] }),
+          \u043A\u043E\u0434\u044B\u0420\u0430\u0437\u043B\u0438\u0447\u0435\u043D\u0438\u044F.map((code) => /* @__PURE__ */ jsx("div", { style: { marginBottom: 6 }, children: DISC[code].map((st, i) => /* @__PURE__ */ jsxs("div", { style: { display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: "1px solid #f0ebe3" }, children: [
             /* @__PURE__ */ jsx("div", { style: { flex: "1 1 340px", fontSize: 14.5, lineHeight: 1.5 }, children: st }),
             /* @__PURE__ */ jsx(Rate, { value: disc[code + "_" + i], onChange: (v) => setDisc((d) => ({ ...d, [code + "_" + i]: v })) })
           ] }, i)) }, code)),
@@ -3807,6 +3825,7 @@ document.addEventListener("click", function (e) {
                 setAnsE({});
                 setDisc({});
                 setFamily(null);
+                setFamilies([]);
                 setTyping(null);
                 setAiCard(null);
                 setBook(null);
