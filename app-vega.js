@@ -2230,6 +2230,9 @@ const parseJsonLoose = (raw) => {
 };
 const font = "'Inter', system-ui, sans-serif";
 const fontHead = "'Inter Tight', 'Inter', system-ui, sans-serif";
+const VIDEO_EUROPE = "";
+const VIDEO_USA = "";
+const VIDEO_CHINA = "";
 const HERO_VIDEO = "/route-map-brand.mp4";
 const HERO_POSTER = "/route-map-poster.jpg";
 function Btn({ children, onClick, kind = "primary", disabled, style, hint, tip }) {
@@ -4020,6 +4023,54 @@ document.addEventListener("click", function (e) {
           /* @__PURE__ */ jsx("div", { style: { textAlign: "right" }, children: /* @__PURE__ */ jsx(Btn, { onClick: () => setS2("countries"), tip: "\u0422\u0435\u043F\u0435\u0440\u044C \u0432\u044B\u0431\u0435\u0440\u0438 \u0441\u0442\u0440\u0430\u043D\u044B: \u0432\u043D\u0443\u0442\u0440\u0438 \u0415\u0432\u0440\u043E\u043F\u044B \u043C\u043E\u0436\u043D\u043E \u043E\u0442\u043A\u0440\u044B\u0442\u044C 10 \u0432\u0430\u0440\u0438\u0430\u043D\u0442\u043E\u0432 \u0438 \u0441\u0440\u0430\u0432\u043D\u0438\u0442\u044C \u0438\u0445 \u043C\u0435\u0436\u0434\u0443 \u0441\u043E\u0431\u043E\u0439", children: "\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u044F\u0441\u043D\u0430 \u2192 \u043A \u0432\u044B\u0431\u043E\u0440\u0443 \u0441\u0442\u0440\u0430\u043D" }) })
         ] }),
         s2 === "countries" && /* @__PURE__ */ jsxs("div", { children: [
+          (() => {
+            const \u041E\u0411\u0417\u041E\u0420\u042B = [
+              { k: "europe", url: VIDEO_EUROPE, \u0444\u043B\u0430\u0433: "\u{1F1EA}\u{1F1FA}", \u0438\u043C\u044F: "\u0415\u0432\u0440\u043E\u043F\u0430", \u043F\u043E\u0434: "\u0430\u043D\u0433\u043B\u043E\u044F\u0437\u044B\u0447\u043D\u044B\u0439 \u0431\u0430\u043A\u0430\u043B\u0430\u0432\u0440\u0438\u0430\u0442 \u0432 \u0415\u0421: \u0446\u0435\u043D\u044B, \u0441\u0440\u043E\u043A\u0438, \u043F\u043E\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u0435", \u043E\u0442: "#1a3a6b", \u0434\u043E: "#2f6fb8" },
+              { k: "usa", url: VIDEO_USA, \u0444\u043B\u0430\u0433: "\u{1F1FA}\u{1F1F8}", \u0438\u043C\u044F: "\u0421\u0428\u0410", \u043F\u043E\u0434: "\u0437\u0430\u044F\u0432\u043A\u0430, \u0444\u0438\u043D\u0430\u043D\u0441\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0438 \u043A\u0430\u043A \u0443\u0441\u0442\u0440\u043E\u0435\u043D \u043F\u0440\u0438\u0451\u043C", \u043E\u0442: "#0f2d5c", \u0434\u043E: "#c0392b" },
+              { k: "china", url: VIDEO_CHINA, \u0444\u043B\u0430\u0433: "\u{1F1E8}\u{1F1F3}", \u0438\u043C\u044F: "\u041A\u0438\u0442\u0430\u0439", \u043F\u043E\u0434: "\u0441\u0442\u0438\u043F\u0435\u043D\u0434\u0438\u0438 \u0432\u0443\u0437\u043E\u0432, \u044F\u0437\u044B\u043A \u0438 \u0436\u0438\u0437\u043D\u044C \u0432 \u043A\u0430\u043C\u043F\u0443\u0441\u0435", \u043E\u0442: "#7d1f1f", \u0434\u043E: "#d4902a" }
+            ];
+            return /* @__PURE__ */ jsxs("div", { style: { marginBottom: 24 }, children: [
+              /* @__PURE__ */ jsx("div", { style: { fontWeight: 800, fontSize: 16, marginBottom: 3 }, children: "\u{1F3AC} \u041E\u0431\u0437\u043E\u0440\u044B \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0439" }),
+              /* @__PURE__ */ jsx("div", { style: { fontSize: 13, color: "#6d675e", marginBottom: 12 }, children: "\u0420\u0430\u0437\u0431\u043E\u0440 \u043E\u0442 \u044D\u043A\u0441\u043F\u0435\u0440\u0442\u043E\u0432 StudyGlobal \u2014 \u043F\u043E\u043C\u043E\u0436\u0435\u0442 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043E\u0441\u043E\u0437\u043D\u0430\u043D\u043D\u043E, \u0430 \u043D\u0435 \u043D\u0430 \u043E\u0449\u0443\u043F\u044C." }),
+              /* @__PURE__ */ jsx("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 12 }, children: \u041E\u0411\u0417\u041E\u0420\u042B.map((\u043E) => {
+                const \u0433\u043E\u0442\u043E\u0432 = !!\u043E.url;
+                return /* @__PURE__ */ jsxs(
+                  "div",
+                  {
+                    onClick: () => {
+                      if (\u0433\u043E\u0442\u043E\u0432) window.open(\u043E.url, "_blank", "noopener");
+                    },
+                    style: {
+                      position: "relative",
+                      borderRadius: 14,
+                      overflow: "hidden",
+                      minHeight: 150,
+                      background: `linear-gradient(140deg, ${\u043E.\u043E\u0442} 0%, ${\u043E.\u0434\u043E} 100%)`,
+                      cursor: \u0433\u043E\u0442\u043E\u0432 ? "pointer" : "default",
+                      opacity: \u0433\u043E\u0442\u043E\u0432 ? 1 : 0.82,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      padding: "14px 15px",
+                      color: "#fff"
+                    },
+                    children: [
+                      /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }, children: [
+                        /* @__PURE__ */ jsx("div", { style: { fontSize: 30, lineHeight: 1 }, children: \u043E.\u0444\u043B\u0430\u0433 }),
+                        \u0433\u043E\u0442\u043E\u0432 ? /* @__PURE__ */ jsx("div", { style: { width: 34, height: 34, borderRadius: "50%", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }, children: /* @__PURE__ */ jsx("div", { style: { width: 0, height: 0, borderLeft: "11px solid #16325c", borderTop: "7px solid transparent", borderBottom: "7px solid transparent", marginLeft: 3 } }) }) : /* @__PURE__ */ jsx("div", { style: { fontSize: 10.5, fontWeight: 700, letterSpacing: "0.08em", background: "rgba(255,255,255,0.2)", padding: "4px 8px", borderRadius: 20, flex: "none" }, children: "\u0421\u041A\u041E\u0420\u041E" })
+                      ] }),
+                      /* @__PURE__ */ jsxs("div", { children: [
+                        /* @__PURE__ */ jsx("div", { style: { fontFamily: fontHead, fontWeight: 800, fontSize: 20, letterSpacing: "-0.01em" }, children: \u043E.\u0438\u043C\u044F }),
+                        /* @__PURE__ */ jsx("div", { style: { fontSize: 12, lineHeight: 1.45, color: "rgba(255,255,255,0.88)", marginTop: 3 }, children: \u043E.\u043F\u043E\u0434 }),
+                        /* @__PURE__ */ jsx("div", { style: { fontSize: 11.5, fontWeight: 700, marginTop: 7, color: "rgba(255,255,255,0.95)" }, children: \u0433\u043E\u0442\u043E\u0432 ? "\u0421\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u043E\u0431\u0437\u043E\u0440 \u2192" : "\u0417\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u0435\u0442\u0441\u044F" })
+                      ] })
+                    ]
+                  },
+                  \u043E.k
+                );
+              }) })
+            ] });
+          })(),
           /* @__PURE__ */ jsx("p", { style: { color: "#6d675e", margin: "0 0 20px" }, children: "\u0421\u043E\u0432\u043C\u0435\u0441\u0442\u0438\u043C\u043E\u0441\u0442\u044C \u0440\u0430\u0441\u0441\u0447\u0438\u0442\u0430\u043D\u0430 \u043F\u043E \u0431\u044E\u0434\u0436\u0435\u0442\u0443 \u0438 \u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0435\u0442\u0430\u043C \u0441\u0435\u043C\u044C\u0438, \u0442\u0432\u043E\u0435\u043C\u0443 \u0443\u0440\u043E\u0432\u043D\u044E \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u043E\u0433\u043E \u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438 \u0437\u0430\u044F\u0432\u043A\u0438. \u0418\u0437\u0443\u0447\u0438 \u043F\u043B\u044E\u0441\u044B, \xAB\u0441\u0442\u043E\u0438\u0442 \u0443\u0447\u0435\u0441\u0442\u044C\xBB \u0438 \u043F\u0435\u0440\u0441\u043F\u0435\u043A\u0442\u0438\u0432\u044B \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u044F \u0438 \u0432\u044B\u0431\u0435\u0440\u0438 2\u20133 \u0441\u0442\u0440\u0430\u043D\u044B \u0434\u043B\u044F \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u044F." }),
           /* @__PURE__ */ jsx("div", { style: { display: "grid", gap: 14 }, children: ranked.map(([k, sc]) => {
             const c = COUNTRIES[k];
