@@ -2839,27 +2839,51 @@ export default function App() {
     setPendingRebuild(false);
     makeBook();
   }, [pendingRebuild, typing]);
-  const applyProgressPatch = (patch) => {
+  const applyProgressPatch = (patch, \u0447\u0438\u0441\u0442\u043E = false) => {
     if (!patch) return;
-    if (patch.name) setName((n) => n || patch.name);
-    if (patch.anketa) setAnketa((a) => ({ ...a, ...patch.anketa }));
-    if (patch.ansE) setAnsE(patch.ansE);
-    if (patch.engAns) setEngAns(patch.engAns);
-    if (patch.readAns) setReadAns(patch.readAns);
-    if (patch.typing) setTyping(patch.typing);
-    if (patch.picked) setPicked(patch.picked);
-    if (patch.book) setBook(patch.book);
-    if (patch.aiCard) setAiCard(patch.aiCard);
-    if (patch.liveActs) setLiveActs(patch.liveActs);
+    const \u0437\u043D = (\u043A\u043B\u044E\u0447, \u043F\u0443\u0441\u0442\u043E) => patch[\u043A\u043B\u044E\u0447] === void 0 || patch[\u043A\u043B\u044E\u0447] === null ? \u043F\u0443\u0441\u0442\u043E : patch[\u043A\u043B\u044E\u0447];
+    if (\u0447\u0438\u0441\u0442\u043E) {
+      setName(\u0437\u043D("name", ""));
+      setAnketa(\u0437\u043D("anketa", {}));
+      setAnsE(\u0437\u043D("ansE", {}));
+      setEngAns(\u0437\u043D("engAns", []));
+      setReadAns(\u0437\u043D("readAns", {}));
+      setTyping(\u0437\u043D("typing", null));
+      setPicked(\u0437\u043D("picked", []));
+      setBook(\u0437\u043D("book", null));
+      setAiCard(\u0437\u043D("aiCard", null));
+      setLiveActs(\u0437\u043D("liveActs", null));
+      setEuCompare(\u0437\u043D("euCompare", []));
+      setConsultQs(\u0437\u043D("consultQs", ""));
+      setFeedback(\u0437\u043D("feedback", ""));
+      setBookedAt(\u0437\u043D("bookedAt", ""));
+      setFbSent(!!patch.fbSent);
+      setBookStale(false);
+      setDone(\u0437\u043D("done", []));
+      setStage(1);
+      setS1("quiz");
+      setS2("eng");
+    } else {
+      if (patch.name) setName((n) => n || patch.name);
+      if (patch.anketa) setAnketa((a) => ({ ...a, ...patch.anketa }));
+      if (patch.ansE) setAnsE(patch.ansE);
+      if (patch.engAns) setEngAns(patch.engAns);
+      if (patch.readAns) setReadAns(patch.readAns);
+      if (patch.typing) setTyping(patch.typing);
+      if (patch.picked) setPicked(patch.picked);
+      if (patch.book) setBook(patch.book);
+      if (patch.aiCard) setAiCard(patch.aiCard);
+      if (patch.liveActs) setLiveActs(patch.liveActs);
+      if (patch.consultQs) setConsultQs(patch.consultQs);
+      if (patch.feedback) setFeedback(patch.feedback);
+      if (patch.fbSent) setFbSent(true);
+      if (patch.bookedAt) setBookedAt(patch.bookedAt);
+      if (patch.euCompare) setEuCompare(patch.euCompare);
+    }
     if (patch.done && patch.done.length) {
       setDone(patch.done);
       setStage(Math.min(4, Math.max(...patch.done) + 1));
     }
-    if (patch.consultQs) setConsultQs(patch.consultQs);
-    if (patch.feedback) setFeedback(patch.feedback);
-    if (patch.fbSent) setFbSent(true);
-    if (patch.bookedAt) setBookedAt(patch.bookedAt);
-    if (patch.euCompare) setEuCompare(patch.euCompare);
     if (patch.typing) setS1("result");
     if (patch.readAns && Object.keys(patch.readAns).length >= READINESS.length) setS2("summary");
     else if (patch.engAns && patch.engAns.length >= ENG_TEST.length) setS2("ready");
@@ -5339,6 +5363,10 @@ document.addEventListener("click", function (e) {
               adminDb.err,
               " ",
               /* @__PURE__ */ jsx("span", { onClick: () => setAdminRefresh((x) => x + 1), style: { textDecoration: "underline", cursor: "pointer" }, children: "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C" })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { style: { fontSize: 11.5, color: C.faint, marginTop: 4 }, children: [
+              "\u0432\u0435\u0440\u0441\u0438\u044F \u043A\u043E\u0434\u0430: ",
+              typeof window !== "undefined" && window.\u041D\u0410\u0412\u0418\u0413\u0410\u0422\u041E\u0420_\u0412\u0415\u0420\u0421\u0418\u042F || "\u2014"
             ] })
           ] }),
           /* @__PURE__ */ jsx("div", { onClick: () => {
@@ -5920,7 +5948,7 @@ document.addEventListener("click", function (e) {
                         alert("\u0423 \u044D\u0442\u043E\u0433\u043E \u0443\u0447\u0435\u043D\u0438\u043A\u0430 \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044F \u0435\u0449\u0451 \u043D\u0435 \u0441\u043E\u0431\u0440\u0430\u043D\u0430.");
                         return;
                       }
-                      applyProgressPatch(patch);
+                      applyProgressPatch(patch, true);
                       setPendingBook(true);
                     },
                     children: bookLoad === st.email ? "\u23F3 \u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E\u2026" : "\u{1F4D5} \u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044E \u0443\u0447\u0435\u043D\u0438\u043A\u0430 \u2014 \u043C\u043E\u0436\u043D\u043E \u0440\u0430\u0441\u043F\u0435\u0447\u0430\u0442\u0430\u0442\u044C \u043A \u0441\u043E\u0437\u0432\u043E\u043D\u0443"
@@ -5947,7 +5975,7 @@ document.addEventListener("click", function (e) {
                         return;
                       }
                       delete patch.book;
-                      applyProgressPatch(patch);
+                      applyProgressPatch(patch, true);
                       setBook(null);
                       setPendingRebuild(true);
                     },

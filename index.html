@@ -43,50 +43,51 @@
     <script type="module">
       import React from "react";
       import { createRoot } from "react-dom/client";
-      import App from "./app-vega.js?v=df5e327696";
 
-      createRoot(document.getElementById("root")).render(
-        React.createElement(React.StrictMode, null, React.createElement(App))
-      );
+      // Запасной адрес кода — тот, что проставила сборка в ЭТУ страницу.
+      var ЗАПАС = "./app-vega.js?v=1529793916";
+      var БАЗА = "./app-vega.js";   // полный адрес собираем сами, иначе сборка затрёт
+      var запущено = false;
+
+      function пуск(адрес) {
+        if (запущено) return;
+        запущено = true;
+        // Версию, которая реально запустилась, показываем в кабинете куратора:
+        // когда владелец говорит «ничего не поменялось», первый вопрос — какой код
+        // у неё в браузере, и теперь ответ виден глазами и попадает в скриншот.
+        try { window.НАВИГАТОР_ВЕРСИЯ = (/v=([A-Za-z0-9.-]+)/.exec(адрес) || [])[1] || ""; } catch (e) {}
+        import(адрес).then(function (м) {
+          createRoot(document.getElementById("root")).render(
+            React.createElement(React.StrictMode, null, React.createElement(м.default))
+          );
+        }).catch(function () {
+          document.getElementById("root").innerHTML =
+            '<div style="font:16px/1.6 system-ui;padding:40px;text-align:center;color:#3a3630">' +
+            'Навигатор не загрузился — похоже, пропала сеть.<br>Обнови страницу.</div>';
+        });
+      }
+
+      // Какая версия кода сейчас настоящая — спрашиваем сервер, а не закэшированную
+      // страницу. Timeweb отдаёт index.html без Cache-Control, и браузер держит его
+      // часами: 09.11.2026 владелец выложила сборку, а в её вкладке осталась вчерашняя
+      // страница со ссылкой на вчерашний код. Прежнее решение (перезагрузить вкладку,
+      // если версия разошлась) спасало только один раз за сессию вкладки: флаг
+      // «уже перезагружались» не знал, ДЛЯ КАКОЙ версии он поставлен, поэтому во
+      // вкладке, открытой с вечера, проверка больше не срабатывала — и 10.11.2026
+      // всё повторилось. Теперь номер версии берётся из сети ДО загрузки кода:
+      // закэшированная страница больше не может запустить старый Навигатор, и
+      // перезагружать вкладку не нужно вообще.
+      var кран = new AbortController();
+      var поздно = setTimeout(function () { кран.abort(); }, 2500);
+      fetch("index.html", { cache: "no-store", signal: кран.signal })
+        .then(function (r) { return r.ok ? r.text() : ""; })
+        .then(function (t) {
+          clearTimeout(поздно);
+          var м = /app-vega\.js\?v=([A-Za-z0-9.-]+)/.exec(t || "");
+          пуск(м ? БАЗА + "?v=" + м[1] : ЗАПАС);
+        })
+        .catch(function () { clearTimeout(поздно); пуск(ЗАПАС); });
     </script>
 
-    <!--
-      Самопроверка версии. 09.11.2026: Timeweb отдаёт и сам index.html без
-      Cache-Control, поэтому браузер держал вчерашнюю страницу, а в ней — ссылку
-      на вчерашний код. Владелец выложила новую сборку, зашла в кабинет ученицы,
-      нажала «собрать стратегию заново» — и получила прежний результат, потому что
-      считал его старый app-vega.js. Номер версии в адресе от этого не спасает:
-      он лежит ВНУТРИ закэшированной страницы.
-
-      Поэтому страница сама спрашивает сервер, какая версия сейчас настоящая, и,
-      если разошлось, один раз перезагружается с новым адресом. Ученику ничего
-      нажимать не нужно — он просто видит свежий Навигатор.
-
-      Защита от зацикливания: перезагрузка не чаще одного раза за сессию вкладки.
-      Любая ошибка (нет сети, сервер не ответил) молча игнорируется — проверка
-      никогда не должна мешать человеку работать.
-    -->
-    <script>
-      (function () {
-        var МОЯ = "./app-vega.js?v=df5e327696";
-        try {
-          if (sessionStorage.getItem("навигатор-перезагружен")) return;
-        } catch (e) { return; }
-        var моя = /v=([\w.-]+)/.exec(МОЯ);
-        if (!моя) return;
-        setTimeout(function () {
-          fetch("index.html", { cache: "no-store" })
-            .then(function (r) { return r.ok ? r.text() : null; })
-            .then(function (t) {
-              if (!t) return;
-              var их = /\.\/app-vega\.js\?v=([\w.-]+)/.exec(t);
-              if (!их || их[1] === моя[1]) return;
-              try { sessionStorage.setItem("навигатор-перезагружен", "1"); } catch (e) { return; }
-              location.replace(location.pathname + "?v=" + их[1] + location.hash);
-            })
-            .catch(function () {});
-        }, 1500);
-      })();
-    </script>
   </body>
 </html>
