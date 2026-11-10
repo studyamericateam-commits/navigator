@@ -2647,6 +2647,7 @@ export default function App() {
   const [bookLoad, setBookLoad] = useState("");
   const [pendingBook, setPendingBook] = useState(false);
   const [pendingRebuild, setPendingRebuild] = useState(false);
+  const [\u0447\u0443\u0436\u043E\u0439\u0423\u0447\u0435\u043D\u0438\u043A, set\u0427\u0443\u0436\u043E\u0439\u0423\u0447\u0435\u043D\u0438\u043A] = useState(false);
   const loadScript = (src) => new Promise((resolve, reject) => {
     const sc = document.createElement("script");
     sc.src = src;
@@ -2887,6 +2888,13 @@ export default function App() {
     if (patch.typing) setS1("result");
     if (patch.readAns && Object.keys(patch.readAns).length >= READINESS.length) setS2("summary");
     else if (patch.engAns && patch.engAns.length >= ENG_TEST.length) setS2("ready");
+  };
+  const \u0432\u044B\u0439\u0442\u0438\u0418\u0437\u041A\u0430\u0431\u0438\u043D\u0435\u0442\u0430 = () => {
+    if (\u0447\u0443\u0436\u043E\u0439\u0423\u0447\u0435\u043D\u0438\u043A) {
+      location.reload();
+      return;
+    }
+    setScreen("welcome");
   };
   useEffect(() => {
     if (!ACCESS_ON) return;
@@ -3246,6 +3254,7 @@ ${opens}
   };
   const syncProgress = async () => {
     if (!HISTORY_ON || !authEmail || !access || !accessToken) return;
+    if (\u0447\u0443\u0436\u043E\u0439\u0423\u0447\u0435\u043D\u0438\u043A) return;
     const row = buildProgressRow({ email: authEmail, name, anketa, typing, done, readinessIndex, engLevel, picked, book, ansE, engAns, readAns, aiCard, liveActs, fbSent, euCompare, consultQs, feedback, helpMsgs, scores, bookedAt });
     await apiSaveProgress(accessToken, row);
   };
@@ -5356,7 +5365,7 @@ document.addEventListener("click", function (e) {
           /* @__PURE__ */ jsxs("div", { children: [
             /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "baseline", gap: 14 }, children: [
               /* @__PURE__ */ jsx("div", { style: { fontFamily: fontHead, fontWeight: 700, fontSize: 24 }, children: "\u041A\u0430\u0431\u0438\u043D\u0435\u0442 \u043A\u0443\u0440\u0430\u0442\u043E\u0440\u0430" }),
-              /* @__PURE__ */ jsx("span", { onClick: () => setScreen("welcome"), style: { fontSize: 12.5, color: "#8a847a", cursor: "pointer", textDecoration: "underline" }, children: "\u0412\u044B\u0439\u0442\u0438" })
+              /* @__PURE__ */ jsx("span", { onClick: \u0432\u044B\u0439\u0442\u0438\u0418\u0437\u041A\u0430\u0431\u0438\u043D\u0435\u0442\u0430, style: { fontSize: 12.5, color: "#8a847a", cursor: "pointer", textDecoration: "underline" }, children: "\u0412\u044B\u0439\u0442\u0438" })
             ] }),
             /* @__PURE__ */ jsx("div", { style: { fontSize: 13, color: C.muted, marginTop: 3 }, children: HISTORY_ON ? adminDb.busy ? "\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E \u0443\u0447\u0435\u043D\u0438\u043A\u043E\u0432 \u0438\u0437 \u0431\u0430\u0437\u044B\u2026" : adminDb.err ? "" : `\u0416\u0438\u0432\u044B\u0435 \u0434\u0430\u043D\u043D\u044B\u0435 \u0438\u0437 \u0431\u0430\u0437\u044B \xB7 \u0443\u0447\u0435\u043D\u0438\u043A\u043E\u0432: ${(adminDb.rows || []).length}` : `\u041F\u0440\u043E\u0444\u0438\u043B\u0438 \u0443\u0447\u0435\u043D\u0438\u043A\u043E\u0432 \u0434\u043B\u044F \u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0438 \u043A \u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u0438. \u041F\u0440\u043E\u0442\u043E\u0442\u0438\u043F \u043D\u0430 \u0434\u0435\u043C\u043E-\u0434\u0430\u043D\u043D\u044B\u0445${typing ? " + \u0442\u0432\u043E\u044F \u0436\u0438\u0432\u0430\u044F \u0441\u0435\u0441\u0441\u0438\u044F" : ""}.` }),
             HISTORY_ON && adminDb.err && /* @__PURE__ */ jsxs("div", { style: { fontSize: 12.5, color: "#a33333", marginTop: 4 }, children: [
@@ -5371,7 +5380,7 @@ document.addEventListener("click", function (e) {
           ] }),
           /* @__PURE__ */ jsx("div", { onClick: () => {
             setAdminSel(null);
-            setScreen("welcome");
+            \u0432\u044B\u0439\u0442\u0438\u0418\u0437\u041A\u0430\u0431\u0438\u043D\u0435\u0442\u0430();
           }, style: { fontSize: 12, fontWeight: 600, color: C.blue, cursor: "pointer" }, children: "\u2190 \u0412\u044B\u0439\u0442\u0438" })
         ] }),
         !st && HISTORY_ON && /* @__PURE__ */ jsxs("div", { style: { marginTop: 16, padding: "14px 16px", background: "#fff", borderRadius: 14, border: "1.5px solid #ece5db" }, children: [
@@ -5948,6 +5957,7 @@ document.addEventListener("click", function (e) {
                         alert("\u0423 \u044D\u0442\u043E\u0433\u043E \u0443\u0447\u0435\u043D\u0438\u043A\u0430 \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044F \u0435\u0449\u0451 \u043D\u0435 \u0441\u043E\u0431\u0440\u0430\u043D\u0430.");
                         return;
                       }
+                      set\u0427\u0443\u0436\u043E\u0439\u0423\u0447\u0435\u043D\u0438\u043A(true);
                       applyProgressPatch(patch, true);
                       setPendingBook(true);
                     },
@@ -5975,6 +5985,7 @@ document.addEventListener("click", function (e) {
                         return;
                       }
                       delete patch.book;
+                      set\u0427\u0443\u0436\u043E\u0439\u0423\u0447\u0435\u043D\u0438\u043A(true);
                       applyProgressPatch(patch, true);
                       setBook(null);
                       setPendingRebuild(true);
