@@ -1976,6 +1976,15 @@ function \u0444\u043E\u043A\u0443\u0441\u041D\u0430\u0437\u0432\u0430\u043D\u041
 function \u043F\u043E\u043B\u0435\u0418\u0437\u0422\u0438\u043F\u0430(card) {
   return card ? \u043F\u043E\u043B\u0435\u0418\u0437\u0421\u043B\u043E\u0432((card.prof_fit || []).join(" ")) : null;
 }
+function \u0441\u0441\u044B\u043B\u043A\u0430\u0412\u041A\u0430\u0442\u0430\u043B\u043E\u0433StudyChina(url) {
+  return /studychina\.ru/i.test(String(url || ""));
+}
+function \u043F\u043E\u0434\u043F\u0438\u0441\u044C\u0421\u0441\u044B\u043B\u043A\u0438\u0412\u0443\u0437\u0430(url) {
+  return \u0441\u0441\u044B\u043B\u043A\u0430\u0412\u041A\u0430\u0442\u0430\u043B\u043E\u0433StudyChina(url) ? "\u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430 \u0432 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0435 StudyChina \u2192" : "\u0441\u0430\u0439\u0442 \u0432\u0443\u0437\u0430 \u2192";
+}
+function \u043F\u043E\u044F\u0441\u043D\u0435\u043D\u044C\u0435\u0421\u0441\u044B\u043B\u043A\u0438\u0412\u0443\u0437\u0430(url) {
+  return \u0441\u0441\u044B\u043B\u043A\u0430\u0412\u041A\u0430\u0442\u0430\u043B\u043E\u0433StudyChina(url) ? "\u041A\u0430\u0440\u0442\u043E\u0447\u043A\u0430 \u0432\u0443\u0437\u0430 \u0432 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0435 StudyChina \u2014 \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u044B, \u0443\u0441\u043B\u043E\u0432\u0438\u044F \u0438 \u0441\u0442\u043E\u0438\u043C\u043E\u0441\u0442\u044C" : "\u041E\u0444\u0438\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0439 \u0441\u0430\u0439\u0442 \u0443\u043D\u0438\u0432\u0435\u0440\u0441\u0438\u0442\u0435\u0442\u0430 \u2014 \u0441\u043C\u043E\u0442\u0440\u0438 \u0442\u0440\u0435\u0431\u043E\u0432\u0430\u043D\u0438\u044F \u0438 \u0441\u0440\u043E\u043A\u0438 \u043F\u043E\u0434\u0430\u0447\u0438";
+}
 function profsForField(profFit, field) {
   const list = profFit || [];
   if (!field) return list.slice(0, 3);
@@ -3660,7 +3669,7 @@ ${JSON.stringify({ vector: \u043A\u043D\u0438\u0433\u0430.vector, scenarios: \u0
     const uniCard = (u) => {
       const pr = progFor(u, shortField);
       const money = [typeof u.cost === "number" ? `\u043E\u0431\u0443\u0447\u0435\u043D\u0438\u0435 \u2248 $${u.cost} \u0442\u044B\u0441/\u0433\u043E\u0434` : "", u.aid || ""].filter(Boolean).join(" \xB7 ");
-      return `<div class="card" style="padding:12px 14px;margin:0">${u.url ? `<a href="${u.url}" title="\u041E\u0444\u0438\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0439 \u0441\u0430\u0439\u0442 \u0443\u043D\u0438\u0432\u0435\u0440\u0441\u0438\u0442\u0435\u0442\u0430 \u2014 \u0441\u043C\u043E\u0442\u0440\u0438 \u0442\u0440\u0435\u0431\u043E\u0432\u0430\u043D\u0438\u044F \u0438 \u0441\u0440\u043E\u043A\u0438 \u043F\u043E\u0434\u0430\u0447\u0438" class="booklink" style="font-weight:700;text-decoration:none">${u.name} <span style="font-size:11px;color:#00337B">\u{1F517}</span></a>` : `<b>${u.name}</b>`}<div class="mut" style="font-size:11.5px;margin-top:3px">${COUNTRIES[u.country].flag} ${u.city} \xB7 ${u.tag}</div>${money ? `<div style="font-size:11.5px;margin-top:4px">\u{1F4B6} ${money}</div>` : ""}${pr ? `<div style="color:#00337B;font-size:12px;margin-top:5px">\u{1F393} \u0423\u0447\u0438\u0442\u044C\u0441\u044F: ${pr}</div>` : ""}</div>`;
+      return `<div class="card" style="padding:12px 14px;margin:0">${u.url ? `<a href="${u.url}" title="${\u043F\u043E\u044F\u0441\u043D\u0435\u043D\u044C\u0435\u0421\u0441\u044B\u043B\u043A\u0438\u0412\u0443\u0437\u0430(u.url)}" class="booklink" style="font-weight:700;text-decoration:none">${u.name} <span style="font-size:11px;color:#00337B">\u{1F517}</span></a>` : `<b>${u.name}</b>`}<div class="mut" style="font-size:11.5px;margin-top:3px">${COUNTRIES[u.country].flag} ${u.city} \xB7 ${u.tag}</div>${money ? `<div style="font-size:11.5px;margin-top:4px">\u{1F4B6} ${money}</div>` : ""}${pr ? `<div style="color:#00337B;font-size:12px;margin-top:5px">\u{1F393} \u0423\u0447\u0438\u0442\u044C\u0441\u044F: ${pr}</div>` : ""}</div>`;
     };
     const uniCat = (ico, t, color, arr, hint, note) => `<div style="display:flex;align-items:baseline;gap:9px;margin:18px 0 10px;break-after:avoid"><span style="font-size:15px">${ico}</span><span style="font-size:15px;font-weight:800;color:${color}">${t}</span></div>` + (arr.length ? `<div class="grid2">${arr.map(uniCard).join("")}</div>${note ? `<p class="mut" style="margin-top:8px">${note}</p>` : ""}` : `<p class="mut">${hint}</p>`);
     const products = cs.filter((k) => NEXT_PRODUCTS[k]).map((k) => `<div class="card" style="border:1.5px solid rgba(0,51,123,0.25);background:rgba(0,51,123,0.04);padding:15px 18px;margin:0"><div style="font-size:15px;font-weight:800;color:#00337B;margin-bottom:5px">${NEXT_PRODUCTS[k].t}</div><div style="font-size:12.5px;color:#454B54">${NEXT_PRODUCTS[k].d}</div></div>`).join("") || `<div class="card" style="border:1.5px solid rgba(0,51,123,0.25);background:rgba(0,51,123,0.04);padding:15px 18px;margin:0"><div style="font-size:15px;font-weight:800;color:#00337B;margin-bottom:5px">StudyGlobal \xB7 \u041A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F \u0441 \u044D\u043A\u0441\u043F\u0435\u0440\u0442\u043E\u043C</div><div style="font-size:12.5px;color:#454B54">\u0420\u0430\u0437\u0431\u0435\u0440\u0451\u043C \u0442\u0432\u043E\u044E \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044E, \u0447\u0435\u0441\u0442\u043D\u043E \u0441\u0440\u0430\u0432\u043D\u0438\u043C \u0440\u043E\u0441\u0441\u0438\u0439\u0441\u043A\u0438\u0439 \u0438 \u0437\u0430\u0440\u0443\u0431\u0435\u0436\u043D\u044B\u0435 \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u044B \u0438 \u0441\u043E\u0431\u0435\u0440\u0451\u043C \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u043E\u0435 \u0440\u0435\u0448\u0435\u043D\u0438\u0435.</div></div>`;
@@ -4694,7 +4703,7 @@ document.addEventListener("click", function (e) {
                                 " ",
                                 us.map((u, j) => /* @__PURE__ */ jsxs("span", { children: [
                                   j > 0 && " \xB7 ",
-                                  /* @__PURE__ */ jsx("a", { title: "\u041E\u0444\u0438\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0439 \u0441\u0430\u0439\u0442 \u0443\u043D\u0438\u0432\u0435\u0440\u0441\u0438\u0442\u0435\u0442\u0430 \u2014 \u043E\u0442\u043A\u0440\u043E\u0435\u0442\u0441\u044F \u0432 \u043D\u043E\u0432\u043E\u0439 \u0432\u043A\u043B\u0430\u0434\u043A\u0435", href: u.url, target: "_blank", rel: "noreferrer", style: { color: C.blue }, children: u.name })
+                                  /* @__PURE__ */ jsx("a", { title: \u043F\u043E\u044F\u0441\u043D\u0435\u043D\u044C\u0435\u0421\u0441\u044B\u043B\u043A\u0438\u0412\u0443\u0437\u0430(u.url) + " \u2014 \u043E\u0442\u043A\u0440\u043E\u0435\u0442\u0441\u044F \u0432 \u043D\u043E\u0432\u043E\u0439 \u0432\u043A\u043B\u0430\u0434\u043A\u0435", href: u.url, target: "_blank", rel: "noreferrer", style: { color: C.blue }, children: u.name })
                                 ] }, j))
                               ] }) : null;
                             })()
@@ -4950,7 +4959,7 @@ document.addEventListener("click", function (e) {
                   ] }),
                   /* @__PURE__ */ jsxs("div", { style: { fontSize: 12.5, color: "#6d675e" }, children: [
                     u.tag,
-                    u.url ? u.country === "china" ? " \xB7 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430 \u0432 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0435 StudyChina \u2192" : " \xB7 \u0441\u0430\u0439\u0442 \u0432\u0443\u0437\u0430 \u2192" : ""
+                    u.url ? " \xB7 " + \u043F\u043E\u0434\u043F\u0438\u0441\u044C\u0421\u0441\u044B\u043B\u043A\u0438\u0412\u0443\u0437\u0430(u.url) : ""
                   ] }),
                   (typeof u.cost === "number" || u.aid) && /* @__PURE__ */ jsxs("div", { style: { fontSize: 12, color: "#454B54", marginTop: 3 }, children: [
                     "\u{1F4B6} ",
