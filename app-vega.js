@@ -2581,9 +2581,9 @@ const parseJsonLoose = (raw) => {
 };
 const font = "'Inter', system-ui, sans-serif";
 const fontHead = "'Inter Tight', 'Inter', system-ui, sans-serif";
-const VIDEO_EUROPE = "";
-const VIDEO_USA = "";
-const VIDEO_CHINA = "";
+const VIDEO_EUROPE = "https://fs.getcourse.ru/fileservice/file/download/a/62293/sc/76/h/2abc00bf31238415942bb118078ce35e.mp4";
+const VIDEO_USA = "https://fs.getcourse.ru/fileservice/file/download/a/62293/sc/134/h/0d6fec32261c2f400524ded062d736e8.mp4";
+const VIDEO_CHINA = "https://fs.getcourse.ru/fileservice/file/download/a/62293/sc/413/h/868557535716002ca25a2b028a4f0947.mp4";
 const HERO_VIDEO = "/route-map-brand.mp4";
 const HERO_POSTER = "/route-map-poster.jpg";
 function Btn({ children, onClick, kind = "primary", disabled, style, hint, tip }) {
@@ -2805,6 +2805,7 @@ export default function App() {
   };
   const [loginBusy, setLoginBusy] = useState(false);
   const [docView, setDocView] = useState(null);
+  const [\u0432\u0438\u0434\u0435\u043E\u041E\u0431\u0437\u043E\u0440, set\u0412\u0438\u0434\u0435\u043E\u041E\u0431\u0437\u043E\u0440] = useState(null);
   const docFrame = useRef(null);
   const [pdfBusy, setPdfBusy] = useState(false);
   const [authEmail, setAuthEmail] = useState("");
@@ -3292,6 +3293,54 @@ ${opens}
     setAnketa((a) => ({ ...a, eng: 2, activ: 2, lang2: "china", field: "it", geo: "city" }));
     setS2("summary");
   };
+  const \u041E\u0411\u0417\u041E\u0420\u042B_\u041D\u0410\u041F\u0420\u0410\u0412\u041B\u0415\u041D\u0418\u0419 = [
+    { k: "europe", url: VIDEO_EUROPE, \u043F\u043E\u0441\u0442\u0435\u0440: "/video-europe.jpg", \u0444\u043B\u0430\u0433: "\u{1F1EA}\u{1F1FA}", \u0438\u043C\u044F: "\u0415\u0432\u0440\u043E\u043F\u0430", \u043F\u043E\u0434: "\u0430\u043D\u0433\u043B\u043E\u044F\u0437\u044B\u0447\u043D\u044B\u0439 \u0431\u0430\u043A\u0430\u043B\u0430\u0432\u0440\u0438\u0430\u0442 \u0432 \u0415\u0421: \u0446\u0435\u043D\u044B, \u0441\u0440\u043E\u043A\u0438, \u043F\u043E\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u0435", \u043E\u0442: "#1a3a6b", \u0434\u043E: "#2d6ea8" },
+    { k: "usa", url: VIDEO_USA, \u043F\u043E\u0441\u0442\u0435\u0440: "/video-usa.jpg", \u0444\u043B\u0430\u0433: "\u{1F1FA}\u{1F1F8}", \u0438\u043C\u044F: "\u0421\u0428\u0410", \u043F\u043E\u0434: "\u0437\u0430\u044F\u0432\u043A\u0430, \u0444\u0438\u043D\u0430\u043D\u0441\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0438 \u043A\u0430\u043A \u0443\u0441\u0442\u0440\u043E\u0435\u043D \u043F\u0440\u0438\u0451\u043C", \u043E\u0442: "#0f2d5c", \u0434\u043E: "#c0392b" },
+    { k: "china", url: VIDEO_CHINA, \u043F\u043E\u0441\u0442\u0435\u0440: "/video-china.jpg", \u0444\u043B\u0430\u0433: "\u{1F1E8}\u{1F1F3}", \u0438\u043C\u044F: "\u041A\u0438\u0442\u0430\u0439", \u043F\u043E\u0434: "\u0441\u0442\u0438\u043F\u0435\u043D\u0434\u0438\u0438 \u0432\u0443\u0437\u043E\u0432, \u044F\u0437\u044B\u043A \u0438 \u0436\u0438\u0437\u043D\u044C \u0432 \u043A\u0430\u043C\u043F\u0443\u0441\u0435", \u043E\u0442: "#7d1f1f", \u0434\u043E: "#d4902a" }
+  ];
+  const \u043E\u0431\u0437\u043E\u0440\u044B\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0439 = (\u043F\u043E\u0434\u043F\u0438\u0441\u044C) => /* @__PURE__ */ jsxs("div", { style: { marginBottom: 24 }, children: [
+    /* @__PURE__ */ jsx("div", { style: { fontWeight: 800, fontSize: 16, marginBottom: 3 }, children: "\u{1F3AC} \u041E\u0431\u0437\u043E\u0440\u044B \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0439" }),
+    /* @__PURE__ */ jsx("div", { style: { fontSize: 13, color: "#6d675e", marginBottom: 12 }, children: \u043F\u043E\u0434\u043F\u0438\u0441\u044C }),
+    /* @__PURE__ */ jsx("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 12 }, children: \u041E\u0411\u0417\u041E\u0420\u042B_\u041D\u0410\u041F\u0420\u0410\u0412\u041B\u0415\u041D\u0418\u0419.map((\u043E) => {
+      const \u0433\u043E\u0442\u043E\u0432 = !!\u043E.url;
+      return /* @__PURE__ */ jsxs(
+        "div",
+        {
+          onClick: () => {
+            if (\u0433\u043E\u0442\u043E\u0432) set\u0412\u0438\u0434\u0435\u043E\u041E\u0431\u0437\u043E\u0440({ \u0438\u043C\u044F: \u043E.\u0438\u043C\u044F, url: \u043E.url, \u043F\u043E\u0441\u0442\u0435\u0440: \u043E.\u043F\u043E\u0441\u0442\u0435\u0440 });
+          },
+          title: \u0433\u043E\u0442\u043E\u0432 ? `\u0421\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u043E\u0431\u0437\u043E\u0440: ${\u043E.\u0438\u043C\u044F}` : "\u0420\u043E\u043B\u0438\u043A \u0437\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u0435\u0442\u0441\u044F",
+          style: {
+            borderRadius: 14,
+            overflow: "hidden",
+            background: "#fff",
+            border: "1px solid #ece5db",
+            cursor: \u0433\u043E\u0442\u043E\u0432 ? "pointer" : "default",
+            display: "flex",
+            flexDirection: "column"
+          },
+          children: [
+            /* @__PURE__ */ jsx("div", { style: {
+              position: "relative",
+              aspectRatio: "16 / 9",
+              minHeight: 96,
+              background: \u0433\u043E\u0442\u043E\u0432 ? `url(${\u043E.\u043F\u043E\u0441\u0442\u0435\u0440}) center/cover no-repeat, linear-gradient(140deg, ${\u043E.\u043E\u0442} 0%, ${\u043E.\u0434\u043E} 100%)` : `linear-gradient(140deg, ${\u043E.\u043E\u0442} 0%, ${\u043E.\u0434\u043E} 100%)`
+            }, children: \u0433\u043E\u0442\u043E\u0432 ? /* @__PURE__ */ jsx("div", { style: { position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ jsx("div", { style: { width: 46, height: 46, borderRadius: "50%", background: "rgba(255,255,255,0.93)", boxShadow: "0 2px 14px rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ jsx("div", { style: { width: 0, height: 0, borderLeft: "14px solid #16325c", borderTop: "9px solid transparent", borderBottom: "9px solid transparent", marginLeft: 4 } }) }) }) : /* @__PURE__ */ jsx("div", { style: { position: "absolute", top: 10, right: 10, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.08em", background: "rgba(255,255,255,0.22)", color: "#fff", padding: "4px 8px", borderRadius: 20 }, children: "\u0421\u041A\u041E\u0420\u041E" }) }),
+            /* @__PURE__ */ jsxs("div", { style: { padding: "10px 13px 12px" }, children: [
+              /* @__PURE__ */ jsxs("div", { style: { fontWeight: 800, fontSize: 15 }, children: [
+                \u043E.\u0444\u043B\u0430\u0433,
+                " ",
+                \u043E.\u0438\u043C\u044F
+              ] }),
+              /* @__PURE__ */ jsx("div", { style: { fontSize: 12, color: "#6d675e", lineHeight: 1.45, marginTop: 2 }, children: \u043E.\u043F\u043E\u0434 }),
+              /* @__PURE__ */ jsx("div", { style: { fontSize: 11.5, fontWeight: 700, marginTop: 6, color: \u0433\u043E\u0442\u043E\u0432 ? C.blue : "#8a847a" }, children: \u0433\u043E\u0442\u043E\u0432 ? "\u0421\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u043E\u0431\u0437\u043E\u0440 \u2192" : "\u0417\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u0435\u0442\u0441\u044F" })
+            ] })
+          ]
+        },
+        \u043E.k
+      );
+    }) })
+  ] });
   const scores = scoreCountries(anketa);
   const ranked = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const pickedOrTop = picked.length ? picked : ranked.slice(0, 2).map((r) => r[0]);
@@ -4524,54 +4573,7 @@ document.addEventListener("click", function (e) {
           /* @__PURE__ */ jsx("div", { style: { textAlign: "right" }, children: /* @__PURE__ */ jsx(Btn, { onClick: () => setS2("countries"), tip: "\u0422\u0435\u043F\u0435\u0440\u044C \u0432\u044B\u0431\u0435\u0440\u0438 \u0441\u0442\u0440\u0430\u043D\u044B: \u0432\u043D\u0443\u0442\u0440\u0438 \u0415\u0432\u0440\u043E\u043F\u044B \u043C\u043E\u0436\u043D\u043E \u043E\u0442\u043A\u0440\u044B\u0442\u044C 10 \u0432\u0430\u0440\u0438\u0430\u043D\u0442\u043E\u0432 \u0438 \u0441\u0440\u0430\u0432\u043D\u0438\u0442\u044C \u0438\u0445 \u043C\u0435\u0436\u0434\u0443 \u0441\u043E\u0431\u043E\u0439", children: "\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u044F\u0441\u043D\u0430 \u2192 \u043A \u0432\u044B\u0431\u043E\u0440\u0443 \u0441\u0442\u0440\u0430\u043D" }) })
         ] }),
         s2 === "countries" && /* @__PURE__ */ jsxs("div", { children: [
-          (() => {
-            const \u041E\u0411\u0417\u041E\u0420\u042B = [
-              { k: "europe", url: VIDEO_EUROPE, \u0444\u043B\u0430\u0433: "\u{1F1EA}\u{1F1FA}", \u0438\u043C\u044F: "\u0415\u0432\u0440\u043E\u043F\u0430", \u043F\u043E\u0434: "\u0430\u043D\u0433\u043B\u043E\u044F\u0437\u044B\u0447\u043D\u044B\u0439 \u0431\u0430\u043A\u0430\u043B\u0430\u0432\u0440\u0438\u0430\u0442 \u0432 \u0415\u0421: \u0446\u0435\u043D\u044B, \u0441\u0440\u043E\u043A\u0438, \u043F\u043E\u0441\u0442\u0443\u043F\u043B\u0435\u043D\u0438\u0435", \u043E\u0442: "#1a3a6b", \u0434\u043E: "#2f6fb8" },
-              { k: "usa", url: VIDEO_USA, \u0444\u043B\u0430\u0433: "\u{1F1FA}\u{1F1F8}", \u0438\u043C\u044F: "\u0421\u0428\u0410", \u043F\u043E\u0434: "\u0437\u0430\u044F\u0432\u043A\u0430, \u0444\u0438\u043D\u0430\u043D\u0441\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0438 \u043A\u0430\u043A \u0443\u0441\u0442\u0440\u043E\u0435\u043D \u043F\u0440\u0438\u0451\u043C", \u043E\u0442: "#0f2d5c", \u0434\u043E: "#c0392b" },
-              { k: "china", url: VIDEO_CHINA, \u0444\u043B\u0430\u0433: "\u{1F1E8}\u{1F1F3}", \u0438\u043C\u044F: "\u041A\u0438\u0442\u0430\u0439", \u043F\u043E\u0434: "\u0441\u0442\u0438\u043F\u0435\u043D\u0434\u0438\u0438 \u0432\u0443\u0437\u043E\u0432, \u044F\u0437\u044B\u043A \u0438 \u0436\u0438\u0437\u043D\u044C \u0432 \u043A\u0430\u043C\u043F\u0443\u0441\u0435", \u043E\u0442: "#7d1f1f", \u0434\u043E: "#d4902a" }
-            ];
-            return /* @__PURE__ */ jsxs("div", { style: { marginBottom: 24 }, children: [
-              /* @__PURE__ */ jsx("div", { style: { fontWeight: 800, fontSize: 16, marginBottom: 3 }, children: "\u{1F3AC} \u041E\u0431\u0437\u043E\u0440\u044B \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0439" }),
-              /* @__PURE__ */ jsx("div", { style: { fontSize: 13, color: "#6d675e", marginBottom: 12 }, children: "\u0420\u0430\u0437\u0431\u043E\u0440 \u043E\u0442 \u044D\u043A\u0441\u043F\u0435\u0440\u0442\u043E\u0432 StudyGlobal \u2014 \u043F\u043E\u043C\u043E\u0436\u0435\u0442 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043E\u0441\u043E\u0437\u043D\u0430\u043D\u043D\u043E, \u0430 \u043D\u0435 \u043D\u0430 \u043E\u0449\u0443\u043F\u044C." }),
-              /* @__PURE__ */ jsx("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 12 }, children: \u041E\u0411\u0417\u041E\u0420\u042B.map((\u043E) => {
-                const \u0433\u043E\u0442\u043E\u0432 = !!\u043E.url;
-                return /* @__PURE__ */ jsxs(
-                  "div",
-                  {
-                    onClick: () => {
-                      if (\u0433\u043E\u0442\u043E\u0432) window.open(\u043E.url, "_blank", "noopener");
-                    },
-                    style: {
-                      position: "relative",
-                      borderRadius: 14,
-                      overflow: "hidden",
-                      minHeight: 150,
-                      background: `linear-gradient(140deg, ${\u043E.\u043E\u0442} 0%, ${\u043E.\u0434\u043E} 100%)`,
-                      cursor: \u0433\u043E\u0442\u043E\u0432 ? "pointer" : "default",
-                      opacity: \u0433\u043E\u0442\u043E\u0432 ? 1 : 0.82,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      padding: "14px 15px",
-                      color: "#fff"
-                    },
-                    children: [
-                      /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }, children: [
-                        /* @__PURE__ */ jsx("div", { style: { fontSize: 30, lineHeight: 1 }, children: \u043E.\u0444\u043B\u0430\u0433 }),
-                        \u0433\u043E\u0442\u043E\u0432 ? /* @__PURE__ */ jsx("div", { style: { width: 34, height: 34, borderRadius: "50%", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }, children: /* @__PURE__ */ jsx("div", { style: { width: 0, height: 0, borderLeft: "11px solid #16325c", borderTop: "7px solid transparent", borderBottom: "7px solid transparent", marginLeft: 3 } }) }) : /* @__PURE__ */ jsx("div", { style: { fontSize: 10.5, fontWeight: 700, letterSpacing: "0.08em", background: "rgba(255,255,255,0.2)", padding: "4px 8px", borderRadius: 20, flex: "none" }, children: "\u0421\u041A\u041E\u0420\u041E" })
-                      ] }),
-                      /* @__PURE__ */ jsxs("div", { children: [
-                        /* @__PURE__ */ jsx("div", { style: { fontFamily: fontHead, fontWeight: 800, fontSize: 20, letterSpacing: "-0.01em" }, children: \u043E.\u0438\u043C\u044F }),
-                        /* @__PURE__ */ jsx("div", { style: { fontSize: 12, lineHeight: 1.45, color: "rgba(255,255,255,0.88)", marginTop: 3 }, children: \u043E.\u043F\u043E\u0434 }),
-                        /* @__PURE__ */ jsx("div", { style: { fontSize: 11.5, fontWeight: 700, marginTop: 7, color: "rgba(255,255,255,0.95)" }, children: \u0433\u043E\u0442\u043E\u0432 ? "\u0421\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u043E\u0431\u0437\u043E\u0440 \u2192" : "\u0417\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u0435\u0442\u0441\u044F" })
-                      ] })
-                    ]
-                  },
-                  \u043E.k
-                );
-              }) })
-            ] });
-          })(),
+          \u043E\u0431\u0437\u043E\u0440\u044B\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0439("\u0420\u0430\u0437\u0431\u043E\u0440 \u043E\u0442 \u044D\u043A\u0441\u043F\u0435\u0440\u0442\u043E\u0432 StudyGlobal \u2014 \u043F\u043E\u043C\u043E\u0436\u0435\u0442 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043E\u0441\u043E\u0437\u043D\u0430\u043D\u043D\u043E, \u0430 \u043D\u0435 \u043D\u0430 \u043E\u0449\u0443\u043F\u044C."),
           /* @__PURE__ */ jsx("p", { style: { color: "#6d675e", margin: "0 0 20px" }, children: "\u0421\u043E\u0432\u043C\u0435\u0441\u0442\u0438\u043C\u043E\u0441\u0442\u044C \u0440\u0430\u0441\u0441\u0447\u0438\u0442\u0430\u043D\u0430 \u043F\u043E \u0431\u044E\u0434\u0436\u0435\u0442\u0443 \u0438 \u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0435\u0442\u0430\u043C \u0441\u0435\u043C\u044C\u0438, \u0442\u0432\u043E\u0435\u043C\u0443 \u0443\u0440\u043E\u0432\u043D\u044E \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u043E\u0433\u043E \u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438 \u0437\u0430\u044F\u0432\u043A\u0438. \u0418\u0437\u0443\u0447\u0438 \u043F\u043B\u044E\u0441\u044B, \xAB\u0441\u0442\u043E\u0438\u0442 \u0443\u0447\u0435\u0441\u0442\u044C\xBB \u0438 \u043F\u0435\u0440\u0441\u043F\u0435\u043A\u0442\u0438\u0432\u044B \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u044F \u0438 \u0432\u044B\u0431\u0435\u0440\u0438 2\u20133 \u0441\u0442\u0440\u0430\u043D\u044B \u0434\u043B\u044F \u0441\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u044F." }),
           /* @__PURE__ */ jsx("div", { style: { display: "grid", gap: 14 }, children: ranked.map(([k, sc]) => {
             const c = COUNTRIES[k];
@@ -5094,6 +5096,7 @@ document.addEventListener("click", function (e) {
         ] }),
         /* @__PURE__ */ jsx("div", { style: { fontSize: 14, color: C.muted, marginTop: 4 }, children: done.length === 4 ? "\u0422\u0432\u043E\u044F \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044F \u0433\u043E\u0442\u043E\u0432\u0430 \u2014 \u0441\u0430\u043C\u043E\u0435 \u0432\u0440\u0435\u043C\u044F \u043E\u0431\u0441\u0443\u0434\u0438\u0442\u044C \u0435\u0451 \u0441 \u044D\u043A\u0441\u043F\u0435\u0440\u0442\u043E\u043C StudyGlobal." : done.length === 0 ? "\u0412\u043F\u0435\u0440\u0435\u0434\u0438 4 \u044D\u0442\u0430\u043F\u0430. \u041D\u0430\u0447\u043D\u0438 \u0441 \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u2014 \u0443\u0437\u043D\u0430\u0435\u043C, \u043A\u0442\u043E \u0442\u044B." : `\u041F\u0440\u043E\u0439\u0434\u0435\u043D\u043E \u044D\u0442\u0430\u043F\u043E\u0432: ${done.length} \u0438\u0437 4. \u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0439 \u2014 \u0412\u0435\u0433\u0430 \u0440\u044F\u0434\u043E\u043C, \u0435\u0441\u043B\u0438 \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u0432\u043E\u043F\u0440\u043E\u0441\u044B.` })
       ] }),
+      /* @__PURE__ */ jsx("div", { style: { marginTop: 20 }, children: \u043E\u0431\u0437\u043E\u0440\u044B\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0439("\u041C\u043E\u0436\u043D\u043E \u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0432 \u043B\u044E\u0431\u043E\u0439 \u043C\u043E\u043C\u0435\u043D\u0442: \u0438 \u0434\u043E \u0432\u044B\u0431\u043E\u0440\u0430 \u0441\u0442\u0440\u0430\u043D, \u0438 \u043F\u043E\u0442\u043E\u043C \u2014 \u043A\u043E\u0433\u0434\u0430 \u0441\u0442\u0440\u0430\u0442\u0435\u0433\u0438\u044F \u0443\u0436\u0435 \u0441\u043E\u0431\u0440\u0430\u043D\u0430.") }),
       /* @__PURE__ */ jsxs(Card, { style: { padding: guideOpen ? "20px 24px" : "14px 24px", marginTop: 16, border: `1.5px solid ${C.yellow}`, background: "#FFFDF4" }, children: [
         /* @__PURE__ */ jsxs("div", { onClick: () => setGuideOpen((o) => !o), style: { display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }, children: [
           /* @__PURE__ */ jsx("span", { style: { fontSize: 18 }, children: "\u{1F4D6}" }),
@@ -6386,6 +6389,35 @@ document.addEventListener("click", function (e) {
         ] })
       ] });
     })(),
+    \u0432\u0438\u0434\u0435\u043E\u041E\u0431\u0437\u043E\u0440 && /* @__PURE__ */ jsx(
+      "div",
+      {
+        onClick: () => set\u0412\u0438\u0434\u0435\u043E\u041E\u0431\u0437\u043E\u0440(null),
+        style: { position: "fixed", inset: 0, background: "rgba(14,18,26,0.85)", zIndex: 70, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 },
+        children: /* @__PURE__ */ jsxs("div", { onClick: (e) => e.stopPropagation(), style: { width: "min(980px, 100%)", borderRadius: 14, overflow: "hidden", background: "#0f1722" }, children: [
+          /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "11px 15px", color: "#fff" }, children: [
+            /* @__PURE__ */ jsxs("div", { style: { fontWeight: 700, fontSize: 14.5 }, children: [
+              "\u{1F3AC} ",
+              \u0432\u0438\u0434\u0435\u043E\u041E\u0431\u0437\u043E\u0440.\u0438\u043C\u044F,
+              " \u2014 \u043E\u0431\u0437\u043E\u0440 \u043E\u0442 \u044D\u043A\u0441\u043F\u0435\u0440\u0442\u043E\u0432 StudyGlobal"
+            ] }),
+            /* @__PURE__ */ jsx("div", { onClick: () => set\u0412\u0438\u0434\u0435\u043E\u041E\u0431\u0437\u043E\u0440(null), title: "\u0417\u0430\u043A\u0440\u044B\u0442\u044C", style: { cursor: "pointer", fontSize: 22, lineHeight: 1, color: "rgba(255,255,255,0.8)" }, children: "\xD7" })
+          ] }),
+          /* @__PURE__ */ jsx(
+            "video",
+            {
+              src: \u0432\u0438\u0434\u0435\u043E\u041E\u0431\u0437\u043E\u0440.url,
+              poster: \u0432\u0438\u0434\u0435\u043E\u041E\u0431\u0437\u043E\u0440.\u043F\u043E\u0441\u0442\u0435\u0440,
+              controls: true,
+              autoPlay: true,
+              playsInline: true,
+              style: { width: "100%", maxHeight: "72vh", display: "block", background: "#000" }
+            }
+          ),
+          /* @__PURE__ */ jsx("div", { style: { padding: "9px 15px" }, children: /* @__PURE__ */ jsx("a", { href: \u0432\u0438\u0434\u0435\u043E\u041E\u0431\u0437\u043E\u0440.url, target: "_blank", rel: "noreferrer", style: { fontSize: 12, color: "#9db6dc" }, children: "\u041D\u0435 \u0438\u0433\u0440\u0430\u0435\u0442? \u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0432\u0438\u0434\u0435\u043E \u0432 \u043D\u043E\u0432\u043E\u0439 \u0432\u043A\u043B\u0430\u0434\u043A\u0435 \u2192" }) })
+        ] })
+      }
+    ),
     docView && /* @__PURE__ */ jsx("div", { style: { position: "fixed", inset: 0, background: "rgba(10,20,40,0.55)", zIndex: 80, display: "flex", padding: 16 }, children: /* @__PURE__ */ jsxs("div", { style: { background: "#fff", borderRadius: 16, flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", maxWidth: 980, margin: "0 auto", boxShadow: "0 16px 60px rgba(0,0,0,0.3)" }, children: [
       /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "12px 16px", borderBottom: "1px solid #f0ebe3", flexWrap: "wrap" }, children: [
         /* @__PURE__ */ jsxs("div", { children: [
